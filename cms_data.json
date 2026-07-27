@@ -1,0 +1,542 @@
+{
+  "personalInfo": {
+    "name": "Karan Pandre",
+    "fullLegalName": "Karan Umaji Pandre",
+    "title": "Business Analyst & Data Analytics Professional",
+    "targetProgram": "Data Analytics & Business Intelligence & cyber security Portfolio",
+    "avatar": "/karan_profile.jpg?v=1785072413499",
+    "tagline": "Transforming complex data into actionable business strategy, campaign ROI, and secure digital infrastructure.",
+    "location": "Bangalore, India",
+    "phone": "+91 96115 56402",
+    "email": "karanpandre3@gmail.com",
+    "linkedin": "https://linkedin.com/in/karanpandre3",
+    "github": "https://github.com/karanpandre3",
+    "cgpa": "7.7 / 10.0",
+    "languages": [
+      "English (Professional)",
+      "Hindi (Professional)",
+      "Kannada (Professional)",
+      "Marathi (Professional)"
+    ],
+    "bio": "B.Tech Information Technology graduate (2025) currently working at Physics Wallah, analyzing campaign performance, building dashboards, and translating business requirements into actionable insights. Hands-on experience with SQL databases, Power BI, Python, and Cisco network security simulated environments."
+  },
+  "workExperiences": [
+    {
+      "id": "pw-2025",
+      "role": "Senior Associate",
+      "company": "Physics Wallah",
+      "location": "Bangalore, India",
+      "period": "Apr 2025 – Present",
+      "type": "Full-time",
+      "summary": "Driving marketing execution, lead conversion analytics, campaign optimization, and cross-functional team management.",
+      "bullets": [
+        "Collaborate with academic, counselling, and sales teams to ensure seamless execution of marketing initiatives and achievement of enrolment targets.",
+        "Analyze campaign performance, lead conversion metrics, and market trends to optimize marketing strategies and improve ROI.",
+        "Mentor and support team members in lead management, communication strategies, and marketing execution to improve overall team performance.",
+        "Manage end-to-end marketing campaigns, including lead generation, follow-ups, conversion tracking, and stakeholder engagement, contributing to increased admissions and revenue growth.",
+        "Conducted market research and competitor analysis to identify growth opportunities, optimize marketing strategies, and strengthen regional market presence."
+      ],
+      "skills": [
+        "Campaign Analytics",
+        "ROI Optimization",
+        "Lead Conversion Tracking",
+        "Stakeholder Engagement",
+        "Market Research",
+        "Project Management"
+      ]
+    },
+    {
+      "id": "infosys-2024",
+      "role": "Data Analyst Intern",
+      "company": "Infosys",
+      "location": "Remote",
+      "period": "Sep 2024 – Feb 2025",
+      "type": "Internship",
+      "summary": "Analyzed large structured datasets, built interactive Power BI dashboards, and automated business reporting.",
+      "bullets": [
+        "Analyzed and transformed structured datasets using SQL, Excel, and Power BI to generate actionable business insights.",
+        "Designed interactive dashboards and automated reports to monitor KPIs, identify trends, and support data-driven decision-making.",
+        "Performed data cleaning, validation, and visualization to improve data quality and deliver accurate analytical reports."
+      ],
+      "skills": [
+        "SQL",
+        "Power BI",
+        "DAX",
+        "Data Cleaning",
+        "KPI Dashboards",
+        "Excel Power Query",
+        "ETL"
+      ]
+    },
+    {
+      "id": "cisco-2024",
+      "role": "Cybersecurity Virtual Intern",
+      "company": "Cisco Networking Academy",
+      "location": "Remote",
+      "period": "May 2024 – Jul 2024",
+      "type": "Virtual Internship",
+      "summary": "Simulated network topologies, applied firewall & VLAN security rules, and produced security risk reports.",
+      "bullets": [
+        "Configured and secured simulated networks in Cisco Packet Tracer — applied firewall rules, VLAN segmentation, and access control policies across structured lab exercises.",
+        "Performed vulnerability assessments on simulated environments; submitted a structured security findings report with risk ratings and remediation recommendations."
+      ],
+      "skills": [
+        "Cisco Packet Tracer",
+        "VLAN Segmentation",
+        "Firewall Rules",
+        "Vulnerability Assessment",
+        "Log Analysis",
+        "Network Security"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "marketing-dashboard",
+      "title": "Marketing Campaign Performance Dashboard",
+      "subtitle": "End-to-End Campaign Analytics & Conversion Funnel Pipeline",
+      "category": "Data Analytics",
+      "techStack": [
+        "Power BI",
+        "Python (Pandas)",
+        "MySQL",
+        "MS Excel",
+        "DAX"
+      ],
+      "description": "Designed an interactive Power BI campaign tracking dashboard with DAX measures, slicers, and drill-throughs to evaluate 5 key campaign KPIs (CTR, Conversions, ROI, Reach, Engagement). Cleaned and segmented user lead data using Python Pandas and SQL window functions.",
+      "highlights": [
+        "Built custom DAX formulas for dynamic ROI and conversion tracking across multi-channel campaigns.",
+        "Automated data cleaning pipeline using Python Pandas and SQL subqueries for multi-source lead consolidation.",
+        "Generated executive pivot summaries and interactive slicers for stakeholder reporting at Physics Wallah."
+      ],
+      "metrics": [
+        {
+          "label": "Campaigns Tracked",
+          "value": "50+"
+        },
+        {
+          "label": "Conversion Rate Boost",
+          "value": "+18.4%"
+        },
+        {
+          "label": "ROI Tracking Precision",
+          "value": "99.2%"
+        },
+        {
+          "label": "DAX Measures Created",
+          "value": "15+"
+        }
+      ],
+      "codeSnippet": {
+        "language": "sql",
+        "title": "Campaign Lead Segmentation & Conversion Query",
+        "code": "SELECT \n  campaign_name,\n  channel,\n  SUM(impressions) AS total_impressions,\n  SUM(clicks) AS total_clicks,\n  ROUND(SUM(clicks) * 100.0 / NULLIF(SUM(impressions), 0), 2) AS ctr_percentage,\n  SUM(conversions) AS total_conversions,\n  ROUND(SUM(spend_inr), 2) AS total_spend,\n  ROUND(SUM(revenue_generated) - SUM(spend_inr), 2) AS net_profit,\n  ROUND(((SUM(revenue_generated) - SUM(spend_inr)) / NULLIF(SUM(spend_inr), 0)) * 100, 2) AS roi_percentage\nFROM campaign_logs\nWHERE campaign_date >= DATE_SUB(CURRENT_DATE, INTERVAL 90 DAY)\nGROUP BY campaign_name, channel\nHAVING total_clicks > 100\nORDER BY roi_percentage DESC;"
+      },
+      "featured": true
+    },
+    {
+      "id": "network-security",
+      "title": "Campus Network Security Assessment",
+      "subtitle": "Vulnerability Audit, Firewall Rule Implementation & Log Analysis",
+      "category": "Cybersecurity",
+      "techStack": [
+        "Cisco Packet Tracer",
+        "Wireshark Log Analysis",
+        "TCP/IP",
+        "VLAN Segmentation"
+      ],
+      "description": "Mapped a simulated university network topology in Cisco Packet Tracer. Identified 3 critical security vulnerabilities including open administrative ports, missing VLAN isolation, and weak access control lists (ACLs).",
+      "highlights": [
+        "Constructed complete 3-tier network topology featuring Core, Distribution, and Access layer switches.",
+        "Implemented strict ACL policies and 802.1Q VLAN trunking to segregate administrative, faculty, and student traffic.",
+        "Produced a formal vulnerability remediation report submitted to Cisco Networking Academy evaluators."
+      ],
+      "metrics": [
+        {
+          "label": "Vulnerabilities Remediated",
+          "value": "3 Critical"
+        },
+        {
+          "label": "Network Segments",
+          "value": "4 VLANs"
+        },
+        {
+          "label": "Access Control Rules",
+          "value": "24 ACLs"
+        }
+      ],
+      "codeSnippet": {
+        "language": "bash",
+        "title": "Cisco Packet Tracer Router ACL & VLAN Config",
+        "code": "! Configure VLAN 10 (Admin) and VLAN 20 (Students)\nvlan 10\n name ADMIN_NET\nvlan 20\n name STUDENT_NET\nexit\n\n! Access Control List to restrict Student access to Admin Server\nip access-list extended BLOCK_STUDENT_TO_ADMIN\n deny ip 192.168.20.0 0.0.0.255 192.168.10.0 0.0.0.255\n permit ip any any\ninterface GigabitEthernet0/0.20\n encapsulation dot1Q 20\n ip address 192.168.20.1 255.255.255.0\n ip access-group BLOCK_STUDENT_TO_ADMIN in"
+      },
+      "featured": true
+    },
+    {
+      "id": "digital-marketing-funnel",
+      "title": "EdTech Admission Funnel Optimization",
+      "subtitle": "Lead Generation & Competitor Benchmarking Pipeline",
+      "category": "Digital Marketing",
+      "techStack": [
+        "Excel Power Query",
+        "Python EDA",
+        "Google Analytics KPIs",
+        "Market Research"
+      ],
+      "description": "Conducted market analysis and lead attribution modeling for EdTech courses, identifying bottle-necks in counsellor follow-ups and optimizing digital ad channels for improved conversion.",
+      "highlights": [
+        "Mapped customer journey from ad impression to final enrolment.",
+        "Identified drop-offs in lead nurture emails and optimized counsellor assignment logic.",
+        "Reduced cost per acquisition (CPA) by 14% through targeted competitor keyword segmentation."
+      ],
+      "metrics": [
+        {
+          "label": "Enrolment Yield",
+          "value": "+12%"
+        },
+        {
+          "label": "Lead Response Time",
+          "value": "-35%"
+        },
+        {
+          "label": "CPA Reduction",
+          "value": "14%"
+        }
+      ],
+      "featured": true
+    }
+  ],
+  "certifications": [
+    {
+      "id": "google-data-science",
+      "title": "Foundations of Data Science",
+      "issuer": "Google (via Coursera)",
+      "date": "Nov 2023",
+      "verifyUrl": "https://coursera.org/verify/ZT89W7QT2ZZS",
+      "category": "Google & Coursera",
+      "badgeColor": "bg-blue-600",
+      "skills": [
+        "Data Analysis",
+        "Python",
+        "Data Ethics",
+        "Statistical Thinking"
+      ]
+    },
+    {
+      "id": "google-cybersecurity",
+      "title": "Foundations of Cybersecurity",
+      "issuer": "Google (via Coursera)",
+      "date": "Nov 2023",
+      "verifyUrl": "https://coursera.org/verify/Q24UVF9W4NC8",
+      "category": "Google & Coursera",
+      "badgeColor": "bg-emerald-600",
+      "skills": [
+        "SIEM",
+        "Network Protocols",
+        "Security Compliance",
+        "Linux"
+      ]
+    },
+    {
+      "id": "google-tech-support",
+      "title": "Technical Support Fundamentals",
+      "issuer": "Google (via Coursera)",
+      "date": "Mar 2024",
+      "verifyUrl": "https://coursera.org/verify/B64V36PPC6MT",
+      "category": "Google & Coursera",
+      "badgeColor": "bg-indigo-600",
+      "skills": [
+        "Troubleshooting",
+        "Customer Support",
+        "Hardware & Networking",
+        "OS Administration"
+      ]
+    },
+    {
+      "id": "google-os-poweruser",
+      "title": "Operating Systems and You: Becoming a Power User",
+      "issuer": "Google (via Coursera)",
+      "date": "Nov 2023",
+      "verifyUrl": "https://coursera.org/verify/VZTF73TU7JU7",
+      "category": "Google & Coursera",
+      "badgeColor": "bg-amber-600",
+      "skills": [
+        "Windows CLI",
+        "Linux Shell",
+        "Process Management",
+        "File Systems"
+      ]
+    },
+    {
+      "id": "ibm-project-management",
+      "title": "Introduction to Project Management",
+      "issuer": "IBM (via Coursera)",
+      "date": "Nov 2023",
+      "verifyUrl": "https://coursera.org/verify/JAH96AUSYLRU",
+      "category": "Management & Productivity",
+      "badgeColor": "bg-blue-700",
+      "skills": [
+        "Project Governance",
+        "Agile & Waterfall",
+        "Risk Management",
+        "Stakeholder Communication"
+      ]
+    },
+    {
+      "id": "ibm-os-security",
+      "title": "Operating Systems: Overview, Administration, and Security",
+      "issuer": "IBM (via Coursera)",
+      "date": "Nov 2024",
+      "verifyUrl": "https://coursera.org/verify/B1ZKCCG00PGF",
+      "category": "Management & Productivity",
+      "badgeColor": "bg-slate-700",
+      "skills": [
+        "OS Hardening",
+        "Access Control",
+        "System Administration"
+      ]
+    },
+    {
+      "id": "uw-ml-regression",
+      "title": "Machine Learning: Regression",
+      "issuer": "University of Washington (via Coursera)",
+      "date": "Oct 2023",
+      "verifyUrl": "https://coursera.org/verify/8BHMNBDZNJA5",
+      "category": "Data & BI",
+      "badgeColor": "bg-purple-600",
+      "skills": [
+        "Linear Regression",
+        "Ridge & Lasso",
+        "Gradient Descent",
+        "Model Evaluation"
+      ]
+    },
+    {
+      "id": "uw-ml-foundations",
+      "title": "Machine Learning Foundations: A Case Study Approach",
+      "issuer": "University of Washington (via Coursera)",
+      "date": "Nov 2023",
+      "verifyUrl": "https://coursera.org/verify/EXLNMK6WS5EX",
+      "category": "Data & BI",
+      "badgeColor": "bg-purple-700",
+      "skills": [
+        "Classification",
+        "Clustering",
+        "Recommender Systems",
+        "Predictive Modeling"
+      ]
+    },
+    {
+      "id": "infosys-powerbi",
+      "title": "Learning Microsoft Power BI",
+      "issuer": "Infosys Springboard",
+      "date": "Feb 2025",
+      "verifyUrl": "https://verify.onwingspan.com",
+      "category": "Data & BI",
+      "badgeColor": "bg-yellow-600",
+      "skills": [
+        "Power BI Desktop",
+        "DAX Measures",
+        "Power Query",
+        "Data Modeling"
+      ]
+    },
+    {
+      "id": "infosys-bi-intro",
+      "title": "Introduction to Business Intelligence",
+      "issuer": "Infosys Springboard",
+      "date": "Apr 2025",
+      "verifyUrl": "https://verify.onwingspan.com",
+      "category": "Data & BI",
+      "badgeColor": "bg-amber-600",
+      "skills": [
+        "BI Architecture",
+        "Data Warehousing",
+        "KPI Reporting"
+      ]
+    },
+    {
+      "id": "infosys-agile",
+      "title": "Software Engineering and Agile Software Development",
+      "issuer": "Infosys Springboard",
+      "date": "Aug 2024",
+      "verifyUrl": "https://verify.onwingspan.com",
+      "category": "Management & Productivity",
+      "badgeColor": "bg-cyan-600",
+      "skills": [
+        "Agile Ceremonies",
+        "Scrum",
+        "Sprint Planning",
+        "Software Lifecycle"
+      ]
+    },
+    {
+      "id": "cisco-virtual-internship",
+      "title": "Cisco AICTE Virtual Internship Program in Networking",
+      "issuer": "Cisco Networking Academy",
+      "date": "Jul 2024",
+      "verifyUrl": "https://netacad.com",
+      "category": "Cybersecurity",
+      "badgeColor": "bg-cyan-700",
+      "skills": [
+        "Simulated Network Security",
+        "VLAN Segmentation",
+        "Firewalls",
+        "Vulnerability Auditing"
+      ]
+    },
+    {
+      "id": "cisco-packet-tracer",
+      "title": "Introduction to Packet Tracer",
+      "issuer": "Cisco Networking Academy",
+      "date": "Jul 2024",
+      "verifyUrl": "https://netacad.com",
+      "category": "Cybersecurity",
+      "badgeColor": "bg-teal-600",
+      "skills": [
+        "Packet Tracer Simulation",
+        "Topology Design",
+        "Router/Switch Config"
+      ]
+    },
+    {
+      "id": "cisco-cybersecurity-essentials",
+      "title": "Cybersecurity Essentials",
+      "issuer": "Cisco Networking Academy",
+      "date": "Jul 2024",
+      "verifyUrl": "https://netacad.com",
+      "category": "Cybersecurity",
+      "badgeColor": "bg-emerald-700",
+      "skills": [
+        "Threat Countermeasures",
+        "CIA Triad",
+        "Legal Frameworks"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "category": "Reporting & Business Intelligence",
+      "iconName": "BarChart3",
+      "skills": [
+        {
+          "name": "Power BI & DAX",
+          "level": 92,
+          "description": "KPI Dashboards, Slicers, Drill-throughs, Dynamic DAX Measures"
+        },
+        {
+          "name": "MS Excel (Power Query & Pivot)",
+          "level": 95,
+          "description": "PivotTables, Power Query ETL, VLOOKUP, Advanced Formulas"
+        },
+        {
+          "name": "Data Visualization & Storytelling",
+          "level": 90,
+          "description": "Transforming raw data into clear executive narratives"
+        }
+      ]
+    },
+    {
+      "category": "Databases & SQL",
+      "iconName": "Database",
+      "skills": [
+        {
+          "name": "MySQL / MS SQL Server",
+          "level": 88,
+          "description": "Complex Joins, Subqueries, Aggregations, Grouping"
+        },
+        {
+          "name": "SQL Window Functions",
+          "level": 85,
+          "description": "ROW_NUMBER, RANK, DENSE_RANK, LAG, LEAD, Over Partitioning"
+        },
+        {
+          "name": "Data Cleaning & Validation",
+          "level": 92,
+          "description": "Handling missing values, deduplication, schema normalization"
+        }
+      ]
+    },
+    {
+      "category": "Programming & Data Science",
+      "iconName": "Code2",
+      "skills": [
+        {
+          "name": "Python (Pandas & NumPy)",
+          "level": 86,
+          "description": "Data wrangling, feature engineering, automated EDA scripts"
+        },
+        {
+          "name": "Matplotlib & Seaborn",
+          "level": 82,
+          "description": "Statistical charting, heatmaps, distribution plots"
+        },
+        {
+          "name": "Machine Learning Concepts",
+          "level": 78,
+          "description": "Regression, Classification, Clustering (UW Certified)"
+        }
+      ]
+    },
+    {
+      "category": "Digital Marketing & Campaign Analytics",
+      "iconName": "TrendingUp",
+      "skills": [
+        {
+          "name": "Campaign Conversion Tracking",
+          "level": 90,
+          "description": "CTR, ROI, Reach, Engagement, CAC, Lead Attribution"
+        },
+        {
+          "name": "Market Research & Competitor Analysis",
+          "level": 88,
+          "description": "Market trends, positioning, enrolment target execution"
+        },
+        {
+          "name": "Lead Funnel Management",
+          "level": 92,
+          "description": "Managing end-to-end campaigns from lead gen to conversion"
+        }
+      ]
+    },
+    {
+      "category": "Project Management & Operations",
+      "iconName": "Briefcase",
+      "skills": [
+        {
+          "name": "Agile & Sprint Execution",
+          "level": 88,
+          "description": "Scrum principles, task prioritization, sprint planning (IBM/Infosys)"
+        },
+        {
+          "name": "Stakeholder Communication",
+          "level": 92,
+          "description": "Collaborating across academic, counselling, and sales teams"
+        },
+        {
+          "name": "Team Mentorship & Coordination",
+          "level": 88,
+          "description": "Mentoring team members in communication & execution"
+        }
+      ]
+    },
+    {
+      "category": "Networking & Security",
+      "iconName": "ShieldCheck",
+      "skills": [
+        {
+          "name": "Cisco Packet Tracer & Networking",
+          "level": 85,
+          "description": "TCP/IP, DNS, OSI Model, VLANs, Router/Switch config"
+        },
+        {
+          "name": "Vulnerability Assessment & Logs",
+          "level": 82,
+          "description": "Log analysis, identifying open ports, firewall ACL policies"
+        }
+      ]
+    }
+  ],
+  "messages": [],
+  "lastUpdated": "2026-07-26T13:26:53.499Z"
+}
