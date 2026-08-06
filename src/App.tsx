@@ -292,6 +292,7 @@ export default function App() {
         darkMode={darkMode}
         isOpen={showResumeModal}
         onClose={() => setShowResumeModal(false)}
+        portfolioData={activeData}
       />
 
       <SearchModal

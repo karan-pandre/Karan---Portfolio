@@ -7,12 +7,14 @@ interface ResumeViewerModalProps {
   darkMode: boolean;
   isOpen: boolean;
   onClose: () => void;
+  portfolioData?: any;
 }
 
 export const ResumeViewerModal: React.FC<ResumeViewerModalProps> = ({
   darkMode,
   isOpen,
-  onClose
+  onClose,
+  portfolioData
 }) => {
   const [copied, setCopied] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -23,7 +25,7 @@ export const ResumeViewerModal: React.FC<ResumeViewerModalProps> = ({
   const handleDownloadPDF = async () => {
     setIsDownloading(true);
     try {
-      await downloadResumePDF(resumeCardRef.current);
+      await downloadResumePDF(resumeCardRef.current, portfolioData);
     } catch (err) {
       console.error('PDF Generation failed:', err);
     } finally {
