@@ -33,8 +33,9 @@ export const RecruiterDock: React.FC<RecruiterDockProps> = ({
     <motion.div 
       drag
       dragMomentum={false}
-      dragElastic={0.1}
-      className="fixed bottom-20 right-3 sm:bottom-5 sm:right-5 z-50 pointer-events-auto cursor-grab active:cursor-grabbing select-none"
+      dragElastic={0.05}
+      dragConstraints={{ left: -260, right: 10, top: -450, bottom: 10 }}
+      className="fixed bottom-16 sm:bottom-6 right-2 sm:right-6 z-50 pointer-events-auto cursor-grab active:cursor-grabbing select-none"
     >
       {/* Expanded Glassmorphism Recruiter Hub Card */}
       <AnimatePresence>

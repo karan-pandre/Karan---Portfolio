@@ -503,9 +503,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 pointer-events-auto max-w-[92vw]"
+            className="fixed bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 z-40 pointer-events-auto w-auto max-w-[94vw] sm:max-w-none"
           >
-            <div className={`p-1.5 rounded-full border shadow-2xl backdrop-blur-2xl flex items-center gap-1.5 transition-all ${
+            <div className={`p-1 sm:p-1.5 rounded-full border shadow-2xl backdrop-blur-2xl flex items-center gap-1 sm:gap-1.5 transition-all max-w-full ${
               darkMode 
                 ? 'bg-[#181818]/90 border-white/15 text-slate-200 shadow-black/80' 
                 : 'bg-white/90 border-slate-200 text-slate-800 shadow-slate-300'
@@ -514,17 +514,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               {!dockMinimized ? (
                 <>
                   {/* Current Active Section Badge */}
-                  <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-extrabold mr-1">
+                  <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-extrabold mr-1 shrink-0">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                     <span className="capitalize">{activeSection.replace('-', ' ')}</span>
                   </div>
 
-                  {/* Quick Section Anchors */}
-                  <div className="flex items-center gap-1">
+                  {/* Quick Section Anchors with Scroll Container */}
+                  <div className="flex items-center gap-0.5 sm:gap-1 overflow-x-auto scrollbar-none max-w-[65vw] sm:max-w-none px-0.5 py-0.5">
                     <button
                       onClick={() => scrollToSection('hero')}
                       title="Overview Top"
-                      className={`p-2 rounded-full transition-all ${
+                      className={`p-1.5 sm:p-2 rounded-full transition-all shrink-0 ${
                         activeSection === 'hero' 
                           ? 'bg-emerald-600 text-white' 
                           : darkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
@@ -536,7 +536,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       onClick={() => scrollToSection('competencies')}
                       title="Core Skills"
-                      className={`p-2 rounded-full transition-all ${
+                      className={`p-1.5 sm:p-2 rounded-full transition-all shrink-0 ${
                         activeSection === 'competencies' 
                           ? 'bg-emerald-600 text-white' 
                           : darkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
@@ -548,7 +548,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       onClick={() => scrollToSection('dashboards')}
                       title="SIEM & Dashboards"
-                      className={`p-2 rounded-full transition-all ${
+                      className={`p-1.5 sm:p-2 rounded-full transition-all shrink-0 ${
                         activeSection === 'dashboards' || activeSection === 'pipeline-simulator'
                           ? 'bg-emerald-600 text-white' 
                           : darkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
@@ -560,7 +560,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       onClick={() => scrollToSection('experience')}
                       title="Work Experience"
-                      className={`p-2 rounded-full transition-all ${
+                      className={`p-1.5 sm:p-2 rounded-full transition-all shrink-0 ${
                         activeSection === 'experience' 
                           ? 'bg-emerald-600 text-white' 
                           : darkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
@@ -572,7 +572,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       onClick={() => scrollToSection('projects')}
                       title="Projects & Case Studies"
-                      className={`p-2 rounded-full transition-all ${
+                      className={`p-1.5 sm:p-2 rounded-full transition-all shrink-0 ${
                         activeSection === 'projects' 
                           ? 'bg-emerald-600 text-white' 
                           : darkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
@@ -584,7 +584,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       onClick={() => scrollToSection('impact-calculator')}
                       title="ROI Impact Calculator"
-                      className={`p-2 rounded-full transition-all ${
+                      className={`p-1.5 sm:p-2 rounded-full transition-all shrink-0 ${
                         activeSection === 'impact-calculator' 
                           ? 'bg-emerald-600 text-white' 
                           : darkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
@@ -596,7 +596,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       onClick={() => scrollToSection('certifications')}
                       title="Certifications"
-                      className={`p-2 rounded-full transition-all ${
+                      className={`p-1.5 sm:p-2 rounded-full transition-all shrink-0 ${
                         activeSection === 'certifications' 
                           ? 'bg-emerald-600 text-white' 
                           : darkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
@@ -608,7 +608,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       onClick={() => scrollToSection('contact')}
                       title="Contact"
-                      className={`p-2 rounded-full transition-all ${
+                      className={`p-1.5 sm:p-2 rounded-full transition-all shrink-0 ${
                         activeSection === 'contact' 
                           ? 'bg-emerald-600 text-white' 
                           : darkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
@@ -618,13 +618,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </button>
                   </div>
 
-                  <div className="w-px h-5 bg-slate-200 dark:bg-white/10 mx-1" />
+                  <div className="w-px h-5 bg-slate-200 dark:bg-white/10 mx-0.5 shrink-0" />
 
                   {/* AI Quick Button */}
                   <button
                     onClick={onOpenAIChat}
                     title="Ask AI Assistant"
-                    className="p-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm hover:scale-105 transition-transform"
+                    className="p-1.5 sm:p-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm hover:scale-105 transition-transform shrink-0"
                   >
                     <Sparkles className="w-4 h-4 text-amber-300" />
                   </button>
@@ -633,7 +633,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <button
                     onClick={() => scrollToSection('hero')}
                     title="Scroll to Top"
-                    className={`p-2 rounded-full transition-all ${
+                    className={`p-1.5 sm:p-2 rounded-full transition-all shrink-0 ${
                       darkMode ? 'hover:bg-white/10 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
                     }`}
                   >
@@ -654,7 +654,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={() => setDockMinimized(!dockMinimized)}
                 title={dockMinimized ? "Expand Dock" : "Minimize Dock"}
-                className={`p-1 rounded-full text-slate-400 hover:text-slate-200 transition-colors ml-0.5`}
+                className={`p-1 rounded-full text-slate-400 hover:text-slate-200 transition-colors ml-0.5 shrink-0`}
               >
                 <X className="w-3 h-3" />
               </button>

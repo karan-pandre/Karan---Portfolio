@@ -34,31 +34,34 @@ export const Footer: React.FC<FooterProps> = ({ darkMode, onOpenATS, onOpenResum
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-3">
             <button
               onClick={onOpenATS}
-              className="px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-sm hover:bg-emerald-700 transition-colors"
+              className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center gap-1.5 active:scale-95"
             >
-              ATS Screener
+              <FileText className="w-3.5 h-3.5" />
+              <span>ATS Screener</span>
             </button>
             <button
               onClick={onOpenResume}
-              className="px-3.5 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-sm hover:bg-blue-700 transition-colors"
+              className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition-all flex items-center gap-1.5 active:scale-95"
             >
-              Download Resume
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>Download Resume</span>
             </button>
             {onOpenCMS && (
               <button
                 onClick={onOpenCMS}
-                className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm transition-colors"
+                className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md shadow-amber-600/20 transition-all flex items-center gap-1.5 active:scale-95"
               >
-                CMS Admin
+                <Shield className="w-3.5 h-3.5" />
+                <span>CMS Admin</span>
               </button>
             )}
             <button
               onClick={scrollToTop}
               aria-label="Scroll Back to Top"
-              className={`p-2 rounded-xl border transition-colors ${
+              className={`p-2 sm:p-2.5 rounded-xl border transition-all active:scale-95 flex items-center justify-center ${
                 darkMode ? 'bg-white/5 border-white/10 hover:bg-white/10 text-slate-200' : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'
               }`}
             >
