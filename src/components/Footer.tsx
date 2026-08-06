@@ -6,9 +6,10 @@ interface FooterProps {
   darkMode: boolean;
   onOpenATS: () => void;
   onOpenResume: () => void;
+  onOpenCMS?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ darkMode, onOpenATS, onOpenResume }) => {
+export const Footer: React.FC<FooterProps> = ({ darkMode, onOpenATS, onOpenResume, onOpenCMS }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -33,23 +34,31 @@ export const Footer: React.FC<FooterProps> = ({ darkMode, onOpenATS, onOpenResum
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
             <button
               onClick={onOpenATS}
-              className="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-sm hover:bg-emerald-700 transition-colors"
+              className="px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-sm hover:bg-emerald-700 transition-colors"
             >
               ATS Screener
             </button>
             <button
               onClick={onOpenResume}
-              className="px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-sm hover:bg-blue-700 transition-colors"
+              className="px-3.5 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-sm hover:bg-blue-700 transition-colors"
             >
               Download Resume
             </button>
+            {onOpenCMS && (
+              <button
+                onClick={onOpenCMS}
+                className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm transition-colors"
+              >
+                CMS Admin
+              </button>
+            )}
             <button
               onClick={scrollToTop}
               aria-label="Scroll Back to Top"
-              className={`p-2.5 rounded-xl border transition-colors ${
+              className={`p-2 rounded-xl border transition-colors ${
                 darkMode ? 'bg-white/5 border-white/10 hover:bg-white/10 text-slate-200' : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'
               }`}
             >

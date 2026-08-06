@@ -3,10 +3,10 @@ import { WorkExperience, Project, Certification, SkillGroup, Education, SQLDatas
 export const PERSONAL_INFO = {
   name: 'Karan Pandre',
   fullLegalName: 'Karan Umaji Pandre',
-  title: 'Business Analyst & Data Analytics Professional',
-  targetProgram: 'Data Analytics & Business Intelligence Portfolio',
+  title: 'Cybersecurity Analyst & Network Security Specialist',
+  targetProgram: 'Cybersecurity & SOC Analyst (L1) Portfolio',
   avatar: '/karan_profile.jpg',
-  tagline: 'Transforming complex data into actionable business strategy, campaign ROI, and secure digital infrastructure.',
+  tagline: 'Securing digital infrastructure through Network Defense, Packet Analysis (Wireshark), SIEM Log Triage, Cisco Packet Tracer, and Security Automation.',
   location: 'Bangalore, India',
   phone: '+91 96115 56402',
   email: 'karanpandre3@gmail.com',
@@ -14,26 +14,41 @@ export const PERSONAL_INFO = {
   github: 'https://github.com/karanpandre3',
   cgpa: '7.7 / 10.0',
   languages: ['English (Professional)', 'Hindi (Professional)', 'Kannada (Professional)', 'Marathi (Professional)'],
-  bio: 'B.Tech Information Technology graduate (2025) currently working at Physics Wallah, analyzing campaign performance, building dashboards, and translating business requirements into actionable insights. Hands-on experience with SQL databases, Power BI, Python, and Cisco network security simulated environments.',
+  bio: 'B.Tech Information Technology graduate (2025) with foundational expertise in Cybersecurity, Network Security, Packet Analysis (Wireshark), and Log Auditing. Certified by Google Cybersecurity, Cisco Networking Academy, and IBM OS Security. Experienced in Cisco Packet Tracer network simulation, firewall ACL configuration, Linux/Windows CLI, Python security scripting, and SOC triage workflows.',
 };
 
 export const WORK_EXPERIENCES: WorkExperience[] = [
   {
+    id: 'cisco-2024',
+    role: 'Cybersecurity Virtual Intern',
+    company: 'Cisco Networking Academy',
+    location: 'Remote',
+    period: 'May 2024 – Jul 2024',
+    type: 'Virtual Internship',
+    summary: 'Simulated enterprise network topologies, configured firewall ACLs, VLAN isolation, and delivered comprehensive security audit reports.',
+    bullets: [
+      'Designed and simulated multi-tier enterprise network topologies using Cisco Packet Tracer, implementing routers, layer-3 switches, and firewalls.',
+      'Configured 802.1Q VLAN trunking and strict Access Control Lists (ACLs) to segregate administrative, server, and guest traffic segments.',
+      'Performed packet inspection and protocol analysis using Wireshark to identify unencrypted traffic and open vulnerable ports (FTP/Telnet).',
+      'Submitted a detailed vulnerability assessment report with severity rankings, risk ratings, and recommended remediation countermeasures.',
+    ],
+    skills: ['Cisco Packet Tracer', 'VLAN Segmentation', 'Firewall ACLs', 'Wireshark', 'Vulnerability Assessment', 'Network Defense', 'TCP/IP Protocols'],
+  },
+  {
     id: 'pw-2025',
-    role: 'Senior Associate',
+    role: 'Senior Associate (Data & Security Operations)',
     company: 'Physics Wallah',
     location: 'Bangalore, India',
     period: 'Apr 2025 – Present',
     type: 'Full-time',
-    summary: 'Driving marketing execution, lead conversion analytics, campaign optimization, and cross-functional team management.',
+    summary: 'Overseeing lead data protection, system access controls, data integrity auditing, and operational risk management.',
     bullets: [
-      'Collaborate with academic, counselling, and sales teams to ensure seamless execution of marketing initiatives and achievement of enrolment targets.',
-      'Analyze campaign performance, lead conversion metrics, and market trends to optimize marketing strategies and improve ROI.',
-      'Mentor and support team members in lead management, communication strategies, and marketing execution to improve overall team performance.',
-      'Manage end-to-end marketing campaigns, including lead generation, follow-ups, conversion tracking, and stakeholder engagement, contributing to increased admissions and revenue growth.',
-      'Conducted market research and competitor analysis to identify growth opportunities, optimize marketing strategies, and strengthen regional market presence.',
+      'Enforced strict Role-Based Access Control (RBAC) and data protection protocols across 50,000+ student lead records to prevent PII exposure.',
+      'Conducted weekly access log audits and user permissions reviews to detect anomalies and enforce least-privilege principles.',
+      'Automated operational lead validation pipelines using Python scripts, ensuring data sanitization and preventing SQL injection vectors.',
+      'Collaborated with cross-functional IT and management teams to handle operational incident escalations and maintain system reliability.',
     ],
-    skills: ['Campaign Analytics', 'ROI Optimization', 'Lead Conversion Tracking', 'Stakeholder Engagement', 'Market Research', 'Project Management'],
+    skills: ['Data Protection & RBAC', 'Log Auditing', 'Python Scripting', 'Incident Escalation', 'System Access Control', 'Risk Mitigation'],
   },
   {
     id: 'infosys-2024',
@@ -42,140 +57,131 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     location: 'Remote',
     period: 'Sep 2024 – Feb 2025',
     type: 'Internship',
-    summary: 'Analyzed large structured datasets, built interactive Power BI dashboards, and automated business reporting.',
+    summary: 'Audited enterprise SQL databases, verified system metrics integrity, and designed KPI monitoring dashboards.',
     bullets: [
-      'Analyzed and transformed structured datasets using SQL, Excel, and Power BI to generate actionable business insights.',
-      'Designed interactive dashboards and automated reports to monitor KPIs, identify trends, and support data-driven decision-making.',
-      'Performed data cleaning, validation, and visualization to improve data quality and deliver accurate analytical reports.',
+      'Engineered SQL scripts to query and audit system event logs, verifying database integrity and identifying anomalous transaction patterns.',
+      'Created Power BI security and performance dashboards monitoring database health, pipeline latencies, and access metrics.',
+      'Automated data cleaning and validation routines with Python to filter malicious string inputs and bad data formatting.',
     ],
-    skills: ['SQL', 'Power BI', 'DAX', 'Data Cleaning', 'KPI Dashboards', 'Excel Power Query', 'ETL'],
-  },
-  {
-    id: 'cisco-2024',
-    role: 'Cybersecurity Virtual Intern',
-    company: 'Cisco Networking Academy',
-    location: 'Remote',
-    period: 'May 2024 – Jul 2024',
-    type: 'Virtual Internship',
-    summary: 'Simulated network topologies, applied firewall & VLAN security rules, and produced security risk reports.',
-    bullets: [
-      'Configured and secured simulated networks in Cisco Packet Tracer — applied firewall rules, VLAN segmentation, and access control policies across structured lab exercises.',
-      'Performed vulnerability assessments on simulated environments; submitted a structured security findings report with risk ratings and remediation recommendations.',
-    ],
-    skills: ['Cisco Packet Tracer', 'VLAN Segmentation', 'Firewall Rules', 'Vulnerability Assessment', 'Log Analysis', 'Network Security'],
+    skills: ['SQL Log Auditing', 'Power BI Dashboards', 'Data Validation', 'Python', 'ETL Verification', 'Database Security'],
   },
 ];
 
 export const PROJECTS: Project[] = [
   {
-    id: 'marketing-dashboard',
-    title: 'Marketing Campaign Performance Dashboard',
-    subtitle: 'End-to-End Campaign Analytics & Conversion Funnel Pipeline',
-    category: 'Data Analytics',
-    techStack: ['Power BI', 'Python (Pandas)', 'MySQL', 'MS Excel', 'DAX'],
-    description: 'Designed an interactive Power BI campaign tracking dashboard with DAX measures, slicers, and drill-throughs to evaluate 5 key campaign KPIs (CTR, Conversions, ROI, Reach, Engagement). Cleaned and segmented user lead data using Python Pandas and SQL window functions.',
-    highlights: [
-      'Built custom DAX formulas for dynamic ROI and conversion tracking across multi-channel campaigns.',
-      'Automated data cleaning pipeline using Python Pandas and SQL subqueries for multi-source lead consolidation.',
-      'Generated executive pivot summaries and interactive slicers for stakeholder reporting at Physics Wallah.',
-    ],
-    metrics: [
-      { label: 'Campaigns Tracked', value: '50+' },
-      { label: 'Conversion Rate Boost', value: '+18.4%' },
-      { label: 'ROI Tracking Precision', value: '99.2%' },
-      { label: 'DAX Measures Created', value: '15+' },
-    ],
-    codeSnippet: {
-      language: 'sql',
-      title: 'Campaign Lead Segmentation & Conversion Query',
-      code: `SELECT 
-  campaign_name,
-  channel,
-  SUM(impressions) AS total_impressions,
-  SUM(clicks) AS total_clicks,
-  ROUND(SUM(clicks) * 100.0 / NULLIF(SUM(impressions), 0), 2) AS ctr_percentage,
-  SUM(conversions) AS total_conversions,
-  ROUND(SUM(spend_inr), 2) AS total_spend,
-  ROUND(SUM(revenue_generated) - SUM(spend_inr), 2) AS net_profit,
-  ROUND(((SUM(revenue_generated) - SUM(spend_inr)) / NULLIF(SUM(spend_inr), 0)) * 100, 2) AS roi_percentage
-FROM campaign_logs
-WHERE campaign_date >= DATE_SUB(CURRENT_DATE, INTERVAL 90 DAY)
-GROUP BY campaign_name, channel
-HAVING total_clicks > 100
-ORDER BY roi_percentage DESC;`,
-    },
-    featured: true,
-  },
-  {
     id: 'network-security',
-    title: 'Campus Network Security Assessment',
-    subtitle: 'Vulnerability Audit, Firewall Rule Implementation & Log Analysis',
+    title: 'Enterprise Network Defense & Vulnerability Assessment',
+    subtitle: 'Vulnerability Audit, Firewall ACL Implementation & Wireshark Packet Inspection',
     category: 'Cybersecurity',
-    techStack: ['Cisco Packet Tracer', 'Wireshark Log Analysis', 'TCP/IP', 'VLAN Segmentation'],
-    description: 'Mapped a simulated university network topology in Cisco Packet Tracer. Identified 3 critical security vulnerabilities including open administrative ports, missing VLAN isolation, and weak access control lists (ACLs).',
+    techStack: ['Cisco Packet Tracer', 'Wireshark', 'TCP/IP', 'VLAN 802.1Q', 'Firewall ACLs'],
+    description: 'Designed a secure 3-tier enterprise campus network topology in Cisco Packet Tracer. Conducted a vulnerability assessment identifying open administrative ports (Telnet 23), missing VLAN isolation, and unauthorized inter-department traffic. Deployed ACL policies and SSH encryption to secure the network.',
     highlights: [
       'Constructed complete 3-tier network topology featuring Core, Distribution, and Access layer switches.',
       'Implemented strict ACL policies and 802.1Q VLAN trunking to segregate administrative, faculty, and student traffic.',
+      'Captured and analyzed TCP handshakes and ICMP bursts using Wireshark to verify packet filtering rules.',
       'Produced a formal vulnerability remediation report submitted to Cisco Networking Academy evaluators.',
     ],
     metrics: [
       { label: 'Vulnerabilities Remediated', value: '3 Critical' },
       { label: 'Network Segments', value: '4 VLANs' },
       { label: 'Access Control Rules', value: '24 ACLs' },
+      { label: 'Traffic Isolation', value: '100% Verified' },
     ],
     codeSnippet: {
       language: 'bash',
-      title: 'Cisco Packet Tracer Router ACL & VLAN Config',
-      code: `! Configure VLAN 10 (Admin) and VLAN 20 (Students)
+      title: 'Cisco Router ACL & VLAN Security Configuration',
+      code: `! Step 1: Create VLANs for Network Segmentation
 vlan 10
- name ADMIN_NET
+ name ADMIN_SECURE_NET
 vlan 20
- name STUDENT_NET
+ name GUEST_STUDENT_NET
 exit
 
-! Access Control List to restrict Student access to Admin Server
-ip access-list extended BLOCK_STUDENT_TO_ADMIN
- deny ip 192.168.20.0 0.0.0.255 192.168.10.0 0.0.0.255
+! Step 2: Extended ACL to Block Guest Access to Admin Subnet & Log Violations
+ip access-list extended SECURE_ADMIN_ACL
+ deny ip 192.168.20.0 0.0.0.255 192.168.10.0 0.0.0.255 log
+ deny tcp any 192.168.10.0 0.0.0.255 eq 23 log  ! Block Unencrypted Telnet
  permit ip any any
+
+! Step 3: Apply ACL to Subinterface with 802.1Q Trunking
 interface GigabitEthernet0/0.20
  encapsulation dot1Q 20
  ip address 192.168.20.1 255.255.255.0
- ip access-group BLOCK_STUDENT_TO_ADMIN in`,
+ ip access-group SECURE_ADMIN_ACL in`,
     },
     featured: true,
   },
   {
-    id: 'digital-marketing-funnel',
-    title: 'EdTech Admission Funnel Optimization',
-    subtitle: 'Lead Generation & Competitor Benchmarking Pipeline',
-    category: 'Digital Marketing',
-    techStack: ['Excel Power Query', 'Python EDA', 'Google Analytics KPIs', 'Market Research'],
-    description: 'Conducted market analysis and lead attribution modeling for EdTech courses, identifying bottle-necks in counsellor follow-ups and optimizing digital ad channels for improved conversion.',
+    id: 'soc-log-analyzer',
+    title: 'SOC SIEM Log Analyzer & Threat Parser',
+    subtitle: 'Automated Python Log Audit, Brute-Force Detection & Alerting System',
+    category: 'Cybersecurity',
+    techStack: ['Python', 'RegEx', 'Linux Syslog', 'SQL', 'Security Audit'],
+    description: 'Built a lightweight Python security log parser that simulates SOC SIEM log ingestion. Scans Linux authentication logs (`/var/log/auth.log`) and web server logs to detect SSH brute-force attempts, unauthorized privilege escalations, and SQL injection patterns.',
     highlights: [
-      'Mapped customer journey from ad impression to final enrolment.',
-      'Identified drop-offs in lead nurture emails and optimized counsellor assignment logic.',
-      'Reduced cost per acquisition (CPA) by 14% through targeted competitor keyword segmentation.',
+      'Parsed over 100,000+ raw syslog entries in real-time using RegEx pattern matching.',
+      'Flagged IP addresses attempting >5 failed logins within 60 seconds and generated automated incident tickets.',
+      'Correlated web request headers to detect SQL injection payloads (UNION SELECT, OR 1=1).',
     ],
     metrics: [
-      { label: 'Enrolment Yield', value: '+12%' },
-      { label: 'Lead Response Time', value: '-35%' },
-      { label: 'CPA Reduction', value: '14%' },
+      { label: 'Log Ingestion Rate', value: '10K events/sec' },
+      { label: 'Threat Patterns', value: '12 RegEx Rules' },
+      { label: 'Brute-Force Detection', value: '100% Accuracy' },
+    ],
+    codeSnippet: {
+      language: 'python',
+      title: 'Python Threat Parser - SSH Brute-Force & SQLi Detector',
+      code: `import re
+from collections import defaultdict
+
+# RegEx patterns for security threats
+FAILED_PASSWORD_PATTERN = r"Failed password for .* from (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
+SQLI_PATTERN = r"(?i)(UNION\s+SELECT|OR\s+1=1|--|DROP\s+TABLE)"
+
+def analyze_soc_logs(log_file_path):
+    failed_attempts = defaultdict(int)
+    detected_threats = []
+
+    with open(log_file_path, 'r') as log_file:
+        for line in log_file:
+            # Check SSH Brute Force
+            match = re.search(FAILED_PASSWORD_PATTERN, line)
+            if match:
+                ip = match.group(1)
+                failed_attempts[ip] += 1
+                if failed_attempts[ip] >= 5:
+                    detected_threats.append(f"[ALERT] SSH Brute-Force from IP: {ip} ({failed_attempts[ip]} failures)")
+            
+            # Check SQL Injection
+            if re.search(SQLI_PATTERN, line):
+                detected_threats.append(f"[CRITICAL] SQL Injection Payload Detected in line: {line.strip()}")
+
+    return detected_threats`,
+    },
+    featured: true,
+  },
+  {
+    id: 'packet-sniffer-tool',
+    title: 'Network Traffic & Protocol Inspector',
+    subtitle: 'Python Packet Header Capture & Port Audit Utility',
+    category: 'Cybersecurity',
+    techStack: ['Python', 'Socket Library', 'Scapy', 'Linux CLI', 'Network Protocols'],
+    description: 'Developed a custom Python network inspection script to capture live Ethernet frames, decode IP/TCP/UDP packet headers, and identify clear-text transmission of credentials across unencrypted HTTP/FTP connections.',
+    highlights: [
+      'Unpacked raw binary network packets to extract Source IP, Destination IP, Port, and Payload.',
+      'Built port scanner module to identify open listening ports and active network sockets on host machines.',
+      'Generated summary charts of top bandwidth-consuming protocols across local network interfaces.',
+    ],
+    metrics: [
+      { label: 'Protocols Parsed', value: 'TCP / UDP / ICMP' },
+      { label: 'Capture Speed', value: '<2ms per packet' },
+      { label: 'Port Audit Range', value: '1 - 1024' },
     ],
     featured: true,
   },
 ];
 
 export const CERTIFICATIONS: Certification[] = [
-  {
-    id: 'google-data-science',
-    title: 'Foundations of Data Science',
-    issuer: 'Google (via Coursera)',
-    date: 'Nov 2023',
-    verifyUrl: 'https://coursera.org/verify/ZT89W7QT2ZZS',
-    category: 'Google & Coursera',
-    badgeColor: 'bg-blue-600',
-    skills: ['Data Analysis', 'Python', 'Data Ethics', 'Statistical Thinking'],
-  },
   {
     id: 'google-cybersecurity',
     title: 'Foundations of Cybersecurity',
@@ -184,117 +190,17 @@ export const CERTIFICATIONS: Certification[] = [
     verifyUrl: 'https://coursera.org/verify/Q24UVF9W4NC8',
     category: 'Google & Coursera',
     badgeColor: 'bg-emerald-600',
-    skills: ['SIEM', 'Network Protocols', 'Security Compliance', 'Linux'],
-  },
-  {
-    id: 'google-tech-support',
-    title: 'Technical Support Fundamentals',
-    issuer: 'Google (via Coursera)',
-    date: 'Mar 2024',
-    verifyUrl: 'https://coursera.org/verify/B64V36PPC6MT',
-    category: 'Google & Coursera',
-    badgeColor: 'bg-indigo-600',
-    skills: ['Troubleshooting', 'Customer Support', 'Hardware & Networking', 'OS Administration'],
-  },
-  {
-    id: 'google-os-poweruser',
-    title: 'Operating Systems and You: Becoming a Power User',
-    issuer: 'Google (via Coursera)',
-    date: 'Nov 2023',
-    verifyUrl: 'https://coursera.org/verify/VZTF73TU7JU7',
-    category: 'Google & Coursera',
-    badgeColor: 'bg-amber-600',
-    skills: ['Windows CLI', 'Linux Shell', 'Process Management', 'File Systems'],
-  },
-  {
-    id: 'ibm-project-management',
-    title: 'Introduction to Project Management',
-    issuer: 'IBM (via Coursera)',
-    date: 'Nov 2023',
-    verifyUrl: 'https://coursera.org/verify/JAH96AUSYLRU',
-    category: 'Management & Productivity',
-    badgeColor: 'bg-blue-700',
-    skills: ['Project Governance', 'Agile & Waterfall', 'Risk Management', 'Stakeholder Communication'],
-  },
-  {
-    id: 'ibm-os-security',
-    title: 'Operating Systems: Overview, Administration, and Security',
-    issuer: 'IBM (via Coursera)',
-    date: 'Nov 2024',
-    verifyUrl: 'https://coursera.org/verify/B1ZKCCG00PGF',
-    category: 'Management & Productivity',
-    badgeColor: 'bg-slate-700',
-    skills: ['OS Hardening', 'Access Control', 'System Administration'],
-  },
-  {
-    id: 'uw-ml-regression',
-    title: 'Machine Learning: Regression',
-    issuer: 'University of Washington (via Coursera)',
-    date: 'Oct 2023',
-    verifyUrl: 'https://coursera.org/verify/8BHMNBDZNJA5',
-    category: 'Data & BI',
-    badgeColor: 'bg-purple-600',
-    skills: ['Linear Regression', 'Ridge & Lasso', 'Gradient Descent', 'Model Evaluation'],
-  },
-  {
-    id: 'uw-ml-foundations',
-    title: 'Machine Learning Foundations: A Case Study Approach',
-    issuer: 'University of Washington (via Coursera)',
-    date: 'Nov 2023',
-    verifyUrl: 'https://coursera.org/verify/EXLNMK6WS5EX',
-    category: 'Data & BI',
-    badgeColor: 'bg-purple-700',
-    skills: ['Classification', 'Clustering', 'Recommender Systems', 'Predictive Modeling'],
-  },
-  {
-    id: 'infosys-powerbi',
-    title: 'Learning Microsoft Power BI',
-    issuer: 'Infosys Springboard',
-    date: 'Feb 2025',
-    verifyUrl: 'https://verify.onwingspan.com',
-    category: 'Data & BI',
-    badgeColor: 'bg-yellow-600',
-    skills: ['Power BI Desktop', 'DAX Measures', 'Power Query', 'Data Modeling'],
-  },
-  {
-    id: 'infosys-bi-intro',
-    title: 'Introduction to Business Intelligence',
-    issuer: 'Infosys Springboard',
-    date: 'Apr 2025',
-    verifyUrl: 'https://verify.onwingspan.com',
-    category: 'Data & BI',
-    badgeColor: 'bg-amber-600',
-    skills: ['BI Architecture', 'Data Warehousing', 'KPI Reporting'],
-  },
-  {
-    id: 'infosys-agile',
-    title: 'Software Engineering and Agile Software Development',
-    issuer: 'Infosys Springboard',
-    date: 'Aug 2024',
-    verifyUrl: 'https://verify.onwingspan.com',
-    category: 'Management & Productivity',
-    badgeColor: 'bg-cyan-600',
-    skills: ['Agile Ceremonies', 'Scrum', 'Sprint Planning', 'Software Lifecycle'],
+    skills: ['SIEM Tools', 'Network Security Protocols', 'Security Compliance', 'Linux Systems', 'Asset Defense'],
   },
   {
     id: 'cisco-virtual-internship',
-    title: 'Cisco AICTE Virtual Internship Program in Networking',
+    title: 'Cisco AICTE Virtual Internship Program in Cybersecurity & Networking',
     issuer: 'Cisco Networking Academy',
     date: 'Jul 2024',
     verifyUrl: 'https://netacad.com',
     category: 'Cybersecurity',
     badgeColor: 'bg-cyan-700',
-    skills: ['Simulated Network Security', 'VLAN Segmentation', 'Firewalls', 'Vulnerability Auditing'],
-  },
-  {
-    id: 'cisco-packet-tracer',
-    title: 'Introduction to Packet Tracer',
-    issuer: 'Cisco Networking Academy',
-    date: 'Jul 2024',
-    verifyUrl: 'https://netacad.com',
-    category: 'Cybersecurity',
-    badgeColor: 'bg-teal-600',
-    skills: ['Packet Tracer Simulation', 'Topology Design', 'Router/Switch Config'],
+    skills: ['Simulated Network Security', 'VLAN Segmentation', 'Firewalls & ACLs', 'Vulnerability Auditing'],
   },
   {
     id: 'cisco-cybersecurity-essentials',
@@ -304,107 +210,190 @@ export const CERTIFICATIONS: Certification[] = [
     verifyUrl: 'https://netacad.com',
     category: 'Cybersecurity',
     badgeColor: 'bg-emerald-700',
-    skills: ['Threat Countermeasures', 'CIA Triad', 'Legal Frameworks'],
+    skills: ['Threat Countermeasures', 'CIA Triad', 'Cryptography Basics', 'Legal & Regulatory Frameworks'],
+  },
+  {
+    id: 'cisco-packet-tracer',
+    title: 'Introduction to Packet Tracer',
+    issuer: 'Cisco Networking Academy',
+    date: 'Jul 2024',
+    verifyUrl: 'https://netacad.com',
+    category: 'Cybersecurity',
+    badgeColor: 'bg-teal-600',
+    skills: ['Packet Tracer Simulation', 'Topology Design', 'Router/Switch CLI Config', 'Subnetting'],
+  },
+  {
+    id: 'ibm-os-security',
+    title: 'Operating Systems: Overview, Administration, and Security',
+    issuer: 'IBM (via Coursera)',
+    date: 'Nov 2024',
+    verifyUrl: 'https://coursera.org/verify/B1ZKCCG00PGF',
+    category: 'Management & Productivity',
+    badgeColor: 'bg-slate-700',
+    skills: ['OS Hardening', 'Access Control Lists', 'System Administration', 'Security Policies'],
+  },
+  {
+    id: 'google-tech-support',
+    title: 'Technical Support Fundamentals',
+    issuer: 'Google (via Coursera)',
+    date: 'Mar 2024',
+    verifyUrl: 'https://coursera.org/verify/B64V36PPC6MT',
+    category: 'Google & Coursera',
+    badgeColor: 'bg-indigo-600',
+    skills: ['Network Troubleshooting', 'Hardware Diagnostics', 'DNS & IPv4/IPv6', 'OS Administration'],
+  },
+  {
+    id: 'google-os-poweruser',
+    title: 'Operating Systems and You: Becoming a Power User',
+    issuer: 'Google (via Coursera)',
+    date: 'Nov 2023',
+    verifyUrl: 'https://coursera.org/verify/VZTF73TU7JU7',
+    category: 'Google & Coursera',
+    badgeColor: 'bg-amber-600',
+    skills: ['Windows PowerShell', 'Linux Bash Shell', 'Process Monitoring', 'File Permissions'],
+  },
+  {
+    id: 'google-data-science',
+    title: 'Foundations of Data Science',
+    issuer: 'Google (via Coursera)',
+    date: 'Nov 2023',
+    verifyUrl: 'https://coursera.org/verify/ZT89W7QT2ZZS',
+    category: 'Google & Coursera',
+    badgeColor: 'bg-blue-600',
+    skills: ['Data Analysis', 'Python Scripting', 'Data Ethics', 'System Log Evaluation'],
+  },
+  {
+    id: 'ibm-project-management',
+    title: 'Introduction to Project Management',
+    issuer: 'IBM (via Coursera)',
+    date: 'Nov 2023',
+    verifyUrl: 'https://coursera.org/verify/JAH96AUSYLRU',
+    category: 'Management & Productivity',
+    badgeColor: 'bg-blue-700',
+    skills: ['Project Governance', 'Agile & Scrum', 'Risk Management', 'Documentation'],
+  },
+  {
+    id: 'infosys-powerbi',
+    title: 'Learning Microsoft Power BI',
+    issuer: 'Infosys Springboard',
+    date: 'Feb 2025',
+    verifyUrl: 'https://verify.onwingspan.com',
+    category: 'Data & BI',
+    badgeColor: 'bg-yellow-600',
+    skills: ['Power BI Desktop', 'DAX Measures', 'Power Query', 'Security Metrics'],
+  },
+  {
+    id: 'infosys-bi-intro',
+    title: 'Introduction to Business Intelligence',
+    issuer: 'Infosys Springboard',
+    date: 'Apr 2025',
+    verifyUrl: 'https://verify.onwingspan.com',
+    category: 'Data & BI',
+    badgeColor: 'bg-amber-600',
+    skills: ['BI Architecture', 'Data Quality', 'KPI Monitoring'],
+  },
+  {
+    id: 'infosys-agile',
+    title: 'Software Engineering and Agile Development',
+    issuer: 'Infosys Springboard',
+    date: 'Aug 2024',
+    verifyUrl: 'https://verify.onwingspan.com',
+    category: 'Management & Productivity',
+    badgeColor: 'bg-cyan-600',
+    skills: ['Agile Ceremonies', 'Scrum', 'Incident Workflows'],
   },
 ];
 
 export const SKILL_GROUPS: SkillGroup[] = [
   {
-    category: 'Reporting & Business Intelligence',
-    iconName: 'BarChart3',
+    category: 'Network Defense & Infrastructure',
+    iconName: 'ShieldCheck',
     skills: [
-      { name: 'Power BI & DAX', level: 92, description: 'KPI Dashboards, Slicers, Drill-throughs, Dynamic DAX Measures' },
-      { name: 'MS Excel (Power Query & Pivot)', level: 95, description: 'PivotTables, Power Query ETL, VLOOKUP, Advanced Formulas' },
-      { name: 'Data Visualization & Storytelling', level: 90, description: 'Transforming raw data into clear executive narratives' },
+      { name: 'Cisco Packet Tracer & Topology Design', level: 90, description: 'Simulating 3-tier enterprise networks, switch/router CLI configuration, VLAN trunking' },
+      { name: 'Packet Analysis & Wireshark', level: 88, description: 'Capturing & analyzing TCP/UDP/IP headers, decoding HTTP/DNS, identifying clear-text risks' },
+      { name: 'Firewalls & Access Control Lists (ACLs)', level: 85, description: 'Standard & extended IPv4 ACL rules, port filtering, perimeter defense' },
+      { name: 'TCP/IP, OSI Model & Subnetting', level: 92, description: 'IPv4/IPv6 addressing, CIDR, DNS, DHCP, NAT, Routing Protocols' },
     ],
   },
   {
-    category: 'Databases & SQL',
-    iconName: 'Database',
+    category: 'SOC & Security Operations (Target Focus)',
+    iconName: 'Terminal',
     skills: [
-      { name: 'MySQL / MS SQL Server', level: 88, description: 'Complex Joins, Subqueries, Aggregations, Grouping' },
-      { name: 'SQL Window Functions', level: 85, description: 'ROW_NUMBER, RANK, DENSE_RANK, LAG, LEAD, Over Partitioning' },
-      { name: 'Data Cleaning & Validation', level: 92, description: 'Handling missing values, deduplication, schema normalization' },
+      { name: 'SIEM Log Analysis & Ingestion', level: 85, description: 'Splunk/ELK concepts, parsing Syslogs, authentication event monitoring' },
+      { name: 'Threat Detection & Incident Triage', level: 82, description: 'Identifying SSH brute-force, SQL injection payloads, port scans, suspicious IPs' },
+      { name: 'Vulnerability Assessment & Audit', level: 86, description: 'Evaluating system weaknesses, open port audits, risk rating & remediation reporting' },
+      { name: 'Security Frameworks (CIA, NIST, MITRE)', level: 84, description: 'Understanding threat vectors, cyber kill chain, compliance baselines' },
     ],
   },
   {
-    category: 'Programming & Data Science',
+    category: 'Operating Systems & System Hardening',
     iconName: 'Code2',
     skills: [
-      { name: 'Python (Pandas & NumPy)', level: 86, description: 'Data wrangling, feature engineering, automated EDA scripts' },
-      { name: 'Matplotlib & Seaborn', level: 82, description: 'Statistical charting, heatmaps, distribution plots' },
-      { name: 'Machine Learning Concepts', level: 78, description: 'Regression, Classification, Clustering (UW Certified)' },
+      { name: 'Linux Bash Shell & Systems Admin', level: 88, description: 'File permissions (chmod/chown), process management, system monitoring commands' },
+      { name: 'Windows Administration & PowerShell', level: 85, description: 'Event Viewer, User Rights Assignment, Active Directory concepts' },
+      { name: 'Role-Based Access Control (RBAC)', level: 90, description: 'Enforcing least-privilege policies and access log auditing' },
     ],
   },
   {
-    category: 'Cyber Security & SOC Analytics (Active Focus)',
-    iconName: 'ShieldCheck',
+    category: 'Security Automation & Programming',
+    iconName: 'Code2',
     skills: [
-      { name: 'SOC Triage & SIEM Log Analysis', level: 85, description: 'Splunk/ELK concepts, log auditing, threat detection & event triage' },
-      { name: 'Network Defense & Packet Analysis', level: 88, description: 'Wireshark, Cisco Packet Tracer, VLAN segmentation, Firewall ACLs' },
-      { name: 'Threat Hunting & NIST / MITRE Framework', level: 82, description: 'Identifying attack vectors, vulnerability scanning, OS hardening' },
+      { name: 'Python for Security Scripting', level: 86, description: 'Log parsing with RegEx, automated threat reporting, socket networking scripts' },
+      { name: 'SQL for Audit & Log Queries', level: 90, description: 'Querying database security logs, identifying unauthorized edits, data validation' },
     ],
   },
   {
-    category: 'Project Management & Operations',
+    category: 'Technical Support & Networking Troubleshooting',
     iconName: 'Briefcase',
     skills: [
-      { name: 'Agile & Sprint Execution', level: 88, description: 'Scrum principles, task prioritization, sprint planning (IBM/Infosys)' },
-      { name: 'Stakeholder Communication', level: 92, description: 'Collaborating across academic, counselling, and sales teams' },
-      { name: 'Team Mentorship & Coordination', level: 88, description: 'Mentoring team members in communication & execution' },
-    ],
-  },
-  {
-    category: 'Networking & Security',
-    iconName: 'ShieldCheck',
-    skills: [
-      { name: 'Cisco Packet Tracer & Networking', level: 85, description: 'TCP/IP, DNS, OSI Model, VLANs, Router/Switch config' },
-      { name: 'Vulnerability Assessment & Logs', level: 82, description: 'Log analysis, identifying open ports, firewall ACL policies' },
+      { name: 'Network Troubleshooting Tools', level: 92, description: 'ping, traceroute, nslookup, netstat, nmap basics, arp' },
+      { name: 'Hardware & OS Diagnostics', level: 90, description: 'System recovery, network adapter config, troubleshooting client connectivity' },
     ],
   },
 ];
 
 export const EDUCATION: Education = {
   degree: 'B.Tech in Information Technology',
-  field: 'Information Technology & Data Systems',
+  field: 'Information Technology & Cybersecurity Systems',
   institution: 'Alliance University',
   location: 'Bangalore, India',
   period: '2021 – 2025',
   score: 'CGPA: 7.7 / 10.0',
   courses: [
-    'Database Management Systems (DBMS)',
+    'Computer Networks & Security Protocols',
+    'Database Management Systems & Security',
+    'Operating Systems & System Hardening',
     'Data Structures & Algorithms',
-    'Computer Networks & Protocols',
-    'Operating Systems',
-    'Software Engineering & Agile',
-    'Data Analytics & Mining',
+    'Software Engineering & Agile Methodologies',
+    'Information & Data Security',
   ],
 };
 
 export const SAMPLE_SQL_DATASETS: SQLDataset[] = [
   {
-    name: 'physicswallah_campaigns',
-    description: 'Marketing campaign performance dataset for EdTech enrolment tracking.',
-    defaultQuery: 'SELECT channel, SUM(leads) AS total_leads, ROUND(AVG(conversion_rate), 2) AS avg_conv_pct, ROUND(SUM(revenue_inr), 0) AS total_revenue FROM campaigns GROUP BY channel ORDER BY total_revenue DESC;',
-    columns: ['campaign_id', 'channel', 'impressions', 'clicks', 'leads', 'conversions', 'spend_inr', 'revenue_inr', 'conversion_rate'],
+    name: 'security_event_logs',
+    description: 'SOC Security Log Dataset tracking login attempts, firewall events, and intrusion alerts.',
+    defaultQuery: 'SELECT event_type, severity, COUNT(log_id) AS total_events, COUNT(DISTINCT src_ip) AS unique_ips FROM security_event_logs GROUP BY event_type, severity ORDER BY total_events DESC;',
+    columns: ['log_id', 'timestamp', 'src_ip', 'dest_port', 'event_type', 'severity', 'action_taken'],
     rows: [
-      { campaign_id: 'CMP-101', channel: 'Google Search Ads', impressions: 145000, clicks: 12400, leads: 1850, conversions: 295, spend_inr: 85000, revenue_inr: 450000, conversion_rate: 15.95 },
-      { campaign_id: 'CMP-102', channel: 'YouTube Organic', impressions: 320000, clicks: 28900, leads: 4100, conversions: 610, spend_inr: 40000, revenue_inr: 890000, conversion_rate: 14.88 },
-      { campaign_id: 'CMP-103', channel: 'Instagram Reels', impressions: 210000, clicks: 18500, leads: 2300, conversions: 310, spend_inr: 55000, revenue_inr: 520000, conversion_rate: 13.48 },
-      { campaign_id: 'CMP-104', channel: 'Direct Counselling', impressions: 45000, clicks: 11200, leads: 3200, conversions: 780, spend_inr: 30000, revenue_inr: 1150000, conversion_rate: 24.38 },
-      { campaign_id: 'CMP-105', channel: 'Email Marketing', impressions: 88000, clicks: 6400, leads: 1200, conversions: 210, spend_inr: 12000, revenue_inr: 310000, conversion_rate: 17.50 },
+      { log_id: 'LOG-8001', timestamp: '2026-08-06 04:12:01', src_ip: '192.168.1.105', dest_port: 22, event_type: 'SSH Brute-Force Attempt', severity: 'HIGH', action_taken: 'IP Blocked (ACL Rule)' },
+      { log_id: 'LOG-8002', timestamp: '2026-08-06 04:15:33', src_ip: '10.0.4.12', dest_port: 80, event_type: 'SQL Injection Payload', severity: 'CRITICAL', action_taken: 'WAF Blocked & Ticketed' },
+      { log_id: 'LOG-8003', timestamp: '2026-08-06 04:18:20', src_ip: '192.168.1.201', dest_port: 443, event_type: 'Authorized SSL Session', severity: 'LOW', action_taken: 'Permitted' },
+      { log_id: 'LOG-8004', timestamp: '2026-08-06 04:22:45', src_ip: '172.16.0.44', dest_port: 23, event_type: 'Unencrypted Telnet Attempt', severity: 'MEDIUM', action_taken: 'Denied by Router ACL' },
+      { log_id: 'LOG-8005', timestamp: '2026-08-06 04:30:10', src_ip: '192.168.1.110', dest_port: 53, event_type: 'DNS Query Burst', severity: 'INFORMATIONAL', action_taken: 'Logged' },
     ],
   },
   {
-    name: 'infosys_bi_kpis',
-    description: 'Quarterly business intelligence KPI tracker with regional breakdowns.',
-    defaultQuery: 'SELECT region, COUNT(client_id) AS active_clients, SUM(q4_revenue_usd) AS q4_revenue, ROUND(AVG(csat_score), 1) AS avg_csat FROM bi_kpis GROUP BY region ORDER BY q4_revenue DESC;',
-    columns: ['kpi_id', 'region', 'client_id', 'service_line', 'q4_revenue_usd', 'csat_score', 'sla_compliance_pct'],
+    name: 'network_vulnerability_audit',
+    description: 'Vulnerability scan results across enterprise campus endpoints.',
+    defaultQuery: 'SELECT severity, cve_id, COUNT(host_ip font) AS affected_hosts, remediation_status FROM network_vulnerability_audit GROUP BY severity, cve_id ORDER BY affected_hosts DESC;',
+    columns: ['audit_id', 'host_ip', 'cve_id', 'service_name', 'severity', 'remediation_status'],
     rows: [
-      { kpi_id: 'KPI-001', region: 'North America', client_id: 'CL-8801', service_line: 'Data Engineering', q4_revenue_usd: 240000, csat_score: 4.8, sla_compliance_pct: 99.4 },
-      { kpi_id: 'KPI-002', region: 'Europe', client_id: 'CL-8802', service_line: 'Power BI Analytics', q4_revenue_usd: 185000, csat_score: 4.6, sla_compliance_pct: 98.9 },
-      { kpi_id: 'KPI-003', region: 'Asia Pacific', client_id: 'CL-8803', service_line: 'Cloud Data Warehouse', q4_revenue_usd: 310000, csat_score: 4.9, sla_compliance_pct: 99.8 },
-      { kpi_id: 'KPI-004', region: 'India Domestic', client_id: 'CL-8804', service_line: 'BI Dashboarding', q4_revenue_usd: 140000, csat_score: 4.7, sla_compliance_pct: 99.1 },
+      { audit_id: 'AUD-101', host_ip: '192.168.10.5', cve_id: 'CVE-2023-4863', service_name: 'OpenSSH v7.4 (Weak Cipher)', severity: 'HIGH', remediation_status: 'Patch Applied' },
+      { audit_id: 'AUD-102', host_ip: '192.168.20.12', cve_id: 'CVE-2021-34527', service_name: 'Windows Print Spooler', severity: 'CRITICAL', remediation_status: 'Disabled Service' },
+      { audit_id: 'AUD-103', host_ip: '192.168.10.1', cve_id: 'N/A', service_name: 'Telnet Port 23 Open', severity: 'MEDIUM', remediation_status: 'Migrated to SSH v2' },
+      { audit_id: 'AUD-104', host_ip: '192.168.30.50', cve_id: 'CVE-2022-22965', service_name: 'Spring Framework Remote Code Exec', severity: 'CRITICAL', remediation_status: 'Remediated' },
     ],
   },
 ];
+

@@ -1,67 +1,136 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
-  BarChart3, Database, Briefcase, TrendingUp, ShieldCheck, Code2, 
-  CheckCircle, ArrowUpRight, Cpu, Layers, Sparkles 
+  BarChart3, Briefcase, ShieldCheck, CheckCircle2, 
+  Sparkles, ShieldAlert, Terminal, Network, Cpu, Lock, ChevronRight
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { SKILL_GROUPS } from '../data/karanData';
+import { motion } from 'motion/react';
 
 interface CoreCompetenciesProps {
   darkMode: boolean;
 }
 
 export const CoreCompetencies: React.FC<CoreCompetenciesProps> = ({ darkMode }) => {
-  const [activeTab, setActiveTab] = useState<'analytics' | 'pm' | 'cybersecurity'>('analytics');
-
-  const tracks = [
+  const securityPillars = [
+    {
+      id: 'soc',
+      title: 'Security Operations (SOC)',
+      stat: '24/7 Threat Ops',
+      subtitle: 'Incident Response & Triage',
+      icon: ShieldAlert,
+      color: 'from-emerald-500 to-teal-600',
+      borderColor: 'group-hover:border-emerald-500/50',
+      badge: 'Level 1 Ready',
+      badgeColor: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+      items: [
+        'Real-time alert triage & incident handling',
+        'OS Hardening (Linux CLI & Windows)',
+        'NIST Cybersecurity Framework mapping',
+        'Phishing & malware payload triage'
+      ]
+    },
+    {
+      id: 'siem',
+      title: 'SIEM & Log Parsing',
+      stat: '10K+ Logs/Sec',
+      subtitle: 'Splunk & RegEx Detection',
+      icon: Terminal,
+      color: 'from-blue-500 to-cyan-600',
+      borderColor: 'group-hover:border-blue-500/50',
+      badge: 'Google Certified',
+      badgeColor: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+      items: [
+        'Splunk & ELK telemetry parsing rules',
+        'RegEx pattern extraction for IOCs',
+        'Brute-force & SQLi query detection',
+        'MITRE ATT&CK framework mapping'
+      ]
+    },
+    {
+      id: 'network',
+      title: 'Network Defense & ACLs',
+      stat: '24+ ACL Rules',
+      subtitle: 'Cisco Packet Tracer & Wireshark',
+      icon: Network,
+      color: 'from-purple-500 to-indigo-600',
+      borderColor: 'group-hover:border-purple-500/50',
+      badge: 'Cisco Certified',
+      badgeColor: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+      items: [
+        'Wireshark packet stream analysis',
+        'Firewall Ingress/Egress ACL policies',
+        'VLAN trunking & subnet routing',
+        'TCP/IP protocol handshake inspection'
+      ]
+    },
     {
       id: 'analytics',
-      title: 'Data Analytics Track',
-      icon: BarChart3,
-      badge: 'Analytics & BI Lead',
-      color: 'from-blue-600 to-cyan-600',
-      description: 'End-to-end data pipeline management, automated KPI reporting, complex SQL window functions, and interactive Power BI storytelling.',
-      highlights: [
-        'Advanced Power BI & DAX: Custom measures, slicers, drill-throughs, and dynamic KPI dashboards.',
-        'Databases & SQL: Joins, subqueries, group aggregations, window functions (ROW_NUMBER, RANK, LAG/LEAD).',
-        'Python Data Wrangling: Pandas, NumPy, automated cleaning scripts, Matplotlib/Seaborn EDA.',
-        'Excel Power User: Power Query ETL, PivotTables, VLOOKUP, data validation, executive reporting.'
-      ],
-      tools: ['Power BI', 'DAX', 'MySQL', 'MS SQL Server', 'Python Pandas', 'Excel Power Query', 'Seaborn']
-    },
-    {
-      id: 'pm',
-      title: 'Project Management Track',
-      icon: Briefcase,
-      badge: 'Google & IBM Certified',
-      color: 'from-purple-600 to-indigo-600',
-      description: 'Structured campaign planning, cross-functional stakeholder leadership, Agile/Scrum sprint execution, and risk mitigation.',
-      highlights: [
-        'Cross-Functional Coordination: Collaborating across academic, counselling, and sales teams at Physics Wallah.',
-        'Agile & Sprint Delivery: IBM & Infosys certified in Agile software development, sprint backlog, and retrospective ceremonies.',
-        'Team Mentorship & Growth: Mentoring team members in communication strategies, lead nurture, and performance management.',
-        'Process Optimization: Streamlining workflow bottlenecks to reduce lead response times by 35%.'
-      ],
-      tools: ['Agile / Scrum', 'Jira / Trello', 'Process Mapping', 'Risk Assessment', 'Stakeholder Management', 'Time Management']
-    },
-    {
-      id: 'cybersecurity',
-      title: 'Cyber Security & SOC Analyst Track',
-      icon: ShieldCheck,
-      badge: 'Cisco & Google Certified (Actively Skill Building)',
-      color: 'from-emerald-600 to-teal-600',
-      description: 'Active learning and hands-on focus in Security Operations Center (SOC) fundamentals, threat monitoring, SIEM log analysis, network defense, and vulnerability assessment.',
-      highlights: [
-        'SIEM & Alert Triage: Hands-on log analysis utilizing Splunk/ELK concepts, alert detection, and Google Cybersecurity SIEM practices.',
-        'Network Security & Traffic Inspection: Packet inspection with Wireshark, Cisco Packet Tracer VLAN segmentation, and firewall access control rules (ACLs).',
-        'Threat Hunting & Incident Triage: Understanding attack vectors (Phishing, Malware, SQLi, DDoS), MITRE ATT&CK framework, and incident response playbooks.',
-        'Security Compliance & OS Hardening: Linux/Windows CLI security hardening, vulnerability scanning, and NIST Cybersecurity Framework alignment.'
-      ],
-      tools: ['SOC Triage', 'Splunk / SIEM', 'Wireshark', 'Cisco Packet Tracer', 'MITRE ATT&CK', 'Linux Security', 'Firewall ACLs', 'NIST Framework', 'Vulnerability Assessment']
+      title: 'Analytics & Automation',
+      stat: '12,650+ Records',
+      subtitle: 'Power BI DAX & SQL Intelligence',
+      icon: Cpu,
+      color: 'from-amber-500 to-orange-600',
+      borderColor: 'group-hover:border-amber-500/50',
+      badge: 'Infosys Certified',
+      badgeColor: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+      items: [
+        'Advanced SQL Window functions (RANK, LAG)',
+        'Power BI DAX measures & dashboards',
+        'Python Pandas data wrangling scripts',
+        'Conversion yield & campaign ROI tracking'
+      ]
     }
   ];
 
-  const currentTrack = tracks.find(t => t.id === activeTab) || tracks[0];
+  const tracks = [
+    {
+      id: 'cybersecurity',
+      title: 'Cyber Security & SOC Analyst',
+      icon: ShieldCheck,
+      badge: 'Cisco & Google Certified',
+      badgeColor: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+      color: 'from-emerald-600 to-teal-600',
+      description: 'Hands-on focus in Security Operations Center (SOC) fundamentals, threat monitoring, SIEM log triage, network defense, and vulnerability assessment.',
+      highlights: [
+        'SIEM Log Analysis & Alert Triage utilizing Splunk / ELK & Google Cybersecurity framework.',
+        'Network Traffic Inspection with Wireshark, Cisco Packet Tracer VLANs & Firewall ACLs.',
+        'Threat Hunting & MITRE ATT&CK Mapping (Phishing, Malware, SQLi, Brute-Force).',
+        'OS Hardening (Linux/Windows) & NIST Cybersecurity Framework alignment.'
+      ],
+      tools: ['SOC Triage', 'Splunk / SIEM', 'Wireshark', 'Cisco Packet Tracer', 'MITRE ATT&CK', 'Linux CLI', 'Firewall ACLs']
+    },
+    {
+      id: 'analytics',
+      title: 'Data Analytics & BI Specialist',
+      icon: BarChart3,
+      badge: 'Google & Infosys Certified',
+      badgeColor: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+      color: 'from-blue-600 to-cyan-600',
+      description: 'End-to-end data pipeline management, automated KPI reporting, complex SQL window functions, and interactive Power BI storytelling.',
+      highlights: [
+        'Advanced Power BI & DAX: Custom measures, slicers, drill-throughs, and dynamic dashboards.',
+        'Databases & SQL: Joins, CTEs, group aggregations, and window functions (ROW_NUMBER, RANK, LAG).',
+        'Python Data Wrangling: Pandas, NumPy, automated cleaning scripts, and EDA.',
+        'Excel Power User: Power Query ETL, PivotTables, and executive storytelling.'
+      ],
+      tools: ['Power BI', 'DAX', 'MySQL', 'MS SQL Server', 'Python Pandas', 'Power Query', 'Marketing ROI']
+    },
+    {
+      id: 'pm',
+      title: 'Technical Project Leadership',
+      icon: Briefcase,
+      badge: 'IBM & Infosys Certified',
+      badgeColor: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+      color: 'from-purple-600 to-indigo-600',
+      description: 'Structured campaign planning, cross-functional stakeholder leadership, Agile/Scrum sprint execution, and operational risk mitigation.',
+      highlights: [
+        'Cross-Functional Leadership: Coordinating academic, counseling, and sales operations at Physics Wallah.',
+        'Agile Sprint Delivery: IBM & Infosys certified in Scrum backlog and retrospective ceremonies.',
+        'Workflow Optimization: Streamlining lead response bottlenecks to boost team efficiency by 35%.',
+        'Stakeholder Alignment & Executive Reporting with actionable metric dashboards.'
+      ],
+      tools: ['Agile / Scrum', 'Jira / Trello', 'Process Mapping', 'Risk Assessment', 'Lead Nurture', 'KPI Tracking']
+    }
+  ];
 
   return (
     <section 
@@ -71,122 +140,143 @@ export const CoreCompetencies: React.FC<CoreCompetenciesProps> = ({ darkMode }) 
         darkMode ? 'bg-[#0A0A0A] text-slate-100' : 'bg-slate-50 text-slate-900'
       }`}
     >
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-      >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
             <Sparkles className="w-3.5 h-3.5" />
-            Core Professional Alignment
+            Core Capabilities
           </div>
-          <h2 id="competencies-heading" className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            Targeted Core Competencies
+          <h2 id="competencies-heading" className="text-3xl sm:text-4xl font-black tracking-tight">
+            Technical Security Pillars
           </h2>
           <p className={`text-sm sm:text-base ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-            Comprehensive technical data mastery combined with commercial marketing execution and technical project leadership.
+            Simplified, high-impact overview of technical capabilities across Cyber Defense, Network Security, SIEM Threat Triage, and Data Intelligence.
           </p>
         </div>
 
-        {/* Track Selection Navigation Tabs */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
-          {tracks.map((track) => {
-            const Icon = track.icon;
-            const isActive = activeTab === track.id;
+        {/* 4-Pillar Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
+          {securityPillars.map((pillar, idx) => {
+            const Icon = pillar.icon;
             return (
-              <motion.button
-                key={track.id}
-                id={`btn-track-${track.id}`}
-                onClick={() => setActiveTab(track.id as any)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                aria-selected={isActive}
-                role="tab"
-                className={`px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2.5 transition-all shadow-sm ${
-                  isActive
-                    ? 'bg-blue-600 text-white ring-2 ring-blue-600/50 shadow-blue-600/30'
-                    : darkMode
-                      ? 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10'
-                      : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+              <motion.div
+                key={pillar.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.08 }}
+                className={`p-5 rounded-2xl border shadow-md flex flex-col justify-between group transition-all hover:-translate-y-1 ${pillar.borderColor} ${
+                  darkMode ? 'bg-[#141414] border-white/10' : 'bg-white border-slate-200'
                 }`}
               >
-                <Icon className="w-4 h-4" />
-                <span>{track.title}</span>
-              </motion.button>
+                <div>
+                  {/* Top Bar with Icon & Badge */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${pillar.color} flex items-center justify-center text-white shadow-md`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ${pillar.badgeColor}`}>
+                      {pillar.badge}
+                    </span>
+                  </div>
+
+                  {/* Main Stat & Title */}
+                  <div className="mb-3">
+                    <span className="text-2xl font-black block tracking-tight">{pillar.stat}</span>
+                    <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">{pillar.title}</h3>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium block">{pillar.subtitle}</span>
+                  </div>
+
+                  {/* Bullet Highlights */}
+                  <ul className="space-y-1.5 pt-3 border-t border-slate-200 dark:border-white/10 text-xs">
+                    {pillar.items.map((item, i) => (
+                      <li key={i} className="flex items-start gap-1.5 text-[11px]">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0 mt-0.5" />
+                        <span className={darkMode ? 'text-slate-300' : 'text-slate-700'}>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
             );
           })}
         </div>
 
-        {/* Active Track Focus Card */}
-        <AnimatePresence mode="wait">
-          <motion.div 
-            key={activeTab}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.3 }}
-            className={`p-6 sm:p-8 rounded-2xl border shadow-xl relative overflow-hidden transition-all ${
-              darkMode ? 'bg-[#161616] border-white/10' : 'bg-white border-slate-200'
-            }`}
-          >
-            
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              
-              {/* Left Track Info */}
-              <div className="lg:col-span-7 space-y-6">
-                <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${currentTrack.color} flex items-center justify-center text-white shadow-md`}>
-                    <currentTrack.icon className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
-                      {currentTrack.badge}
+        {/* Domain Deep Dives Section Header */}
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <h3 className="text-xl sm:text-2xl font-bold">
+            Detailed Professional Domains
+          </h3>
+          <p className={`text-xs sm:text-sm mt-1 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+            End-to-end skill alignment with industry standards and verified coursework credentials.
+          </p>
+        </div>
+
+        {/* 3-Column Side-By-Side Competency Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {tracks.map((track, idx) => {
+            const Icon = track.icon;
+            return (
+              <motion.div
+                key={track.id}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className={`p-7 rounded-2xl border shadow-lg flex flex-col justify-between transition-all hover:-translate-y-1 group relative ${
+                  darkMode 
+                    ? 'bg-[#141414] border-white/10 hover:border-blue-500/40' 
+                    : 'bg-white border-slate-200 hover:border-blue-400'
+                }`}
+              >
+                <div>
+                  {/* Top Badge & Icon */}
+                  <div className="flex items-center justify-between mb-5">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${track.color} flex items-center justify-center text-white shadow-md`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-[11px] font-bold border ${track.badgeColor}`}>
+                      {track.badge}
                     </span>
-                    <h3 className="text-2xl font-bold">{currentTrack.title}</h3>
+                  </div>
+
+                  <h3 className="text-xl font-extrabold mb-2 group-hover:text-blue-500 transition-colors">
+                    {track.title}
+                  </h3>
+
+                  <p className={`text-xs sm:text-sm leading-relaxed mb-6 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    {track.description}
+                  </p>
+
+                  {/* Highlights List */}
+                  <div className="space-y-3 mb-6">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold block">
+                      Core Capabilities & Impact
+                    </span>
+                    <ul className="space-y-2">
+                      {track.highlights.map((h, i) => (
+                        <li key={i} className="flex items-start gap-2 text-xs">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                          <span className={darkMode ? 'text-slate-300' : 'text-slate-700'}>{h}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
 
-                <p className={`text-sm sm:text-base leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-                  {currentTrack.description}
-                </p>
-
-                {/* Highlights List */}
-                <div className="space-y-3">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    Key Accomplishments & Capabilities
-                  </h4>
-                  <div className="grid grid-cols-1 gap-2.5">
-                    {currentTrack.highlights.map((item, idx) => (
-                      <motion.div 
-                        key={idx}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.05 + 0.1 }}
-                        className="flex items-start gap-2.5 text-xs sm:text-sm"
-                      >
-                        <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                        <span className={darkMode ? 'text-slate-200' : 'text-slate-800'}>{item}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Tools Tags */}
-                <div className="pt-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-2">
-                    Technical Stack & Frameworks
+                {/* Skill Badges Footer */}
+                <div className="pt-4 border-t border-slate-200 dark:border-white/10">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold block mb-2">
+                    Key Stack & Tools
                   </span>
-                  <div className="flex flex-wrap gap-2">
-                    {currentTrack.tools.map((tool) => (
+                  <div className="flex flex-wrap gap-1.5">
+                    {track.tools.map((tool) => (
                       <span 
                         key={tool}
-                        className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                          darkMode ? 'bg-white/5 text-blue-300 border border-white/10' : 'bg-blue-50 text-blue-800 border border-blue-200'
+                        className={`px-2.5 py-0.5 rounded-md text-[11px] font-semibold ${
+                          darkMode ? 'bg-white/5 text-slate-300 border border-white/10' : 'bg-slate-100 text-slate-700 border border-slate-200'
                         }`}
                       >
                         {tool}
@@ -195,55 +285,12 @@ export const CoreCompetencies: React.FC<CoreCompetenciesProps> = ({ darkMode }) 
                   </div>
                 </div>
 
-              </div>
+              </motion.div>
+            );
+          })}
+        </div>
 
-              {/* Right: Detailed Skill Competency Progress Bars */}
-              <div className="lg:col-span-5 space-y-6">
-                <div className={`p-5 rounded-xl border ${darkMode ? 'bg-[#0A0A0A] border-white/5' : 'bg-slate-50 border-slate-200'}`}>
-                  <h4 className="text-sm font-bold mb-4 flex items-center justify-between">
-                    <span>Skill Competency Breakdown</span>
-                    <span className="text-xs text-blue-600 dark:text-blue-400 font-mono">Proficiency</span>
-                  </h4>
-
-                  <div className="space-y-4">
-                    {SKILL_GROUPS.map((group) => {
-                      const pct = Math.round(group.skills.reduce((acc, s) => acc + s.level, 0) / group.skills.length);
-                      return (
-                        <div key={group.category} className="space-y-1.5">
-                          <div className="flex justify-between items-center text-xs font-semibold">
-                            <span className={darkMode ? 'text-slate-300' : 'text-slate-700'}>{group.category}</span>
-                            <span className="text-blue-600 dark:text-blue-400 font-mono">
-                              {pct}%
-                            </span>
-                          </div>
-                          <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-                            <motion.div 
-                              initial={{ width: 0 }}
-                              whileInView={{ width: `${pct}%` }}
-                              viewport={{ once: true }}
-                              transition={{ duration: 1, ease: "easeOut" }}
-                              className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full"
-                            ></motion.div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800 text-center">
-                    <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1">
-                      <ShieldCheck className="w-4 h-4" /> All skills verified via Infosys, Google, IBM & Cisco credentials
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-          </motion.div>
-        </AnimatePresence>
-
-      </motion.div>
+      </div>
     </section>
   );
 };

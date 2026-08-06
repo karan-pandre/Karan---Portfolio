@@ -9,16 +9,19 @@ import { Project } from '../types';
 
 interface ProjectsSectionProps {
   darkMode: boolean;
+  projects?: Project[];
 }
 
-export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ darkMode }) => {
+export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ darkMode, projects }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeCodeModal, setActiveCodeModal] = useState<Project | null>(null);
 
   const categories = ['All', 'Data Analytics', 'Cybersecurity', 'Digital Marketing'];
 
-  const filteredProjects = PROJECTS.filter(project => {
+  const projectsList = projects || PROJECTS;
+
+  const filteredProjects = projectsList.filter(project => {
     const matchesCategory = selectedCategory === 'All' || project.category === selectedCategory;
     const matchesSearch = searchQuery === '' || 
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -103,8 +106,8 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ darkMode }) =>
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className={`p-6 rounded-2xl border shadow-lg flex flex-col justify-between transition-all hover:-translate-y-1.5 hover:shadow-xl ${
-                  darkMode ? 'bg-[#161616] border-white/10 hover:border-white/20' : 'bg-slate-50 border-slate-200 hover:border-slate-300'
+                className={`p-6 rounded-2xl border shadow-lg flex flex-col justify-between transition-all hover:-translate-y-1.5 hover:shadow-xl group relative overflow-hidden ${
+                  darkMode ? 'bg-[#161616] border-white/10 hover:border-blue-500/40' : 'bg-slate-50 border-slate-200 hover:border-blue-400'
                 }`}
               >
                 <div>
@@ -176,6 +179,68 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ darkMode }) =>
                       <span>Inspect DAX / SQL Code Snippet</span>
                     </button>
                   )}
+                </div>
+
+                {/* On-Hover Glassmorphism Technical Detail Reveal Overlay */}
+                <div className="absolute inset-0 bg-[#090d16]/95 backdrop-blur-xl opacity-0 group-hover:opacity-100 transition-all duration-300 p-6 flex flex-col justify-between z-30 pointer-events-none group-hover:pointer-events-auto border-2 border-blue-500/40 rounded-2xl text-slate-100">
+                  <div>
+                    <div className="flex items-center justify-between mb-3 pb-2 border-b border-blue-500/20">
+                      <span className="px-2.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-blue-600 text-white shadow-sm">
+                        TECHNICAL METADATA & SPECS
+                      </span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> VERIFIED CODE
+                      </span>
+                    </div>
+
+                    <h4 className="text-base font-black text-blue-400 mb-1 leading-snug">
+                      {project.title}
+                    </h4>
+                    <span className="text-xs text-slate-400 block mb-3 font-mono">
+                      {project.subtitle}
+                    </span>
+
+                    <div className="space-y-2 mb-4">
+                      <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs">
+                        <span className="text-[9px] font-mono uppercase text-blue-300 font-extrabold block mb-0.5">Benchmark Metrics</span>
+                        <div className="grid grid-cols-2 gap-2 text-[11px] font-bold">
+                          {project.metrics.map((m, idx) => (
+                            <div key={idx} className="text-emerald-400">
+                              {m.label}: <span className="text-white">{m.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-xs">
+                        <span className="text-[9px] font-mono uppercase text-slate-400 font-extrabold block mb-1">Architecture Highlights</span>
+                        <ul className="space-y-1 text-[11px] text-slate-300">
+                          {project.highlights.map((h, i) => (
+                            <li key={i} className="flex items-start gap-1.5">
+                              <span className="text-blue-400 font-bold">•</span>
+                              <span>{h}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-blue-500/20 flex items-center gap-2">
+                    {project.codeSnippet ? (
+                      <button
+                        onClick={() => setActiveCodeModal(project)}
+                        className="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-600/30 transition-transform hover:scale-102"
+                      >
+                        <Code className="w-4 h-4" />
+                        <span>Inspect DAX / SQL Code</span>
+                      </button>
+                    ) : (
+                      <div className="w-full text-center text-xs font-mono text-slate-400 py-1">
+                        Architecture Documentation Verified
+                      </div>
+                    )}
+                  </div>
                 </div>
 
               </motion.div>

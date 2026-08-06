@@ -5,14 +5,18 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { WORK_EXPERIENCES, EDUCATION } from '../data/karanData';
+import { WorkExperience } from '../types';
 
 interface ExperienceTimelineProps {
   darkMode: boolean;
+  experiences?: WorkExperience[];
 }
 
-export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ darkMode }) => {
+export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ darkMode, experiences }) => {
   const [filter, setFilter] = useState<'all' | 'work' | 'education'>('all');
   const [expandedId, setExpandedId] = useState<string | null>('pw-2025'); // Default open first item
+
+  const activeExperiences = experiences && experiences.length > 0 ? experiences : WORK_EXPERIENCES;
 
   const toggleExpand = (id: string) => {
     setExpandedId(prev => (prev === id ? null : id));
@@ -79,7 +83,7 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ darkMode
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>All Timeline Entries ({WORK_EXPERIENCES.length + 1})</span>
+            <span>All Timeline Entries ({activeExperiences.length + 1})</span>
           </button>
 
           <button
@@ -92,7 +96,7 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ darkMode
             }`}
           >
             <Building2 className="w-3.5 h-3.5" />
-            <span>Work Experience ({WORK_EXPERIENCES.length})</span>
+            <span>Work Experience ({activeExperiences.length})</span>
           </button>
 
           <button
@@ -113,7 +117,7 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ darkMode
         <div className="relative border-l-2 border-indigo-500/30 dark:border-indigo-500/20 ml-4 sm:ml-8 lg:ml-12 space-y-10 pr-2">
           
           <AnimatePresence>
-            {showWork && WORK_EXPERIENCES.map((exp, idx) => {
+            {showWork && activeExperiences.map((exp, idx) => {
               const isExpanded = expandedId === exp.id;
               const metrics = roleHighlights[exp.id] || [];
 

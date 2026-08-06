@@ -67,16 +67,16 @@ ${CERTIFICATIONS.map(c => `- ${c.title} (${c.issuer})`).join('\n')}
       }`}>
         
         {/* Top Control Bar (Hidden on Print) */}
-        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-950 text-white print:hidden">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-2 bg-slate-950 text-white print:hidden">
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-blue-400" />
-            <h3 className="font-bold text-base">ATS-Optimized Printable Resume</h3>
+            <FileText className="w-5 h-5 text-blue-400 shrink-0" />
+            <h3 className="font-bold text-sm sm:text-base">ATS-Optimized Printable Resume</h3>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
             <button
               onClick={handleCopyText}
-              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold flex items-center gap-1.5"
+              className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold flex items-center gap-1.5"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'Copied' : 'Copy Text'}</span>
@@ -84,13 +84,13 @@ ${CERTIFICATIONS.map(c => `- ${c.title} (${c.issuer})`).join('\n')}
 
             <button
               onClick={handlePrint}
-              className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm"
+              className="px-3 sm:px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print / Download PDF</span>
+              <span>Print / PDF</span>
             </button>
 
-            <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-white">
+            <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-white" title="Close modal">
               <X className="w-5 h-5" />
             </button>
           </div>

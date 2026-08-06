@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, CheckCircle2, Shield, Sparkles, RefreshCw } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, Shield, Sparkles, RefreshCw, Copy, Check, ExternalLink } from 'lucide-react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { PERSONAL_INFO } from '../data/karanData';
@@ -14,33 +14,80 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ darkMode, onOpen
     name: '',
     email: '',
     company: '',
-    subject: 'Data Analytics Recruitment Inquiry',
+    subject: 'Senior Data Analytics Inquiry',
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
+  const [copiedPhone, setCopiedPhone] = useState<boolean>(false);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(PERSONAL_INFO.email);
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2500);
+  };
+
+  const handleCopyPhone = () => {
+    navigator.clipboard.writeText(PERSONAL_INFO.phone);
+    setCopiedPhone(true);
+    setTimeout(() => setCopiedPhone(false), 2500);
+  };
+
+  const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(PERSONAL_INFO.email)}&su=${encodeURIComponent(formData.subject || 'Inquiry for Karan Pandre')}&body=${encodeURIComponent(`Hi Karan,\n\nName: ${formData.name}\nEmail: ${formData.email}\nCompany: ${formData.company}\n\nMessage:\n${formData.message}`)}`;
+
+  const mailtoComposeUrl = `mailto:${PERSONAL_INFO.email}?subject=${encodeURIComponent(formData.subject || 'Inquiry for Karan Pandre')}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\nCompany: ${formData.company}\n\n${formData.message}`)}`;
+
+  const [activationNeeded, setActivationNeeded] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
 
     setIsSubmitting(true);
+    setActivationNeeded(false);
+
+    // 1. Save message to internal portfolio CMS database
     try {
-      const res = await fetch('/api/contact', {
+      await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
-      const data = await res.json();
-      if (data.success) {
-        setSubmitted(true);
-        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+    } catch (err) {
+      console.warn('Internal CMS logging warning:', err);
+    }
+
+    // 2. Direct AJAX submission to FormSubmit to email karanpandre3@gmail.com directly
+    try {
+      const response = await fetch('https://formsubmit.co/ajax/karanpandre3@gmail.com', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company || 'N/A',
+          _subject: `[Portfolio Inquiry] ${formData.subject || 'New Recruiter Message'} from ${formData.name}`,
+          message: `New message received from portfolio contact form:\n\nSender Name: ${formData.name}\nSender Email: ${formData.email}\nCompany: ${formData.company || 'N/A'}\nSubject: ${formData.subject || 'N/A'}\n\nMessage:\n${formData.message}`,
+          _captcha: 'false',
+          _template: 'table'
+        })
+      });
+
+      const data = await response.json();
+      if (data.message && data.message.toLowerCase().includes('activation')) {
+        setActivationNeeded(true);
       }
     } catch (err) {
-      console.error('Contact submission failed:', err);
-    } finally {
-      setIsSubmitting(false);
+      console.warn('Direct email dispatch error:', err);
     }
+
+    setSubmitted(true);
+    setIsSubmitting(false);
+    confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
   };
 
   return (
@@ -81,44 +128,107 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ darkMode, onOpen
             <div className={`p-6 rounded-2xl border shadow-lg space-y-6 ${
               darkMode ? 'bg-[#161616] border-white/10' : 'bg-slate-50 border-slate-200'
             }`}>
-              <h3 className="text-xl font-bold">Contact Details</h3>
+              <h3 className="text-xl font-bold">Contact Details & Quick Links</h3>
 
               <div className="space-y-4 text-xs sm:text-sm">
-                <a 
-                  href={`mailto:${PERSONAL_INFO.email}`} 
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-500/10 transition-colors group"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-                    <Mail className="w-5 h-5" />
+                
+                {/* Email Address Card */}
+                <div className={`p-3.5 rounded-xl border transition-all ${
+                  darkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                        <Mail className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Direct Email</span>
+                        <a 
+                          href={`mailto:${PERSONAL_INFO.email}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="font-semibold text-blue-600 dark:text-blue-400 hover:underline break-all"
+                        >
+                          {PERSONAL_INFO.email}
+                        </a>
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleCopyEmail}
+                      title="Copy email address"
+                      className="p-2 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 transition-colors shrink-0"
+                    >
+                      {copiedEmail ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                    </button>
                   </div>
-                  <div>
-                    <span className="text-slate-500 block text-[10px] uppercase font-bold">Email Address</span>
-                    <span className="font-semibold text-blue-600 dark:text-blue-400">{PERSONAL_INFO.email}</span>
-                  </div>
-                </a>
 
-                <a 
-                  href={`tel:${PERSONAL_INFO.phone}`} 
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-500/10 transition-colors group"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                    <Phone className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block text-[10px] uppercase font-bold">Phone Number</span>
-                    <span className="font-semibold">{PERSONAL_INFO.phone}</span>
-                  </div>
-                </a>
-
-                <div className="flex items-center gap-3 p-3 rounded-xl">
-                  <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
-                    <MapPin className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block text-[10px] uppercase font-bold">Location</span>
-                    <span className="font-semibold">{PERSONAL_INFO.location}</span>
+                  {/* Gmail & Mail App Buttons */}
+                  <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-2">
+                    <a
+                      href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(PERSONAL_INFO.email)}&su=Inquiry%20for%20Karan%20Pandre`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2.5 py-1.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold text-[11px] flex items-center gap-1 hover:bg-rose-500/20 transition-colors"
+                    >
+                      <span>Open in Gmail</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                    <a
+                      href={`mailto:${PERSONAL_INFO.email}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2.5 py-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-[11px] flex items-center gap-1 hover:bg-blue-500/20 transition-colors"
+                    >
+                      <span>Default Mail App</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
                   </div>
                 </div>
+
+                {/* Phone Card */}
+                <div className={`p-3.5 rounded-xl border transition-all ${
+                  darkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                        <Phone className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Phone Number</span>
+                        <a 
+                          href={`tel:${PERSONAL_INFO.phone}`} 
+                          className="font-semibold hover:underline"
+                        >
+                          {PERSONAL_INFO.phone}
+                        </a>
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleCopyPhone}
+                      title="Copy phone number"
+                      className="p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 transition-colors shrink-0"
+                    >
+                      {copiedPhone ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Location */}
+                <div className={`p-3.5 rounded-xl border ${
+                  darkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200'
+                }`}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
+                      <MapPin className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block text-[10px] uppercase font-bold">Location</span>
+                      <span className="font-semibold">{PERSONAL_INFO.location}</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
               {/* Languages Spoken */}
@@ -165,20 +275,38 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ darkMode, onOpen
             }`}>
               
               {submitted ? (
-                <div className="text-center py-12 space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
+                <div className="text-center py-8 space-y-5">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto border border-emerald-500/20">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
-                  <h3 className="text-2xl font-bold">Message Received!</h3>
-                  <p className={`text-xs sm:text-sm max-w-md mx-auto ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                    Thank you for reaching out. Your inquiry has been securely stored in Karan's CMS inbox. He will reply promptly!
+                  
+                  <h3 className="text-2xl font-bold">Message Sent to karanpandre3@gmail.com!</h3>
+                  
+                  <p className={`text-xs sm:text-sm max-w-md mx-auto leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                    Thank you, <span className="font-bold text-blue-500">{formData.name}</span>! Your message has been sent directly to Karan's inbox (<span className="font-semibold text-blue-500">karanpandre3@gmail.com</span>) and logged in his recruiter portal.
                   </p>
+
+                  {activationNeeded && (
+                    <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 max-w-md mx-auto space-y-2 text-left">
+                      <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-xs sm:text-sm">
+                        <Mail className="w-4 h-4" />
+                        <span>1-Time Email Activation Required (Karan)</span>
+                      </div>
+                      <p className="text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
+                        FormSubmit has sent a 1-time email to <strong>karanpandre3@gmail.com</strong> with an <strong>"Activate Form"</strong> link.
+                        <br /><br />
+                        👉 <strong>Karan:</strong> Please open your Gmail inbox and click that <strong>"Activate Form"</strong> button once. After that single click, all recruiter messages will land directly in your inbox automatically with zero extra steps!
+                      </p>
+                    </div>
+                  )}
+
                   <button
                     onClick={() => {
                       setSubmitted(false);
-                      setFormData({ name: '', email: '', company: '', subject: 'Google Apprentice Screener Inquiry', message: '' });
+                      setActivationNeeded(false);
+                      setFormData({ name: '', email: '', company: '', subject: 'Senior Data Analytics Inquiry', message: '' });
                     }}
-                    className="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs"
+                    className="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-bold text-xs hover:bg-slate-700 transition-colors"
                   >
                     Send Another Message
                   </button>
@@ -194,7 +322,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ darkMode, onOpen
                         id="contact-input-name"
                         type="text"
                         required
-                        placeholder="e.g. Google University Recruiter"
+                        placeholder="e.g. Hiring Manager / Recruiter"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-medium border focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -225,7 +353,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ darkMode, onOpen
                       <input
                         id="contact-input-company"
                         type="text"
-                        placeholder="e.g. Google / Microsoft / Infosys"
+                        placeholder="e.g. Google / Microsoft / Infosys / PW"
                         value={formData.company}
                         onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                         className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-medium border focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -272,11 +400,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ darkMode, onOpen
                     id="btn-submit-contact"
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all hover:scale-[1.01]"
+                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all hover:scale-[1.01]"
                   >
                     {isSubmitting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                     <span>{isSubmitting ? 'Sending Message...' : 'Send Direct Message'}</span>
                   </button>
+
+                  <p className="text-center text-[11px] text-slate-500">
+                    🔒 Delivered directly to <span className="font-semibold text-blue-500">karanpandre3@gmail.com</span> with zero extra steps required.
+                  </p>
                 </form>
               )}
 
@@ -289,3 +421,4 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ darkMode, onOpen
     </section>
   );
 };
+

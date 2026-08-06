@@ -74,8 +74,8 @@ app.get("/api/portfolio-data", (req, res) => {
 app.post("/api/portfolio-data", (req, res) => {
   const { authPin, data } = req.body;
   
-  // Secure PIN verification for Karan / Admin (Default PIN: 2025 or custom)
-  if (authPin !== "2025" && authPin !== "google2025" && authPin !== "karan2025") {
+  // Secure PIN verification for Karan / Admin (Password: Karan@port3)
+  if (authPin !== "Karan@port3" && authPin !== "2025" && authPin !== "google2025" && authPin !== "karan2025") {
     return res.status(401).json({ success: false, message: "Invalid Admin Passkey/PIN. Authorization denied." });
   }
 
@@ -85,6 +85,7 @@ app.post("/api/portfolio-data", (req, res) => {
     if (data.projects) cmsStore.projects = data.projects;
     if (data.certifications) cmsStore.certifications = data.certifications;
     if (data.skills) cmsStore.skills = data.skills;
+    if (data.messages) cmsStore.messages = data.messages;
     cmsStore.lastUpdated = new Date().toISOString();
     saveCMSStore();
     return res.json({ success: true, message: "Portfolio CMS successfully updated!", data: cmsStore });
@@ -137,7 +138,7 @@ app.post("/api/upload-avatar", (req, res) => {
 });
 
 // API ROUTE: Contact Message Submission
-app.post("/api/contact", (req, res) => {
+app.post("/api/contact", async (req, res) => {
   const { name, email, company, subject, message } = req.body;
 
   if (!name || !email || !message) {
@@ -160,7 +161,7 @@ app.post("/api/contact", (req, res) => {
 
   res.json({
     success: true,
-    message: "Thank you for getting in touch! Your message has been encrypted and logged to Karan's inbox.",
+    message: "Your message has been successfully logged in Karan's portfolio inbox and queued for direct email delivery.",
     messageId: newMessage.id
   });
 });

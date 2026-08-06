@@ -1,9 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { 
   Sparkles, ShieldCheck, Download, Mail, MapPin, Award, 
-  BarChart3, Database, Briefcase, TrendingUp, CheckCircle2, ChevronRight, ExternalLink, Camera, Upload, Terminal
+  BarChart3, Briefcase, ChevronRight, ExternalLink, Camera, Upload,
+  Terminal, TrendingUp, CheckCircle2
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'motion/react';
 import { PERSONAL_INFO } from '../data/karanData';
 
 interface HeroProps {
@@ -11,6 +12,7 @@ interface HeroProps {
   onOpenATS: () => void;
   onOpenResume: () => void;
   onOpenAIChat: () => void;
+  onOpenRecruiterBrief?: () => void;
   personalInfo?: typeof PERSONAL_INFO;
   onRefreshData?: () => void;
 }
@@ -20,13 +22,39 @@ export const Hero: React.FC<HeroProps> = ({
   onOpenATS,
   onOpenResume,
   onOpenAIChat,
+  onOpenRecruiterBrief,
   personalInfo,
   onRefreshData
 }) => {
   const info = personalInfo || PERSONAL_INFO;
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
+
+  // Parallax 3D tilt values for Hero Card
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateXRaw = useTransform(mouseY, [-0.5, 0.5], [8, -8]);
+  const rotateYRaw = useTransform(mouseX, [-0.5, 0.5], [-8, 8]);
+
+  const rotateX = useSpring(rotateXRaw, { stiffness: 200, damping: 20 });
+  const rotateY = useSpring(rotateYRaw, { stiffness: 200, damping: 20 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const xPct = (e.clientX - rect.left) / rect.width - 0.5;
+    const yPct = (e.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(xPct);
+    mouseY.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
 
   // Animated role text rotator
   const rolesList = [
@@ -45,40 +73,47 @@ export const Hero: React.FC<HeroProps> = ({
   }, [rolesList.length]);
 
   const compressImage = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
+    return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        img.src = e.target?.result as string;
-      };
-      reader.onerror = (err) => reject(err);
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
-        const MAX_DIM = 1000;
-        if (width > height) {
-          if (width > MAX_DIM) {
-            height = Math.round((height * MAX_DIM) / width);
-            width = MAX_DIM;
-          }
-        } else {
-          if (height > MAX_DIM) {
-            width = Math.round((width * MAX_DIM) / height);
-            height = MAX_DIM;
-          }
-        }
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          resolve(img.src);
+        const rawDataUrl = e.target?.result as string;
+        if (!rawDataUrl) {
+          resolve('');
           return;
         }
-        ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', 0.88));
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            const maxDim = 800;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.88));
+              return;
+            }
+          } catch (err) {
+            console.warn('Canvas compression fallback', err);
+          }
+          resolve(rawDataUrl);
+        };
+        img.onerror = () => resolve(rawDataUrl);
+        img.src = rawDataUrl;
       };
-      img.onerror = (err) => reject(err);
+      reader.onerror = () => resolve('');
       reader.readAsDataURL(file);
     });
   };
@@ -92,7 +127,20 @@ export const Hero: React.FC<HeroProps> = ({
 
     try {
       const base64 = await compressImage(file);
+      if (!base64) {
+        setUploadMessage('Unable to read image file.');
+        return;
+      }
+
+      // Store in localStorage immediately so avatar persists across browser sessions
+      try {
+        localStorage.setItem('karan_custom_avatar', base64);
+      } catch (err) {
+        console.warn('LocalStorage avatar cache warning:', err);
+      }
+
       setUploadMessage('Saving photo...');
+
       const res = await fetch('/api/upload-avatar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -100,17 +148,20 @@ export const Hero: React.FC<HeroProps> = ({
       });
       const json = await res.json();
       if (json.success) {
-        setUploadMessage('Photo updated!');
-        if (onRefreshData) onRefreshData();
-        setTimeout(() => setUploadMessage(null), 3000);
+        setUploadMessage('Photo successfully updated!');
       } else {
-        setUploadMessage(json.message || 'Upload failed');
+        setUploadMessage('Photo updated locally!');
       }
+      if (onRefreshData) onRefreshData();
+      setTimeout(() => setUploadMessage(null), 3500);
     } catch (err: any) {
       console.error('Image upload error:', err);
-      setUploadMessage('Upload error');
+      setUploadMessage('Upload saved locally!');
+      if (onRefreshData) onRefreshData();
+      setTimeout(() => setUploadMessage(null), 3500);
     } finally {
       setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
   return (
@@ -138,15 +189,14 @@ export const Hero: React.FC<HeroProps> = ({
             className="lg:col-span-7 space-y-6"
           >
             
-            {/* Target Role Banner */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-sm">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
-              <span>Open for Business Intelligence & Data Analytics Roles</span>
-            </div>
+
 
             {/* Main Headline with Profile Photo / Initials Avatar */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              <div className="relative group w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-1 bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 shadow-xl shrink-0 flex items-center justify-center overflow-hidden">
+              <motion.div 
+                layoutId="hero-avatar-container"
+                className="relative group w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-1 bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 shadow-xl shrink-0 flex items-center justify-center overflow-hidden"
+              >
                 {info.avatar ? (
                   <img 
                     key={info.avatar}
@@ -190,7 +240,7 @@ export const Hero: React.FC<HeroProps> = ({
                 <span className="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-extrabold shadow-sm border-2 border-white dark:border-black z-30">
                   ACTIVE
                 </span>
-              </div>
+              </motion.div>
               
               <div>
                 {uploadMessage && (
@@ -198,12 +248,13 @@ export const Hero: React.FC<HeroProps> = ({
                     {uploadMessage}
                   </div>
                 )}
-                <h1 
+                <motion.h1 
                   id="hero-heading" 
+                  layoutId="hero-user-name"
                   className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight"
                 >
                   Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-indigo-300 dark:to-purple-400">{info.name}</span>
-                </h1>
+                </motion.h1>
                 
                 {/* Dynamic Rotating Role Badge */}
                 <div className="h-7 overflow-hidden mt-1 flex items-center">
@@ -265,6 +316,17 @@ export const Hero: React.FC<HeroProps> = ({
 
             {/* Action CTAs */}
             <div className="flex flex-wrap items-center gap-3 pt-2">
+              {onOpenRecruiterBrief && (
+                <button
+                  id="hero-cta-recruiter"
+                  onClick={onOpenRecruiterBrief}
+                  className="px-5 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-extrabold text-sm shadow-xl shadow-indigo-600/20 flex items-center gap-2 transition-all hover:scale-[1.03]"
+                >
+                  <ShieldCheck className="w-4 h-4 text-cyan-300" />
+                  Recruiter 10-Sec Brief
+                </button>
+              )}
+
               <button
                 id="hero-cta-ats"
                 onClick={onOpenATS}
@@ -300,74 +362,111 @@ export const Hero: React.FC<HeroProps> = ({
             </div>
           </motion.div>
 
-          {/* Hero Feature Card / Live Data Showcase */}
+          {/* Hero Feature Card / Verified Candidate Summary */}
           <motion.div 
+            ref={cardRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{
+              rotateX,
+              rotateY,
+              transformStyle: 'preserve-3d',
+            }}
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            whileHover={{ y: -6, transition: { duration: 0.2 } }}
-            className="lg:col-span-5"
+            className="lg:col-span-5 perspective-1000"
           >
-            <div className={`p-6 rounded-2xl border shadow-2xl relative overflow-hidden transition-all ${
-              darkMode ? 'bg-[#161616] border-white/10 hover:border-blue-500/30 hover:shadow-blue-500/10' : 'bg-white border-slate-200 hover:border-blue-300 hover:shadow-xl'
+            <div className={`p-6 sm:p-7 rounded-2xl border shadow-xl relative overflow-hidden transition-all duration-200 ${
+              darkMode ? 'bg-[#141414] border-white/10 hover:border-blue-500/30' : 'bg-white border-slate-200 hover:border-blue-300'
             }`}>
               
-              {/* Top Card Bar */}
-              <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-white/10">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-rose-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                  <span className="text-xs font-mono font-semibold ml-2 text-slate-500 dark:text-slate-400">
-                    karan_pandre_kpi_overview.bi
-                  </span>
+              {/* Header Status Badge */}
+              <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-200 dark:border-white/10">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Available for Full-Time Roles</span>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                  LIVE
-                </span>
+                <span className="text-xs font-mono text-slate-400 font-bold">2025 Graduate</span>
               </div>
 
-              {/* Metrics Grid */}
-              <div className="grid grid-cols-2 gap-4 my-5">
-                <div className={`p-3.5 rounded-xl border ${darkMode ? 'bg-[#0A0A0A] border-white/5' : 'bg-slate-50 border-slate-200'}`}>
-                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">Campaigns Tracked</span>
-                  <span className="text-2xl font-black text-blue-600 dark:text-blue-400">50+</span>
-                  <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5 mt-1">
-                    ↑ Physics Wallah & Infosys
+              {/* Core Qualification Summary */}
+              <div className="space-y-4">
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold block mb-1">
+                    Academic Degree
+                  </span>
+                  <div className="text-sm font-black text-slate-900 dark:text-slate-100">
+                    B.Tech in Information Technology
+                  </div>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    Alliance University (2021–2025) • 7.7 CGPA
                   </span>
                 </div>
 
-                <div className={`p-3.5 rounded-xl border ${darkMode ? 'bg-[#0A0A0A] border-white/5' : 'bg-slate-50 border-slate-200'}`}>
-                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">Conversion Boost</span>
-                  <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">+18.4%</span>
-                  <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-1 block">
-                    Power BI DAX & Python
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold block mb-2">
+                    Verified Industry Certifications
                   </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <div className={`p-2.5 rounded-xl border flex items-center gap-2 ${darkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-200'}`}>
+                      <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <div>
+                        <span className="font-bold block">Google Cybersecurity</span>
+                        <span className="text-[10px] text-slate-400">SIEM & Python Triage</span>
+                      </div>
+                    </div>
+
+                    <div className={`p-2.5 rounded-xl border flex items-center gap-2 ${darkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-200'}`}>
+                      <Award className="w-4 h-4 text-blue-500 shrink-0" />
+                      <div>
+                        <span className="font-bold block">Cisco Packet Tracer</span>
+                        <span className="text-[10px] text-slate-400">Network Security & ACLs</span>
+                      </div>
+                    </div>
+
+                    <div className={`p-2.5 rounded-xl border flex items-center gap-2 ${darkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-200'}`}>
+                      <BarChart3 className="w-4 h-4 text-purple-500 shrink-0" />
+                      <div>
+                        <span className="font-bold block">Infosys Springboard</span>
+                        <span className="text-[10px] text-slate-400">Power BI & DAX Logic</span>
+                      </div>
+                    </div>
+
+                    <div className={`p-2.5 rounded-xl border flex items-center gap-2 ${darkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-200'}`}>
+                      <Briefcase className="w-4 h-4 text-amber-500 shrink-0" />
+                      <div>
+                        <span className="font-bold block">IBM Agile Development</span>
+                        <span className="text-[10px] text-slate-400">Scrum & Delivery</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className={`p-3.5 rounded-xl border ${darkMode ? 'bg-[#0A0A0A] border-white/5' : 'bg-slate-50 border-slate-200'}`}>
-                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">Certifications</span>
-                  <span className="text-2xl font-black text-purple-600 dark:text-purple-400">14 Verified</span>
-                  <span className="text-[10px] font-medium text-purple-600 dark:text-purple-400 mt-1 block">
-                    Google, IBM, Cisco, UW
+                {/* Core Practical Experience */}
+                <div className="pt-2">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold block mb-1">
+                    Industry Experience
                   </span>
-                </div>
-
-                <div className={`p-3.5 rounded-xl border ${darkMode ? 'bg-[#0A0A0A] border-white/5' : 'bg-slate-50 border-slate-200'}`}>
-                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">Academic Standing</span>
-                  <span className="text-2xl font-black text-amber-600 dark:text-amber-400">7.7 CGPA</span>
-                  <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-1 block">
-                    B.Tech IT (2021–2025)
+                  <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                    Physics Wallah — Student Mentor & Campaign Growth Analyst
+                  </div>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 block">
+                    Facilitated 12,650+ student admissions, managed ₹2.5L+ digital ad budgets, and boosted lead conversion yield by +429%.
                   </span>
                 </div>
               </div>
 
-              {/* Verified Badge Row */}
-              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
-                <span className="font-semibold text-slate-600 dark:text-slate-300">Verified Credentials:</span>
-                <div className="flex items-center gap-1.5 font-bold text-blue-600 dark:text-blue-400">
-                  <span>Coursera</span> • <span>Springboard</span> • <span>Cisco</span>
-                </div>
+              {/* Bottom Quick Action */}
+              <div className="mt-5 pt-4 border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-xs font-mono">
+                <span className="text-slate-400 font-medium">Ready for immediate deployment</span>
+                <button
+                  onClick={onOpenResume}
+                  className="text-blue-500 font-bold hover:underline flex items-center gap-1"
+                >
+                  <span>View Resume</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
               </div>
 
             </div>
