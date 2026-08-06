@@ -58,10 +58,10 @@ export const Hero: React.FC<HeroProps> = ({
 
   // Animated role text rotator
   const rolesList = [
-    "Business Intelligence & Data Analytics Specialist",
-    "Physics Wallah Senior Marketing Associate",
-    "Infosys Certified Data Analyst",
-    "Cisco Cybersecurity & SOC Trainee"
+    "Data Analytics & Business Intelligence Specialist",
+    "Senior Associate at Physics Wallah",
+    "Infosys Certified Data Analytics Intern",
+    "Cisco Network Security & SOC Trainee"
   ];
   const [roleIdx, setRoleIdx] = useState(0);
 
@@ -192,7 +192,7 @@ export const Hero: React.FC<HeroProps> = ({
 
 
             {/* Main Headline with Profile Photo / Initials Avatar */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex flex-col xs:flex-row items-start xs:items-center gap-3 sm:gap-5">
               <motion.div 
                 layoutId="hero-avatar-container"
                 className="relative group w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-1 bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 shadow-xl shrink-0 flex items-center justify-center overflow-hidden"
@@ -242,7 +242,7 @@ export const Hero: React.FC<HeroProps> = ({
                 </span>
               </motion.div>
               
-              <div>
+              <div className="flex-1 min-w-0">
                 {uploadMessage && (
                   <div className="mb-2 text-xs font-semibold px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-500 border border-blue-500/20 inline-block animate-pulse">
                     {uploadMessage}
@@ -251,24 +251,24 @@ export const Hero: React.FC<HeroProps> = ({
                 <motion.h1 
                   id="hero-heading" 
                   layoutId="hero-user-name"
-                  className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight"
+                  className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight"
                 >
                   Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-indigo-300 dark:to-purple-400">{info.name}</span>
                 </motion.h1>
                 
                 {/* Dynamic Rotating Role Badge */}
-                <div className="h-7 overflow-hidden mt-1 flex items-center">
+                <div className="min-h-[32px] overflow-hidden mt-1 flex items-center">
                   <AnimatePresence mode="wait">
                     <motion.p 
                       key={roleIdx}
-                      initial={{ opacity: 0, y: 15 }}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -15 }}
+                      exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.3 }}
-                      className="text-xs sm:text-sm font-extrabold text-blue-600 dark:text-blue-400 flex items-center gap-1.5"
+                      className="text-xs sm:text-sm font-extrabold text-blue-600 dark:text-blue-400 flex items-center gap-1.5 leading-normal"
                     >
-                      <Terminal className="w-3.5 h-3.5 text-indigo-500" />
-                      <span>{rolesList[roleIdx]}</span>
+                      <Terminal className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                      <span className="break-words">{rolesList[roleIdx]}</span>
                     </motion.p>
                   </AnimatePresence>
                 </div>
@@ -276,7 +276,7 @@ export const Hero: React.FC<HeroProps> = ({
             </div>
 
             {/* Subtitle / Role Focus */}
-            <p className={`text-base sm:text-lg font-medium leading-relaxed ${
+            <p className={`text-sm sm:text-base lg:text-lg font-medium leading-relaxed ${
               darkMode ? 'text-slate-300' : 'text-slate-700'
             }`}>
               Senior Associate at <span className="font-semibold text-blue-600 dark:text-blue-400">Physics Wallah</span>. Former <span className="font-semibold text-blue-600 dark:text-blue-400">Infosys</span> Data Analyst Intern & <span className="font-semibold text-blue-600 dark:text-blue-400">Cisco</span> Cybersecurity Virtual Intern.
@@ -320,7 +320,7 @@ export const Hero: React.FC<HeroProps> = ({
                 <button
                   id="hero-cta-recruiter"
                   onClick={onOpenRecruiterBrief}
-                  className="px-5 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-extrabold text-sm shadow-xl shadow-indigo-600/20 flex items-center gap-2 transition-all hover:scale-[1.03]"
+                  className="w-full sm:w-auto px-5 py-3 min-h-[44px] justify-center rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-extrabold text-sm shadow-xl shadow-indigo-600/20 flex items-center gap-2 transition-all hover:scale-[1.03]"
                 >
                   <ShieldCheck className="w-4 h-4 text-cyan-300" />
                   Recruiter 10-Sec Brief
@@ -330,7 +330,7 @@ export const Hero: React.FC<HeroProps> = ({
               <button
                 id="hero-cta-ats"
                 onClick={onOpenATS}
-                className="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-600/25 flex items-center gap-2 transition-all hover:scale-[1.02]"
+                className="w-full sm:w-auto px-5 py-3 min-h-[44px] justify-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-600/25 flex items-center gap-2 transition-all hover:scale-[1.02]"
               >
                 <ShieldCheck className="w-4 h-4" />
                 Run ATS Match Screener
@@ -339,7 +339,7 @@ export const Hero: React.FC<HeroProps> = ({
               <button
                 id="hero-cta-resume"
                 onClick={onOpenResume}
-                className={`px-5 py-3 rounded-xl font-semibold text-sm border flex items-center gap-2 transition-all hover:scale-[1.02] ${
+                className={`w-full sm:w-auto px-5 py-3 min-h-[44px] justify-center rounded-xl font-semibold text-sm border flex items-center gap-2 transition-all hover:scale-[1.02] ${
                   darkMode 
                     ? 'border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800' 
                     : 'border-slate-300 bg-white text-slate-800 hover:bg-slate-100 shadow-sm'
@@ -352,7 +352,7 @@ export const Hero: React.FC<HeroProps> = ({
               <button
                 id="hero-cta-ai"
                 onClick={onOpenAIChat}
-                className={`px-4 py-3 rounded-xl font-semibold text-sm flex items-center gap-2 border border-purple-500/30 transition-all ${
+                className={`w-full sm:w-auto px-4 py-3 min-h-[44px] justify-center rounded-xl font-semibold text-sm flex items-center gap-2 border border-purple-500/30 transition-all ${
                   darkMode ? 'bg-purple-950/40 text-purple-300 hover:bg-purple-900/50' : 'bg-purple-50 text-purple-800 hover:bg-purple-100'
                 }`}
               >

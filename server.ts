@@ -340,6 +340,9 @@ Keep answers concise (2-4 bullet points or short paragraphs), highlight quantita
 
 // START EXPRESS SERVER WITH VITE DEVELOPMENT OR PRODUCTION MIDDLEWARE
 async function startServer() {
+  // Always serve public static assets
+  app.use(express.static(path.join(process.cwd(), 'public')));
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },

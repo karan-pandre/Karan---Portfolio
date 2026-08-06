@@ -34,7 +34,7 @@ export const RecruiterDock: React.FC<RecruiterDockProps> = ({
       drag
       dragMomentum={false}
       dragElastic={0.1}
-      className="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-50 pointer-events-auto cursor-grab active:cursor-grabbing select-none"
+      className="fixed bottom-20 right-3 sm:bottom-5 sm:right-5 z-50 pointer-events-auto cursor-grab active:cursor-grabbing select-none"
     >
       {/* Expanded Glassmorphism Recruiter Hub Card */}
       <AnimatePresence>
@@ -65,7 +65,7 @@ export const RecruiterDock: React.FC<RecruiterDockProps> = ({
 
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 rounded-full text-slate-400 hover:text-slate-200 hover:bg-white/10 transition-colors"
+                className="p-2 -mr-1 rounded-full text-slate-400 hover:text-slate-200 hover:bg-white/10 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
                 title="Minimize Hub"
               >
                 <X className="w-3.5 h-3.5" />
@@ -81,7 +81,7 @@ export const RecruiterDock: React.FC<RecruiterDockProps> = ({
                   onOpenBriefing();
                   setIsOpen(false);
                 }}
-                className={`w-full p-2 rounded-xl flex items-center justify-between gap-2 font-bold transition-all group ${
+                className={`w-full p-2.5 min-h-[44px] rounded-xl flex items-center justify-between gap-2 font-bold transition-all group ${
                   darkMode ? 'bg-gradient-to-r from-emerald-950/40 to-teal-900/30 hover:from-emerald-900/50 hover:to-teal-800/40 text-emerald-300 border border-emerald-500/20' : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200'
                 }`}
               >
@@ -104,7 +104,7 @@ export const RecruiterDock: React.FC<RecruiterDockProps> = ({
                   onOpenResume();
                   setIsOpen(false);
                 }}
-                className={`w-full p-2 rounded-xl flex items-center justify-between gap-2 font-bold transition-all group ${
+                className={`w-full p-2.5 min-h-[44px] rounded-xl flex items-center justify-between gap-2 font-bold transition-all group ${
                   darkMode ? 'bg-white/5 hover:bg-white/10 text-slate-200 border border-white/5' : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200'
                 }`}
               >
@@ -127,7 +127,7 @@ export const RecruiterDock: React.FC<RecruiterDockProps> = ({
                   onOpenATS();
                   setIsOpen(false);
                 }}
-                className={`w-full p-2 rounded-xl flex items-center justify-between gap-2 font-bold transition-all group ${
+                className={`w-full p-2.5 min-h-[44px] rounded-xl flex items-center justify-between gap-2 font-bold transition-all group ${
                   darkMode ? 'bg-white/5 hover:bg-white/10 text-slate-200 border border-white/5' : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200'
                 }`}
               >

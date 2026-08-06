@@ -182,38 +182,45 @@ export const Navbar: React.FC<NavbarProps> = ({
               ? 'bg-[#0A0A0A]/80 border-white/10 shadow-black/40' 
               : 'bg-white/80 border-slate-200/70 shadow-slate-100'
         }`}>
-          <div className="px-3.5 sm:px-5 h-14 sm:h-16 flex items-center justify-between">
+          <div className="px-2.5 sm:px-5 h-14 sm:h-16 flex items-center justify-between gap-1.5 sm:gap-4">
             
             {/* Brand Identity */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 min-w-0 shrink">
               <a 
                 href="#hero" 
                 id="brand-logo-link"
                 onClick={(e) => { e.preventDefault(); scrollToSection('hero'); }}
                 aria-label="Karan Pandre Portfolio Home"
-                className="flex items-center gap-2.5 group"
+                className="flex items-center gap-2 group min-w-0"
               >
-                <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full p-0.5 bg-gradient-to-tr from-emerald-500 via-blue-600 to-indigo-600 shadow-md group-hover:scale-105 transition-transform shrink-0 flex items-center justify-center overflow-hidden">
+                <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full p-0.5 bg-gradient-to-tr from-emerald-500 via-blue-600 to-indigo-600 shadow-md group-hover:scale-105 transition-transform shrink-0 flex items-center justify-center overflow-hidden">
                   {info.avatar ? (
                     <img 
                       src={info.avatar} 
                       alt={info.name} 
                       className="w-full h-full object-cover rounded-full"
                       referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        const parent = e.currentTarget.parentElement;
+                        if (parent) {
+                          const fallback = parent.querySelector('.nav-avatar-fallback');
+                          if (fallback) fallback.classList.remove('hidden');
+                        }
+                      }}
                     />
-                  ) : (
-                    <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center text-white font-black text-xs sm:text-sm tracking-wider">
-                      KP
-                    </div>
-                  )}
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-black rounded-full" title="Available for Cybersecurity Roles" />
+                  ) : null}
+                  <div className={`nav-avatar-fallback ${info.avatar ? 'hidden' : ''} w-full h-full rounded-full bg-slate-900 flex items-center justify-center text-white font-black text-xs sm:text-sm tracking-wider`}>
+                    KP
+                  </div>
+                  <span className="absolute bottom-0 right-0 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-emerald-500 border-2 border-white dark:border-black rounded-full" title="Available for Roles" />
                 </div>
-                <div className="flex flex-col">
-                  <span className={`font-extrabold text-sm sm:text-base tracking-tight leading-none ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                <div className="flex flex-col min-w-0 max-w-[105px] xs:max-w-[145px] sm:max-w-none">
+                  <span className={`font-extrabold text-xs sm:text-base tracking-tight leading-none truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                     {info.name}
                   </span>
-                  <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1 mt-0.5">
-                    Cybersecurity & SOC Analyst
+                  <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 truncate hidden sm:block mt-0.5">
+                    Cybersecurity & Analytics Specialist
                   </span>
                 </div>
               </a>
@@ -251,14 +258,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             </nav>
 
             {/* Header Right Action Tools */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               
               {/* Direct CMS Admin Access Button */}
               <button
                 id="btn-nav-cms-admin"
                 onClick={onOpenCMS}
                 aria-label="Open CMS Admin Management Panel"
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all border shadow-sm ${
+                className={`hidden sm:flex px-2.5 py-1.5 rounded-xl text-xs font-bold items-center gap-1.5 transition-all border shadow-sm ${
                   darkMode 
                     ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20' 
                     : 'bg-amber-50 border-amber-300 text-amber-700 hover:bg-amber-100'
@@ -274,7 +281,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 id="btn-quick-search"
                 onClick={onOpenSearch}
                 aria-label="Search Skills & Projects"
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all border ${
+                className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all border ${
                   darkMode 
                     ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10' 
                     : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
@@ -283,7 +290,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <Search className="w-3.5 h-3.5 text-emerald-500" />
                 <span className="hidden sm:inline text-[11px]">Search</span>
-                <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-mono font-bold rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                <kbd className="hidden md:inline-block px-1.5 py-0.5 text-[9px] font-mono font-bold rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                   ⌘K
                 </kbd>
               </button>
@@ -294,11 +301,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   id="btn-tools-dropdown"
                   onClick={() => setToolsDropdownOpen(!toolsDropdownOpen)}
                   aria-expanded={toolsDropdownOpen}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all hover:scale-105"
+                  className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all hover:scale-105"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
-                  <span className="hidden sm:inline">AI & Tools</span>
-                  <span className="sm:hidden">Tools</span>
+                  <span className="hidden xs:inline">Tools</span>
                   <ChevronDown className={`w-3 h-3 transition-transform ${toolsDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
@@ -373,7 +379,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setDarkMode(!darkMode);
                 }}
                 aria-label={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                className={`p-2 rounded-xl transition-all border ${
+                className={`p-1.5 sm:p-2 rounded-xl transition-all border ${
                   darkMode ? 'bg-white/5 border-white/10 text-amber-400 hover:bg-white/10' : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
                 }`}
                 title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
@@ -386,7 +392,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 id="btn-sound-toggle"
                 onClick={handleToggleAudio}
                 aria-label={isAudioMuted ? "Unmute Sound FX" : "Mute Sound FX"}
-                className={`p-2 rounded-xl transition-all border relative group ${
+                className={`hidden sm:flex p-2 rounded-xl transition-all border relative group ${
                   isAudioMuted
                     ? darkMode ? 'bg-white/5 border-white/10 text-slate-500 hover:bg-white/10' : 'bg-slate-100 border-slate-200 text-slate-400 hover:bg-slate-200'
                     : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/20 shadow-sm'
@@ -401,7 +407,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 id="btn-mobile-menu"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label="Toggle Navigation Menu"
-                className={`lg:hidden p-2 rounded-xl border ${
+                className={`lg:hidden p-1.5 sm:p-2 rounded-xl border ${
                   darkMode ? 'bg-white/5 border-white/10 text-slate-200' : 'bg-slate-100 border-slate-200 text-slate-800'
                 }`}
               >

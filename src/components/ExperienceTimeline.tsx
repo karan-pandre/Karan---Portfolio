@@ -72,11 +72,11 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ darkMode
         </div>
 
         {/* Filter Controls */}
-        <div className="flex justify-center gap-2 mb-12">
+        <div className="flex flex-wrap justify-center gap-2 mb-10 sm:mb-12">
           <button
             id="btn-filter-exp-all"
             onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+            className={`px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all min-h-[44px] ${
               filter === 'all'
                 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 scale-105'
                 : darkMode ? 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
@@ -89,7 +89,7 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ darkMode
           <button
             id="btn-filter-exp-work"
             onClick={() => setFilter('work')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+            className={`px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all min-h-[44px] ${
               filter === 'work'
                 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 scale-105'
                 : darkMode ? 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
@@ -102,7 +102,7 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ darkMode
           <button
             id="btn-filter-exp-edu"
             onClick={() => setFilter('education')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+            className={`px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all min-h-[44px] ${
               filter === 'education'
                 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 scale-105'
                 : darkMode ? 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
@@ -138,7 +138,7 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ darkMode
                   </div>
 
                   {/* Experience Card */}
-                  <div className={`p-6 sm:p-8 rounded-2xl border shadow-lg transition-all ${
+                  <div className={`p-5 sm:p-8 rounded-2xl border shadow-lg transition-all ${
                     darkMode ? 'bg-[#141414] border-white/10 hover:border-indigo-500/40 hover:shadow-indigo-500/10' : 'bg-white border-slate-200 hover:border-indigo-300 hover:shadow-xl'
                   }`}>
                     
@@ -179,7 +179,7 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ darkMode
 
                     {/* Quick Metric Pills Bar */}
                     {metrics.length > 0 && (
-                      <div className="grid grid-cols-3 gap-2 my-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 my-4">
                         {metrics.map((m, i) => (
                           <div key={i} className={`p-2 rounded-xl text-center border ${
                             darkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-200'

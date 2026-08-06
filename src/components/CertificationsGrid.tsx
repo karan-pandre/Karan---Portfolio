@@ -138,7 +138,7 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
                   key={cat}
                   id={`btn-cert-cat-${cat.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 min-h-[44px] ${
                     isActive
                       ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30 scale-105'
                       : darkMode ? 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
@@ -262,9 +262,9 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
                     <button
                       id={`btn-inspect-seal-${cert.id}`}
                       onClick={() => handleInspectCert(cert)}
-                      className="text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-amber-500 flex items-center gap-1 transition-colors"
+                      className="px-3 py-2 min-h-[44px] text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-amber-500 flex items-center gap-1 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
                     >
-                      <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                      <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
                       <span>Inspect Seal</span>
                     </button>
 
@@ -273,7 +273,7 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
                       href={cert.verifyUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center gap-1 shadow-sm transition-all hover:scale-105"
+                      className="px-3.5 py-2.5 min-h-[44px] rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center gap-1 shadow-sm transition-all hover:scale-105"
                     >
                       <span>Live Credential</span>
                       <ExternalLink className="w-3 h-3" />
@@ -283,7 +283,7 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
                 </div>
 
                 {/* On-Hover Glassmorphism Technical Detail Reveal Overlay */}
-                <div className="absolute inset-0 bg-[#0c0a09]/92 dark:bg-[#09090b]/94 backdrop-blur-xl opacity-0 group-hover:opacity-100 transition-all duration-300 p-5 flex flex-col justify-between z-30 pointer-events-none group-hover:pointer-events-auto border-2 border-amber-500/40 rounded-2xl">
+                <div className="hidden md:flex absolute inset-0 bg-[#0c0a09]/92 dark:bg-[#09090b]/94 backdrop-blur-xl opacity-0 group-hover:opacity-100 transition-all duration-300 p-5 flex-col justify-between z-30 pointer-events-none group-hover:pointer-events-auto border-2 border-amber-500/40 rounded-2xl">
                   <div>
                     <div className="flex items-center justify-between mb-2 pb-2 border-b border-amber-500/20">
                       <span className="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-amber-500 text-black">
@@ -348,7 +348,7 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ duration: 0.25 }}
-              className={`max-w-2xl w-full p-6 sm:p-8 rounded-3xl border shadow-2xl relative overflow-hidden ${
+              className={`max-w-2xl w-full p-4 sm:p-8 rounded-3xl border shadow-2xl relative overflow-hidden ${
                 darkMode ? 'bg-[#121212] border-amber-500/30 text-slate-100' : 'bg-white border-amber-400 text-slate-900'
               }`}
             >
