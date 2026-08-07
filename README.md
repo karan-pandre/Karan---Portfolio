@@ -203,7 +203,6 @@ To sync all code changes directly to your GitHub repository (`karanpandre`):
 
 - **Name**: Karan U. Pandre
 - **Role**: Senior Associate (Physics Wallah) | B.Tech Information Technology Graduate
-- **Email**: [karanpandre3@gmail.com](mailto:karanpandre3@gmail.com)
 - **LinkedIn**: [linkedin.com/in/karanpandre](https://linkedin.com/in/karanpandre)
 - **GitHub**: [github.com/karanpandre](https://github.com/karanpandre)
 
