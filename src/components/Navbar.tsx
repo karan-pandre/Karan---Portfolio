@@ -426,13 +426,38 @@ export const Navbar: React.FC<NavbarProps> = ({
           <AnimatePresence>
             {mobileMenuOpen && (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className={`lg:hidden border-t px-4 py-4 space-y-4 rounded-b-2xl overflow-y-auto max-h-[82vh] shadow-2xl ${
+                initial={{ opacity: 0, height: 0, y: -10 }}
+                animate={{ opacity: 1, height: 'auto', y: 0 }}
+                exit={{ opacity: 0, height: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                className={`lg:hidden border-t px-4 pb-4 pt-2 space-y-3.5 rounded-b-2xl overflow-y-auto max-h-[82vh] shadow-2xl relative ${
                   darkMode ? 'bg-[#161616] border-white/10' : 'bg-white border-slate-200'
                 }`}
               >
+                {/* Drag Handle Bar for Swipe-to-Close Gesture */}
+                <motion.div
+                  drag="y"
+                  dragConstraints={{ top: -100, bottom: 100 }}
+                  dragElastic={0.4}
+                  onDragEnd={(_, info) => {
+                    if (Math.abs(info.offset.y) > 35 || Math.abs(info.velocity.y) > 180) {
+                      soundFx.playCyberBlip();
+                      setMobileMenuOpen(false);
+                    }
+                  }}
+                  onClick={() => {
+                    soundFx.playCyberBlip();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full flex flex-col items-center justify-center cursor-grab active:cursor-grabbing pb-1 pt-0.5 touch-none group"
+                  title="Swipe up/down or tap to close menu"
+                >
+                  <div className="w-12 h-1.5 rounded-full bg-slate-400/50 group-hover:bg-emerald-500 transition-colors shadow-sm" />
+                  <div className="flex items-center gap-1 mt-1 text-[10px] font-mono text-slate-400 font-semibold select-none group-hover:text-emerald-400 transition-colors">
+                    <span>Swipe or tap handle to close</span>
+                  </div>
+                </motion.div>
+
                 {/* Top Quick Actions Grid */}
                 <div className="grid grid-cols-3 gap-2">
                   <button
