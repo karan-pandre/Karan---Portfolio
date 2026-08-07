@@ -9,8 +9,10 @@ import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { CoreCompetencies } from './components/CoreCompetencies';
 import { InteractiveDashboards } from './components/InteractiveDashboards';
+import { DataPipelineSimulator } from './components/DataPipelineSimulator';
 import { ExperienceTimeline } from './components/ExperienceTimeline';
 import { ProjectsSection } from './components/ProjectsSection';
+import { ValueImpactCalculator } from './components/ValueImpactCalculator';
 import { CertificationsGrid } from './components/CertificationsGrid';
 import { ATSResumeOptimizer } from './components/ATSResumeOptimizer';
 import { AICareerAssistant } from './components/AICareerAssistant';
@@ -23,6 +25,31 @@ import { SearchModal } from './components/SearchModal';
 import { MouseSpotlight } from './components/MouseSpotlight';
 import { ScrollProgressBar } from './components/ScrollProgressBar';
 import { Footer } from './components/Footer';
+
+// Motion Staggered Variants for Main Sections
+const mainContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.14,
+      delayChildren: 0.08
+    }
+  }
+};
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 40, filter: 'blur(4px)' },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 0.65,
+      ease: [0.22, 1, 0.36, 1]
+    }
+  }
+};
 
 export default function App() {
   const [darkMode, setDarkMode] = useState<boolean>(true);
@@ -186,70 +213,96 @@ export default function App() {
       />
 
       {/* Main Content Sections */}
-      <main id="main-content" role="main">
-        <Hero
-          darkMode={darkMode}
-          onOpenATS={() => {
-            const el = document.getElementById('ats-screener');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-          onOpenResume={() => setShowResumeModal(true)}
-          onOpenAIChat={() => setShowAIChatModal(true)}
-          onOpenRecruiterBrief={() => setShowRecruiterBriefModal(true)}
-          personalInfo={activeData?.personalInfo}
-          onRefreshData={fetchPortfolioData}
-        />
+      <motion.main
+        id="main-content"
+        role="main"
+        variants={mainContainerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div variants={sectionVariants}>
+          <Hero
+            darkMode={darkMode}
+            onOpenATS={() => {
+              const el = document.getElementById('ats-screener');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            onOpenResume={() => setShowResumeModal(true)}
+            onOpenAIChat={() => setShowAIChatModal(true)}
+            onOpenRecruiterBrief={() => setShowRecruiterBriefModal(true)}
+            personalInfo={activeData?.personalInfo}
+            onRefreshData={fetchPortfolioData}
+          />
+        </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
         >
           <CoreCompetencies darkMode={darkMode} />
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
         >
           <InteractiveDashboards darkMode={darkMode} />
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+        >
+          <DataPipelineSimulator darkMode={darkMode} />
+        </motion.div>
+
+        <motion.div
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
         >
           <ExperienceTimeline darkMode={darkMode} experiences={activeData?.workExperiences} />
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
         >
           <ProjectsSection darkMode={darkMode} projects={activeData?.projects} />
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+        >
+          <ValueImpactCalculator darkMode={darkMode} />
+        </motion.div>
+
+        <motion.div
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
         >
           <CertificationsGrid darkMode={darkMode} certifications={activeData?.certifications} />
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
         >
           <ATSResumeOptimizer
             darkMode={darkMode}
@@ -258,17 +311,17 @@ export default function App() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
         >
           <ContactSection
             darkMode={darkMode}
             onOpenAIChat={() => setShowAIChatModal(true)}
           />
         </motion.div>
-      </main>
+      </motion.main>
 
       {/* Footer */}
       <Footer

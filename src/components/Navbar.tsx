@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Sun, Moon, Shield, Search, Sparkles, FileText, Lock, 
   Menu, X, ChevronDown, BarChart2,
-  Briefcase, Award, Code2, Cpu,
+  Briefcase, Award, Code2, Cpu, Terminal,
   Compass, Mail, Home, ArrowUp, Volume2, VolumeX
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -93,10 +93,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navLinks = [
     { id: 'hero', label: 'Overview', icon: Home, href: '#hero' },
     { id: 'competencies', label: 'Skills', icon: Cpu, href: '#competencies' },
-    { id: 'dashboards', label: 'SIEM & Dashboards', icon: BarChart2, href: '#dashboards' },
+    { id: 'dashboards', label: 'SIEM & Analytics', icon: BarChart2, href: '#dashboards' },
+    { id: 'pipeline-simulator', label: 'Log Pipeline', icon: Terminal, href: '#pipeline-simulator' },
     { id: 'experience', label: 'Experience', icon: Briefcase, href: '#experience' },
     { id: 'projects', label: 'Projects', icon: Code2, href: '#projects' },
+    { id: 'impact-calculator', label: 'ROI Estimator', icon: Compass, href: '#impact-calculator' },
     { id: 'certifications', label: 'Certifications', icon: Award, href: '#certifications' },
+    { id: 'ats-screener', label: 'ATS Matcher', icon: Shield, href: '#ats-screener' },
     { id: 'contact', label: 'Contact', icon: Mail, href: '#contact' },
   ];
 
@@ -150,19 +153,21 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const scrollToSection = (id: string) => {
     soundFx.playCyberBlip();
-    const el = document.getElementById(id);
-    if (el) {
-      const offset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = el.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
+    setMobileMenuOpen(false);
+    setToolsDropdownOpen(false);
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
+    // Give mobile menu animation 60ms to collapse so position calculation is precise
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        const yOffset = -75;
+        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({
+          top: Math.max(0, y),
+          behavior: 'smooth'
+        });
+      }
+    }, 60);
   };
 
   return (
@@ -316,7 +321,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-full mt-2 w-72 sm:w-80 z-50 pointer-events-auto"
+                      className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] max-w-xs sm:w-80 z-50 pointer-events-auto"
                     >
                       <div className={`p-3 rounded-2xl border shadow-2xl backdrop-blur-2xl ${
                         darkMode ? 'bg-[#161616]/95 border-white/15 text-slate-200' : 'bg-white/95 border-slate-200 text-slate-800'
@@ -424,69 +429,94 @@ export const Navbar: React.FC<NavbarProps> = ({
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className={`lg:hidden border-t px-4 py-4 space-y-4 rounded-b-2xl overflow-hidden ${
+                className={`lg:hidden border-t px-4 py-4 space-y-4 rounded-b-2xl overflow-y-auto max-h-[82vh] shadow-2xl ${
                   darkMode ? 'bg-[#161616] border-white/10' : 'bg-white border-slate-200'
                 }`}
               >
+                {/* Top Quick Actions Grid */}
                 <div className="grid grid-cols-3 gap-2">
                   <button
+                    type="button"
                     onClick={() => { onOpenAIChat(); setMobileMenuOpen(false); }}
-                    className="flex items-center justify-center gap-1.5 p-2 rounded-xl bg-blue-600 text-white text-xs font-bold"
+                    className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl bg-blue-600 active:bg-blue-700 text-white text-xs font-bold shadow-sm transition-all"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-amber-300" /> AI Twin
                   </button>
                   <button
+                    type="button"
                     onClick={() => { onOpenATS(); setMobileMenuOpen(false); }}
-                    className="flex items-center justify-center gap-1.5 p-2 rounded-xl bg-emerald-600 text-white text-xs font-bold"
+                    className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl bg-emerald-600 active:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all"
                   >
-                    <Shield className="w-3.5 h-3.5" /> ATS Matcher
+                    <Shield className="w-3.5 h-3.5" /> ATS Match
                   </button>
                   <button
+                    type="button"
                     onClick={() => { onOpenCMS(); setMobileMenuOpen(false); }}
-                    className="flex items-center justify-center gap-1.5 p-2 rounded-xl bg-amber-600 text-white text-xs font-bold"
+                    className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl bg-amber-600 active:bg-amber-700 text-white text-xs font-bold shadow-sm transition-all"
                   >
                     <Lock className="w-3.5 h-3.5" /> CMS Admin
                   </button>
                 </div>
 
+                {/* Section Jumps */}
                 <div className="space-y-1 pt-1">
-                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 pb-1">
-                    Navigation Jump
+                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3 pb-1 flex items-center justify-between">
+                    <span>Navigation Jump</span>
+                    <span className="text-[9px] font-mono text-emerald-500 font-bold">Tap to scroll</span>
                   </div>
-                  {navLinks.map((link) => (
-                    <button
-                      key={link.id}
-                      onClick={() => {
-                        scrollToSection(link.id);
-                        setMobileMenuOpen(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between ${
-                        activeSection === link.id
-                          ? 'bg-emerald-600 text-white font-bold'
-                          : darkMode ? 'text-slate-200 hover:bg-white/10' : 'text-slate-800 hover:bg-slate-100'
-                      }`}
-                    >
-                      <span>{link.label}</span>
-                      {activeSection === link.id && <span className="text-[10px]">Active</span>}
-                    </button>
-                  ))}
+                  {navLinks.map((link) => {
+                    const IconComponent = link.icon;
+                    const isActive = activeSection === link.id;
+                    return (
+                      <button
+                        key={link.id}
+                        type="button"
+                        onClick={() => scrollToSection(link.id)}
+                        className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all active:scale-[0.98] ${
+                          isActive
+                            ? 'bg-emerald-600 text-white font-bold shadow-md'
+                            : darkMode ? 'text-slate-200 hover:bg-white/10 active:bg-white/15' : 'text-slate-800 hover:bg-slate-100 active:bg-slate-200'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2.5">
+                          <IconComponent className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                          {link.label}
+                        </span>
+                        {isActive && (
+                          <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono font-bold">
+                            Active
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
 
-                <div className="pt-2 border-t border-slate-200 dark:border-white/10 flex items-center justify-between">
+                {/* Bottom Quick Tools Bar */}
+                <div className="pt-2 border-t border-slate-200 dark:border-white/10 flex items-center justify-between gap-1">
                   <button
+                    type="button"
                     onClick={() => { onOpenResume(); setMobileMenuOpen(false); }}
-                    className="text-xs font-semibold text-blue-500 flex items-center gap-1"
+                    className="text-xs font-bold text-blue-500 hover:text-blue-400 active:scale-95 flex items-center gap-1.5 py-2 px-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20"
                   >
                     <FileText className="w-3.5 h-3.5" /> Resume PDF
                   </button>
                   {onOpenRecruiterBrief && (
                     <button
+                      type="button"
                       onClick={() => { onOpenRecruiterBrief(); setMobileMenuOpen(false); }}
-                      className="text-xs font-semibold text-purple-500 flex items-center gap-1"
+                      className="text-xs font-bold text-purple-500 hover:text-purple-400 active:scale-95 flex items-center gap-1.5 py-2 px-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20"
                     >
-                      <Compass className="w-3.5 h-3.5" /> Recruiter Brief
+                      <Compass className="w-3.5 h-3.5" /> Brief
                     </button>
                   )}
+                  <button
+                    type="button"
+                    onClick={() => { onOpenSearch(); setMobileMenuOpen(false); }}
+                    className="text-xs font-bold text-emerald-500 hover:text-emerald-400 active:scale-95 flex items-center gap-1.5 py-2 px-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20"
+                  >
+                    <Search className="w-3.5 h-3.5" /> Search
+                  </button>
                 </div>
               </motion.div>
             )}
