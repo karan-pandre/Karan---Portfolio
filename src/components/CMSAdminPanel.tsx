@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Lock, KeyRound, Save, Inbox, AlertCircle, 
   X, RefreshCw, Database, Plus, Trash2, Download, Shield, Edit3, Mail, Trash, Upload,
-  Sparkles, Layers, Award, Activity, CheckCircle2, Eye, RotateCcw, User, Briefcase, Building2,
+  Sparkles, Layers, Award, Activity, CheckCircle2, Eye, EyeOff, RotateCcw, User, Briefcase, Building2,
   Calendar, MapPin, Star
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -28,6 +28,7 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [passkeyInput, setPasskeyInput] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'overview' | 'experience' | 'projects' | 'certifications' | 'profile' | 'inbox' | 'backup'>('overview');
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -87,14 +88,14 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
       try {
         localStorage.setItem('karan_cms_auth_session', JSON.stringify({
           authenticated: true,
-          passkey: activeKey || 'Karan@port3',
+          passkey: 'authenticated',
           timestamp: Date.now()
         }));
       } catch (err) {
         console.warn('Error saving session to localStorage:', err);
       }
     } else {
-      setAuthError('Please enter passkey (e.g., Karan@port3 or admin).');
+      setAuthError('Incorrect security passkey. Access denied.');
     }
   };
 
@@ -161,7 +162,7 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          authPin: passkeyInput || 'Karan@port3',
+          authPin: passkeyInput || 'authenticated',
           data: payload
         })
       });
@@ -537,18 +538,27 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
             </div>
 
             <form onSubmit={handleAuthenticate} className="space-y-4">
-              <div className="relative">
+              <div className="relative flex items-center">
                 <input
                   id="cms-password-input"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Enter Security Password"
                   value={passkeyInput}
                   onChange={(e) => setPasskeyInput(e.target.value)}
-                  className={`w-full text-center px-4 py-3.5 rounded-xl font-mono text-sm border focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+                  className={`w-full text-center px-10 py-3.5 rounded-xl font-mono text-sm border focus:outline-none focus:ring-2 focus:ring-amber-500 ${
                     darkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-100 border-slate-300 text-slate-900'
                   }`}
                   autoFocus
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 text-slate-400 hover:text-slate-200 p-1 rounded-lg transition-colors"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
 
               {authError && (
