@@ -7,11 +7,33 @@ import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { CERTIFICATIONS } from '../data/karanData';
 import { Certification } from '../types';
+import { MagneticCard } from './MagneticCard';
 
 interface CertificationsGridProps {
   darkMode: boolean;
   certifications?: Certification[];
 }
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.05
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 25, scale: 0.96 },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1.0] } 
+  }
+};
 
 export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode, certifications }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -221,22 +243,26 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
           </div>
         ) : (
           /* Certifications Cards Grid */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+          >
             {filteredCerts.map((cert) => (
-              <motion.div 
-                key={cert.id}
-                layout
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.25 }}
-                whileHover={{ y: -5, transition: { duration: 0.15 } }}
-                className={`group rounded-2xl specular-shine flex flex-col justify-between overflow-hidden relative transition-all duration-300 ${
-                  darkMode 
-                    ? 'glass-panel-dark hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-500/10' 
-                    : 'glass-panel-light hover:border-amber-400 hover:shadow-2xl'
-                }`}
-              >
+              <MagneticCard key={cert.id} intensity={8} className="h-full">
+                <motion.div 
+                  layout
+                  variants={itemVariants}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                  className={`group rounded-2xl specular-shine flex flex-col justify-between overflow-hidden relative transition-all duration-300 h-full ${
+                    darkMode 
+                      ? 'glass-panel-dark hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-500/10' 
+                      : 'glass-panel-light hover:border-amber-400 hover:shadow-2xl'
+                  }`}
+                >
                 {/* Visual Certificate Header Banner */}
                 <div 
                   onClick={() => handleInspectCert(cert)}
@@ -324,8 +350,9 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
 
                 </div>
               </motion.div>
-            ))}
-          </div>
+            </MagneticCard>
+          ))}
+          </motion.div>
         )}
 
       </div>

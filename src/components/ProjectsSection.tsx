@@ -6,6 +6,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { PROJECTS } from '../data/karanData';
 import { Project } from '../types';
+import { MagneticCard } from './MagneticCard';
 
 interface ProjectsSectionProps {
   darkMode: boolean;
@@ -99,17 +100,17 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ darkMode, proj
         >
           <AnimatePresence>
             {filteredProjects.map((project, idx) => (
-              <motion.div 
-                key={project.id}
-                layout
-                initial={{ opacity: 0, y: 25 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className={`p-5 sm:p-6 rounded-2xl specular-shine flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 group relative overflow-hidden ${
-                  darkMode ? 'glass-panel-dark hover:border-blue-500/50' : 'glass-panel-light hover:border-blue-400 hover:shadow-2xl'
-                }`}
-              >
+              <MagneticCard key={project.id} intensity={8}>
+                <motion.div 
+                  layout
+                  initial={{ opacity: 0, y: 25 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.4, delay: idx * 0.05 }}
+                  className={`p-5 sm:p-6 rounded-2xl specular-shine flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 group relative overflow-hidden h-full ${
+                    darkMode ? 'glass-panel-dark hover:border-blue-500/50' : 'glass-panel-light hover:border-blue-400 hover:shadow-2xl'
+                  }`}
+                >
                 <div>
                   {/* Header Category & Badge */}
                   <div className="flex items-center justify-between gap-2 mb-3">
@@ -244,7 +245,8 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ darkMode, proj
                 </div>
 
               </motion.div>
-            ))}
+            </MagneticCard>
+          ))}
           </AnimatePresence>
         </motion.div>
 

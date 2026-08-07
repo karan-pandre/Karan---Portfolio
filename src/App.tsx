@@ -119,15 +119,38 @@ export default function App() {
 
       {/* Live Preview Mode Floating Banner */}
       {isPreviewActive && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-40 bg-amber-500 text-slate-950 px-4 py-2 rounded-2xl font-bold text-xs shadow-2xl border border-amber-300 flex items-center gap-3 backdrop-blur-md animate-bounce">
-          <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-950 animate-ping" />
-            <span>Preview Mode Active (Showing Unsaved CMS Edits)</span>
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 px-4 py-2.5 rounded-2xl font-bold text-xs shadow-2xl border border-amber-300 flex flex-wrap items-center justify-between gap-3 backdrop-blur-md animate-bounce">
+          <span className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-950 animate-ping" />
+            <span className="tracking-tight">Preview Mode Active (Showing Draft CMS Edits)</span>
           </span>
           <div className="flex items-center gap-1.5 border-l border-slate-950/20 pl-3">
             <button
+              onClick={async () => {
+                if (previewData) {
+                  setPortfolioData(previewData);
+                  try {
+                    localStorage.setItem('karan_cms_persisted_data', JSON.stringify(previewData));
+                    await fetch('/api/portfolio-data', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ authPin: 'authenticated', data: previewData })
+                    });
+                  } catch (err) {
+                    console.warn('Error persisting preview data:', err);
+                  }
+                  setIsPreviewActive(false);
+                  setPreviewData(null);
+                  alert('Preview changes published successfully to live portfolio!');
+                }
+              }}
+              className="px-3 py-1 rounded-lg bg-emerald-950 text-emerald-300 font-extrabold text-[11px] hover:bg-emerald-900 transition-colors shadow-sm flex items-center gap-1"
+            >
+              <span>Save & Publish</span>
+            </button>
+            <button
               onClick={() => setShowCMSModal(true)}
-              className="px-2.5 py-1 rounded-lg bg-slate-950 text-amber-400 font-extrabold text-[11px] hover:bg-slate-900 transition-colors"
+              className="px-2.5 py-1 rounded-lg bg-slate-950 text-amber-300 font-extrabold text-[11px] hover:bg-slate-900 transition-colors"
             >
               Return to CMS
             </button>
@@ -138,7 +161,7 @@ export default function App() {
               }}
               className="px-2 py-1 rounded-lg bg-slate-950/10 hover:bg-slate-950/20 text-slate-950 text-[11px] font-bold transition-colors"
             >
-              Exit Preview
+              Discard
             </button>
           </div>
         </div>

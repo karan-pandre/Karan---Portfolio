@@ -57,8 +57,11 @@
  │  🌙 3D DARK MODE GLASS   : Deep space navy background (#0a0f1d) with ambient  │
  │                            glowing light orbs and specular shine reflections│
  │                                                                             │
- │  ⚡ CMS REAL-TIME SYNC   : Instant client preview fallback and backend POST   │
- │                            persistence for zero downtime content editing.   │
+ │  ⚡ 30S DRAFT AUTO-SAVE   : Background interval saves draft changes to       │
+ │                            localStorage every 30s with timestamp badge.     │
+ │                                                                             │
+ │  👁️ LIVE PAGE PREVIEW    : Test edits on main page before saving with       │
+ │                            top floating banner and 1-click Publish option.  │
  └─────────────────────────────────────────────────────────────────────────────┘
 ```
 

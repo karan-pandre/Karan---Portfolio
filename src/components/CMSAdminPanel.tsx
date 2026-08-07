@@ -33,6 +33,7 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
   const [activeTab, setActiveTab] = useState<'overview' | 'experience' | 'projects' | 'certifications' | 'profile' | 'inbox' | 'backup'>('overview');
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [saveSuccess, setSaveSuccess] = useState<string>('');
+  const [lastAutoSaved, setLastAutoSaved] = useState<string | null>(null);
 
   // Editable States
   const [editableInfo, setEditableInfo] = useState<any>(portfolioData?.personalInfo || PERSONAL_INFO);
@@ -40,6 +41,31 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
   const [editableProjects, setEditableProjects] = useState<Project[]>(portfolioData?.projects || PROJECTS);
   const [editableCerts, setEditableCerts] = useState<Certification[]>(portfolioData?.certifications || CERTIFICATIONS);
   const [editableMessages, setEditableMessages] = useState<ContactMessage[]>(portfolioData?.messages || []);
+
+  // 30-Second Auto-Save Draft Interval
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const autoSaveTimer = setInterval(() => {
+      const draftPayload = {
+        personalInfo: editableInfo,
+        workExperiences: editableExperiences,
+        projects: editableProjects,
+        certifications: editableCerts,
+        messages: editableMessages,
+        timestamp: Date.now()
+      };
+      try {
+        localStorage.setItem('karan_cms_auto_draft_v2', JSON.stringify(draftPayload));
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        setLastAutoSaved(timeStr);
+      } catch (err) {
+        console.warn('Auto-save error:', err);
+      }
+    }, 30000);
+
+    return () => clearInterval(autoSaveTimer);
+  }, [isAuthenticated, editableInfo, editableExperiences, editableProjects, editableCerts, editableMessages]);
 
   // Search & Filter states inside CMS
   const [expSearch, setExpSearch] = useState<string>('');
@@ -677,11 +703,24 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
               </div>
 
               {/* Action Controls */}
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Auto-Save Status Badge */}
+                <div className={`px-2.5 py-1 rounded-lg border text-[11px] font-mono font-medium flex items-center gap-1.5 ${
+                  darkMode ? 'border-slate-800 bg-slate-900/80 text-slate-300' : 'border-slate-300 bg-white text-slate-700'
+                }`}>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Draft Auto-Saved: <strong className="text-emerald-500">{lastAutoSaved || 'Active (30s)'}</strong></span>
+                </div>
+
                 <button
-                  onClick={handleTriggerPreview}
+                  onClick={() => {
+                    handleTriggerPreview();
+                    if (confirm('Live Preview Active! Would you like to temporarily close the CMS panel to inspect your edits on the main page? (You can reopen CMS anytime)')) {
+                      onClose();
+                    }
+                  }}
                   className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs flex items-center gap-1.5 shadow-md transition-all active:scale-95"
-                  title="Test draft edits temporarily on live portfolio"
+                  title="Apply draft edits to main page for live inspection"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   <span>Preview Changes</span>
