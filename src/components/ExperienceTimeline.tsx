@@ -49,7 +49,7 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ darkMode
       id="experience" 
       aria-labelledby="experience-heading"
       className={`py-20 transition-colors relative overflow-hidden ${
-        darkMode ? 'bg-[#0A0A0A] text-slate-100' : 'bg-slate-50 text-slate-900'
+        darkMode ? 'bg-[#0a0f1d] text-slate-100' : 'bg-gradient-to-b from-slate-50 via-indigo-50/20 to-slate-50 text-slate-900'
       }`}
     >
       {/* Background ambient light orb */}
@@ -138,8 +138,8 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ darkMode
                   </div>
 
                   {/* Experience Card */}
-                  <div className={`p-5 sm:p-8 rounded-2xl border shadow-lg transition-all ${
-                    darkMode ? 'bg-[#141414] border-white/10 hover:border-indigo-500/40 hover:shadow-indigo-500/10' : 'bg-white border-slate-200 hover:border-indigo-300 hover:shadow-xl'
+                  <div className={`p-5 sm:p-8 rounded-2xl specular-shine transition-all duration-300 ${
+                    darkMode ? 'glass-panel-dark hover:border-indigo-500/50 hover:shadow-indigo-500/10' : 'glass-panel-light hover:border-indigo-400 hover:shadow-2xl'
                   }`}>
                     
                     {/* Role Header */}

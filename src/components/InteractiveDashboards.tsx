@@ -48,8 +48,8 @@ export const InteractiveDashboards: React.FC<InteractiveDashboardsProps> = ({ da
     <section 
       id="dashboards" 
       aria-labelledby="dashboards-heading"
-      className={`py-20 transition-colors ${
-        darkMode ? 'bg-[#0A0A0A] text-slate-100' : 'bg-white text-slate-900'
+      className={`py-20 transition-colors relative overflow-hidden ${
+        darkMode ? 'bg-[#0a0f1d] text-slate-100' : 'bg-gradient-to-b from-slate-50 via-blue-50/20 to-slate-50 text-slate-900'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -116,8 +116,8 @@ export const InteractiveDashboards: React.FC<InteractiveDashboardsProps> = ({ da
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className={`p-6 sm:p-8 rounded-2xl border shadow-xl ${
-                darkMode ? 'bg-[#141414] border-white/10' : 'bg-slate-50 border-slate-200'
+              className={`p-6 sm:p-8 rounded-2xl specular-shine ${
+                darkMode ? 'glass-panel-dark' : 'glass-panel-light shadow-2xl'
               }`}
             >
               {/* Executive KPI Header Cards */}
@@ -226,8 +226,8 @@ export const InteractiveDashboards: React.FC<InteractiveDashboardsProps> = ({ da
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className={`p-6 sm:p-8 rounded-2xl border shadow-xl ${
-                darkMode ? 'bg-[#141414] border-white/10' : 'bg-slate-50 border-slate-200'
+              className={`p-6 sm:p-8 rounded-2xl specular-shine ${
+                darkMode ? 'glass-panel-dark' : 'glass-panel-light shadow-2xl'
               }`}
             >
               {/* SOC Status Header */}

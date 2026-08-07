@@ -65,8 +65,8 @@ export const ATSResumeOptimizer: React.FC<ATSResumeOptimizerProps> = ({
     <section 
       id="ats-screener" 
       aria-labelledby="ats-screener-heading"
-      className={`py-20 transition-colors ${
-        darkMode ? 'bg-[#0A0A0A] text-slate-100' : 'bg-gradient-to-b from-blue-50/30 to-white text-slate-900'
+      className={`py-20 transition-colors relative overflow-hidden ${
+        darkMode ? 'bg-[#0a0f1d] text-slate-100' : 'bg-gradient-to-b from-slate-50 via-emerald-50/20 to-slate-50 text-slate-900'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -108,8 +108,8 @@ export const ATSResumeOptimizer: React.FC<ATSResumeOptimizerProps> = ({
         </div>
 
         {/* Selected Role Qualification Matrix */}
-        <div className={`p-7 sm:p-9 rounded-2xl border shadow-xl ${
-          darkMode ? 'bg-[#141414] border-white/10' : 'bg-white border-slate-200'
+        <div className={`p-7 sm:p-9 rounded-2xl specular-shine ${
+          darkMode ? 'glass-panel-dark' : 'glass-panel-light shadow-2xl'
         }`}>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             

@@ -484,14 +484,16 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
       >
         
         {/* Header Bar */}
-        <div className="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950 text-white shrink-0">
+        <div className={`px-5 py-3.5 border-b flex items-center justify-between shrink-0 ${
+          darkMode ? 'bg-slate-950 border-slate-800 text-white' : 'bg-slate-900 border-slate-800 text-white'
+        }`}>
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 flex items-center justify-center font-black shadow-lg">
               <Shield className="w-5 h-5 text-slate-950" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-sm sm:text-base tracking-tight leading-none">CMS Admin & Recruiter Hub</h3>
+                <h3 className="font-extrabold text-sm sm:text-base tracking-tight leading-none text-white">CMS Admin & Recruiter Hub</h3>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
                   v3.2 Live
                 </span>
@@ -532,7 +534,7 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
 
             <div className="space-y-1.5">
               <h4 className="text-2xl font-black tracking-tight">Admin Passkey Authentication</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'} leading-relaxed`}>
                 Enter your administrative password to edit experience entries, projects, certifications, profile details, and process recruiter messages.
               </p>
             </div>
@@ -582,12 +584,16 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
           <div className="flex-1 flex flex-col overflow-hidden">
             
             {/* Nav Tabs Bar */}
-            <div className="px-4 py-2 border-b border-slate-800 bg-slate-950 flex flex-wrap items-center justify-between gap-2 text-xs font-semibold shrink-0">
+            <div className={`px-4 py-2 border-b flex flex-wrap items-center justify-between gap-2 text-xs font-semibold shrink-0 ${
+              darkMode ? 'border-slate-800 bg-slate-950 text-slate-300' : 'border-slate-200 bg-slate-100/90 text-slate-700'
+            }`}>
               <div className="flex flex-wrap gap-1">
                 <button
                   onClick={() => setActiveTab('overview')}
                   className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-                    activeTab === 'overview' ? 'bg-blue-600 text-white font-bold shadow-md' : 'text-slate-400 hover:text-white'
+                    activeTab === 'overview' 
+                      ? 'bg-blue-600 text-white font-bold shadow-md' 
+                      : darkMode ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                   }`}
                 >
                   <Activity className="w-3.5 h-3.5" />
@@ -597,7 +603,9 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
                 <button
                   onClick={() => setActiveTab('experience')}
                   className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-                    activeTab === 'experience' ? 'bg-blue-600 text-white font-bold shadow-md' : 'text-slate-400 hover:text-white'
+                    activeTab === 'experience' 
+                      ? 'bg-blue-600 text-white font-bold shadow-md' 
+                      : darkMode ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                   }`}
                 >
                   <Briefcase className="w-3.5 h-3.5" />
@@ -607,7 +615,9 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
                 <button
                   onClick={() => setActiveTab('projects')}
                   className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-                    activeTab === 'projects' ? 'bg-blue-600 text-white font-bold shadow-md' : 'text-slate-400 hover:text-white'
+                    activeTab === 'projects' 
+                      ? 'bg-blue-600 text-white font-bold shadow-md' 
+                      : darkMode ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                   }`}
                 >
                   <Layers className="w-3.5 h-3.5" />
@@ -617,7 +627,9 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
                 <button
                   onClick={() => setActiveTab('certifications')}
                   className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-                    activeTab === 'certifications' ? 'bg-blue-600 text-white font-bold shadow-md' : 'text-slate-400 hover:text-white'
+                    activeTab === 'certifications' 
+                      ? 'bg-blue-600 text-white font-bold shadow-md' 
+                      : darkMode ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                   }`}
                 >
                   <Award className="w-3.5 h-3.5" />
@@ -627,7 +639,9 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
                 <button
                   onClick={() => setActiveTab('profile')}
                   className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-                    activeTab === 'profile' ? 'bg-blue-600 text-white font-bold shadow-md' : 'text-slate-400 hover:text-white'
+                    activeTab === 'profile' 
+                      ? 'bg-blue-600 text-white font-bold shadow-md' 
+                      : darkMode ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                   }`}
                 >
                   <User className="w-3.5 h-3.5" />
@@ -637,7 +651,9 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
                 <button
                   onClick={() => setActiveTab('inbox')}
                   className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 relative ${
-                    activeTab === 'inbox' ? 'bg-blue-600 text-white font-bold shadow-md' : 'text-slate-400 hover:text-white'
+                    activeTab === 'inbox' 
+                      ? 'bg-blue-600 text-white font-bold shadow-md' 
+                      : darkMode ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                   }`}
                 >
                   <Inbox className="w-3.5 h-3.5" />
@@ -650,7 +666,9 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
                 <button
                   onClick={() => setActiveTab('backup')}
                   className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-                    activeTab === 'backup' ? 'bg-blue-600 text-white font-bold shadow-md' : 'text-slate-400 hover:text-white'
+                    activeTab === 'backup' 
+                      ? 'bg-blue-600 text-white font-bold shadow-md' 
+                      : darkMode ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                   }`}
                 >
                   <Database className="w-3.5 h-3.5" />
@@ -707,64 +725,78 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
                   
                   {/* Executive Summary Cards */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/60 flex items-center justify-between">
+                    <div className={`p-4 rounded-xl border flex items-center justify-between transition-colors ${
+                      darkMode ? 'border-slate-800 bg-slate-900/60 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-900'
+                    }`}>
                       <div>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Experience Timeline</span>
-                        <span className="text-2xl font-black text-white">{editableExperiences.length} Roles</span>
-                        <span className="text-[11px] text-indigo-400 block mt-0.5">Corporate & Virtual Internships</span>
+                        <span className={`text-2xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>{editableExperiences.length} Roles</span>
+                        <span className="text-[11px] text-indigo-500 font-bold block mt-0.5">Corporate & Virtual Internships</span>
                       </div>
-                      <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20">
+                      <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center border border-indigo-500/20">
                         <Briefcase className="w-5 h-5" />
                       </div>
                     </div>
 
-                    <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/60 flex items-center justify-between">
+                    <div className={`p-4 rounded-xl border flex items-center justify-between transition-colors ${
+                      darkMode ? 'border-slate-800 bg-slate-900/60 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-900'
+                    }`}>
                       <div>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Portfolio Projects</span>
-                        <span className="text-2xl font-black text-white">{editableProjects.length} Active</span>
-                        <span className="text-[11px] text-emerald-400 block mt-0.5">
+                        <span className={`text-2xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>{editableProjects.length} Active</span>
+                        <span className="text-[11px] text-emerald-500 font-bold block mt-0.5">
                           {editableProjects.filter(p => p.featured).length} Featured on Hero
                         </span>
                       </div>
-                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center border border-blue-500/20">
                         <Layers className="w-5 h-5" />
                       </div>
                     </div>
 
-                    <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/60 flex items-center justify-between">
+                    <div className={`p-4 rounded-xl border flex items-center justify-between transition-colors ${
+                      darkMode ? 'border-slate-800 bg-slate-900/60 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-900'
+                    }`}>
                       <div>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Certifications</span>
-                        <span className="text-2xl font-black text-white">{editableCerts.length} Verified</span>
-                        <span className="text-[11px] text-purple-400 block mt-0.5">Google & CompTIA</span>
+                        <span className={`text-2xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>{editableCerts.length} Verified</span>
+                        <span className="text-[11px] text-purple-500 font-bold block mt-0.5">Google & CompTIA</span>
                       </div>
-                      <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20">
+                      <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center border border-purple-500/20">
                         <Award className="w-5 h-5" />
                       </div>
                     </div>
 
-                    <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/60 flex items-center justify-between">
+                    <div className={`p-4 rounded-xl border flex items-center justify-between transition-colors ${
+                      darkMode ? 'border-slate-800 bg-slate-900/60 text-slate-100' : 'border-slate-200 bg-slate-50 text-slate-900'
+                    }`}>
                       <div>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Recruiter Inquiries</span>
-                        <span className="text-2xl font-black text-white">{editableMessages.length} Received</span>
-                        <span className="text-[11px] text-amber-400 block mt-0.5">
+                        <span className={`text-2xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>{editableMessages.length} Received</span>
+                        <span className="text-[11px] text-amber-500 font-bold block mt-0.5">
                           {unreadCount} Unread Messages
                         </span>
                       </div>
-                      <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
+                      <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
                         <Inbox className="w-5 h-5" />
                       </div>
                     </div>
                   </div>
 
                   {/* Quick Preset Action Hub */}
-                  <div className="p-5 rounded-2xl border border-blue-500/20 bg-blue-950/20 space-y-4">
+                  <div className={`p-5 rounded-2xl border space-y-4 transition-colors ${
+                    darkMode 
+                      ? 'border-blue-500/20 bg-blue-950/20' 
+                      : 'border-blue-200 bg-blue-50/60'
+                  }`}>
                     <div className="flex items-center justify-between">
                       <div>
-                        <h4 className="font-extrabold text-sm text-blue-300 flex items-center gap-2">
-                          <Sparkles className="w-4 h-4 text-amber-400" />
+                        <h4 className={`font-extrabold text-sm flex items-center gap-2 ${
+                          darkMode ? 'text-blue-300' : 'text-blue-900'
+                        }`}>
+                          <Sparkles className="w-4 h-4 text-amber-500" />
                           Quick CMS Content Injectors & Actions
                         </h4>
-                        <p className="text-xs text-slate-400 mt-0.5">
+                        <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'} mt-0.5`}>
                           1-click tools to insert sample cybersecurity roles, SOC projects, or test recruiter inquiries
                         </p>
                       </div>
@@ -773,65 +805,83 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                       <button
                         onClick={handleAddSampleExp}
-                        className="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition-all hover:scale-[1.02] group"
+                        className={`p-3 rounded-xl border text-left transition-all hover:scale-[1.02] group ${
+                          darkMode 
+                            ? 'bg-slate-900 hover:bg-slate-800 border-slate-700' 
+                            : 'bg-white hover:bg-slate-100 border-slate-200 shadow-sm'
+                        }`}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-slate-200">Inject Cyber Internship</span>
-                          <Plus className="w-3.5 h-3.5 text-indigo-400 group-hover:rotate-90 transition-transform" />
+                          <span className={`text-xs font-bold ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>Inject Cyber Internship</span>
+                          <Plus className="w-3.5 h-3.5 text-indigo-500 group-hover:rotate-90 transition-transform" />
                         </div>
-                        <p className="text-[11px] text-slate-400">Adds CrowdStrike SOC Virtual Internship entry</p>
+                        <p className={`text-[11px] ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Adds CrowdStrike SOC Virtual Internship entry</p>
                       </button>
 
                       <button
                         onClick={handleAddSampleSOCProject}
-                        className="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition-all hover:scale-[1.02] group"
+                        className={`p-3 rounded-xl border text-left transition-all hover:scale-[1.02] group ${
+                          darkMode 
+                            ? 'bg-slate-900 hover:bg-slate-800 border-slate-700' 
+                            : 'bg-white hover:bg-slate-100 border-slate-200 shadow-sm'
+                        }`}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-slate-200">Inject Tier-1 SOC Project</span>
-                          <Plus className="w-3.5 h-3.5 text-blue-400 group-hover:rotate-90 transition-transform" />
+                          <span className={`text-xs font-bold ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>Inject Tier-1 SOC Project</span>
+                          <Plus className="w-3.5 h-3.5 text-blue-500 group-hover:rotate-90 transition-transform" />
                         </div>
-                        <p className="text-[11px] text-slate-400">Adds Splunk & Triage Incident Response project</p>
+                        <p className={`text-[11px] ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Adds Splunk & Triage Incident Response project</p>
                       </button>
 
                       <button
                         onClick={handleAddSampleCert}
-                        className="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition-all hover:scale-[1.02] group"
+                        className={`p-3 rounded-xl border text-left transition-all hover:scale-[1.02] group ${
+                          darkMode 
+                            ? 'bg-slate-900 hover:bg-slate-800 border-slate-700' 
+                            : 'bg-white hover:bg-slate-100 border-slate-200 shadow-sm'
+                        }`}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-slate-200">Inject Cyber Certification</span>
-                          <Plus className="w-3.5 h-3.5 text-purple-400 group-hover:rotate-90 transition-transform" />
+                          <span className={`text-xs font-bold ${darkMode ? 'text-slate-200' : 'text-slate-800'}`}>Inject Cyber Certification</span>
+                          <Plus className="w-3.5 h-3.5 text-purple-500 group-hover:rotate-90 transition-transform" />
                         </div>
-                        <p className="text-[11px] text-slate-400">Adds CompTIA Security+ SY0-701 certification</p>
+                        <p className={`text-[11px] ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Adds CompTIA Security+ SY0-701 certification</p>
                       </button>
 
                       <button
                         onClick={handleResetToDefault}
-                        className="p-3 rounded-xl bg-rose-950/30 hover:bg-rose-900/40 border border-rose-500/30 text-left transition-all hover:scale-[1.02] group"
+                        className={`p-3 rounded-xl border text-left transition-all hover:scale-[1.02] group ${
+                          darkMode 
+                            ? 'bg-rose-950/30 hover:bg-rose-900/40 border-rose-500/30 text-rose-300' 
+                            : 'bg-rose-50 hover:bg-rose-100 border-rose-200 text-rose-800 shadow-sm'
+                        }`}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-rose-300">Reset Portfolio State</span>
-                          <RotateCcw className="w-3.5 h-3.5 text-rose-400 group-hover:-rotate-90 transition-transform" />
+                          <span className="text-xs font-bold">Reset Portfolio State</span>
+                          <RotateCcw className="w-3.5 h-3.5 text-rose-500 group-hover:-rotate-90 transition-transform" />
                         </div>
-                        <p className="text-[11px] text-rose-400/80">Reverts back to original Karan Pandre dataset</p>
+                        <p className={`text-[11px] ${darkMode ? 'text-rose-400/80' : 'text-rose-600/80'}`}>Reverts back to original Karan Pandre dataset</p>
                       </button>
                     </div>
                   </div>
 
                   {/* Candidate Quick Info */}
-                  <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/60 space-y-3">
+                  <div className={`p-4 rounded-xl border space-y-3 ${
+                    darkMode ? 'border-slate-800 bg-slate-900/60' : 'border-slate-200 bg-slate-50'
+                  }`}>
                     <h5 className="font-bold text-xs uppercase text-slate-400 tracking-wider">Active Portfolio Summary</h5>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                       <div>
-                        <span className="text-slate-500 block">Candidate Name</span>
-                        <span className="font-bold text-white">{editableInfo.name}</span>
+                        <span className="text-slate-500 block font-semibold">Candidate Name</span>
+                        <span className={`font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>{editableInfo.name}</span>
                       </div>
                       <div>
-                        <span className="text-slate-500 block">Target Role</span>
-                        <span className="font-bold text-emerald-400">{editableInfo.targetProgram}</span>
+                        <span className="text-slate-500 block font-semibold">Target Role</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">{editableInfo.targetProgram}</span>
                       </div>
                       <div>
-                        <span className="text-slate-500 block">Email Address</span>
-                        <span className="font-bold text-blue-400">{editableInfo.email}</span>
+                        <span className="text-slate-500 block font-semibold">Email Address</span>
+                        <span className="font-bold text-blue-600 dark:text-blue-400">{editableInfo.email}</span>
                       </div>
                     </div>
                   </div>

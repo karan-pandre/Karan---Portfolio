@@ -95,9 +95,20 @@ export default function App() {
     };
   }, []);
 
+  // Sync document root class for Tailwind dark: selectors
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+    }
+  }, [darkMode]);
+
   return (
     <div className={`min-h-screen font-sans selection:bg-blue-500 selection:text-white relative theme-transition transition-colors duration-500 ease-in-out ${
-      darkMode ? 'bg-[#0A0A0A] text-slate-100' : 'bg-slate-50 text-slate-900'
+      darkMode ? 'dark bg-[#0a0f1d] text-slate-100' : 'light bg-slate-50 text-slate-900'
     }`}>
       
       {/* Editorial Scroll Position Progress Bar */}

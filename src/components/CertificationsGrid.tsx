@@ -101,7 +101,7 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
       id="certifications" 
       aria-labelledby="certifications-heading"
       className={`py-20 transition-colors relative overflow-hidden ${
-        darkMode ? 'bg-[#0A0A0A] text-slate-100' : 'bg-slate-50 text-slate-900'
+        darkMode ? 'bg-[#0a0f1d] text-slate-100' : 'bg-gradient-to-b from-slate-50 via-amber-50/20 to-slate-50 text-slate-900'
       }`}
     >
       {/* Background ambient lighting */}
@@ -231,10 +231,10 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.25 }}
                 whileHover={{ y: -5, transition: { duration: 0.15 } }}
-                className={`group rounded-2xl border shadow-sm flex flex-col justify-between overflow-hidden relative transition-all duration-300 ${
+                className={`group rounded-2xl specular-shine flex flex-col justify-between overflow-hidden relative transition-all duration-300 ${
                   darkMode 
-                    ? 'bg-[#141414] border-white/10 hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-500/10' 
-                    : 'bg-white border-slate-200 hover:border-amber-400 hover:shadow-xl'
+                    ? 'glass-panel-dark hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-500/10' 
+                    : 'glass-panel-light hover:border-amber-400 hover:shadow-2xl'
                 }`}
               >
                 {/* Visual Certificate Header Banner */}

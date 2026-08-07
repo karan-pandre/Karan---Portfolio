@@ -34,8 +34,8 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ darkMode, proj
     <section 
       id="projects" 
       aria-labelledby="projects-heading"
-      className={`py-20 transition-colors ${
-        darkMode ? 'bg-[#0A0A0A] text-slate-100' : 'bg-white text-slate-900'
+      className={`py-20 transition-colors relative overflow-hidden ${
+        darkMode ? 'bg-[#0a0f1d] text-slate-100' : 'bg-gradient-to-b from-slate-50 via-blue-50/20 to-slate-50 text-slate-900'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -106,8 +106,8 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ darkMode, proj
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className={`p-5 sm:p-6 rounded-2xl border shadow-lg flex flex-col justify-between transition-all hover:-translate-y-1.5 hover:shadow-xl group relative overflow-hidden ${
-                  darkMode ? 'bg-[#161616] border-white/10 hover:border-blue-500/40' : 'bg-slate-50 border-slate-200 hover:border-blue-400'
+                className={`p-5 sm:p-6 rounded-2xl specular-shine flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 group relative overflow-hidden ${
+                  darkMode ? 'glass-panel-dark hover:border-blue-500/50' : 'glass-panel-light hover:border-blue-400 hover:shadow-2xl'
                 }`}
               >
                 <div>

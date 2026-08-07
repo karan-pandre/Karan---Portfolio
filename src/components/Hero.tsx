@@ -169,14 +169,17 @@ export const Hero: React.FC<HeroProps> = ({
       id="hero" 
       aria-labelledby="hero-heading"
       className={`relative pt-28 pb-16 sm:pt-36 sm:pb-24 overflow-hidden transition-colors ${
-        darkMode ? 'bg-[#0A0A0A] text-slate-100' : 'bg-gradient-to-b from-slate-50 via-blue-50/20 to-white text-slate-900'
+        darkMode ? 'bg-[#0a0f1d] text-slate-100' : 'bg-gradient-to-b from-slate-50 via-blue-50/30 to-indigo-50/20 text-slate-900'
       }`}
     >
-      {/* Background Subtle Mesh Accents */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30 dark:opacity-20">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-purple-500 rounded-full blur-3xl"></div>
+      {/* Dynamic 3D Ambient Glowing Light Orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40 dark:opacity-30">
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full blur-3xl animate-orb-float"></div>
+        <div className="absolute top-1/2 -left-32 w-96 h-96 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-full blur-3xl animate-orb-float" style={{ animationDelay: '-4s' }}></div>
       </div>
+
+      {/* Grid pattern overlay */}
+      <div className={`absolute inset-0 pointer-events-none ${darkMode ? 'bg-grid-pattern' : 'bg-grid-pattern-light'}`} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -377,8 +380,8 @@ export const Hero: React.FC<HeroProps> = ({
             transition={{ duration: 0.6, delay: 0.2 }}
             className="lg:col-span-5 perspective-1000"
           >
-            <div className={`p-6 sm:p-7 rounded-2xl border shadow-xl relative overflow-hidden transition-all duration-200 ${
-              darkMode ? 'bg-[#141414] border-white/10 hover:border-blue-500/30' : 'bg-white border-slate-200 hover:border-blue-300'
+            <div className={`p-6 sm:p-7 rounded-2xl specular-shine relative overflow-hidden transition-all duration-300 ${
+              darkMode ? 'glass-panel-dark hover:border-blue-500/40' : 'glass-panel-light hover:border-blue-400/60 shadow-2xl'
             }`}>
               
               {/* Header Status Badge */}
