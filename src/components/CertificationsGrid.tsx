@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
-  Award, ExternalLink, ShieldCheck, CheckCircle2, Search, Sparkles, X, Eye, 
-  Copy, Check, Building, Globe, Layers, Download 
+  Award, ExternalLink, ShieldCheck, CheckCircle2, Search, X, Eye, 
+  Copy, Check 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -19,9 +19,31 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
   const [selectedCertModal, setSelectedCertModal] = useState<Certification | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const categories = ['All', 'Google & Coursera', 'Data & BI', 'Management & Productivity', 'Cybersecurity'];
+  // Guarantee valid fallback list if prop is missing or empty
+  const certsList = useMemo(() => {
+    if (certifications && Array.isArray(certifications) && certifications.length > 0) {
+      return certifications;
+    }
+    return CERTIFICATIONS;
+  }, [certifications]);
 
-  const certsList = certifications || CERTIFICATIONS;
+  // Dynamically compute category tabs from dataset
+  const categories = useMemo(() => {
+    const categoriesArray: string[] = certsList.map(c => c.category).filter((c): c is string => Boolean(c));
+    const rawCats: string[] = Array.from(new Set<string>(categoriesArray));
+    const preferredOrder: string[] = ['Google & Coursera', 'Data & BI', 'Management & Productivity', 'Cybersecurity'];
+    
+    rawCats.sort((a: string, b: string) => {
+      const idxA = preferredOrder.indexOf(a);
+      const idxB = preferredOrder.indexOf(b);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return a.localeCompare(b);
+    });
+
+    return ['All', ...rawCats];
+  }, [certsList]);
 
   // Calculate live count per category
   const getCategoryCount = (cat: string) => {
@@ -29,14 +51,18 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
     return certsList.filter(c => c.category === cat).length;
   };
 
-  const filteredCerts = certsList.filter(cert => {
-    const matchesCat = selectedCategory === 'All' || cert.category === selectedCategory;
-    const matchesQuery = searchQuery === '' ||
-      cert.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cert.issuer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cert.skills.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCat && matchesQuery;
-  });
+  const filteredCerts = useMemo(() => {
+    return certsList.filter(cert => {
+      const matchesCat = selectedCategory === 'All' || cert.category === selectedCategory;
+      const q = searchQuery.trim().toLowerCase();
+      const matchesQuery = q === '' ||
+        cert.title.toLowerCase().includes(q) ||
+        cert.issuer.toLowerCase().includes(q) ||
+        cert.date.toLowerCase().includes(q) ||
+        cert.skills.some(s => s.toLowerCase().includes(q));
+      return matchesCat && matchesQuery;
+    });
+  }, [certsList, selectedCategory, searchQuery]);
 
   const triggerConfetti = () => {
     try {
@@ -61,7 +87,7 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  // Badge colors based on issuer
+  // Badge styles based on issuer name
   const getIssuerBadge = (issuer: string) => {
     if (issuer.includes('Google')) return 'bg-blue-600/10 text-blue-600 dark:text-blue-400 border-blue-500/20';
     if (issuer.includes('IBM')) return 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20';
@@ -87,7 +113,7 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-10">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 shadow-sm">
             <Award className="w-4 h-4 animate-bounce text-amber-500" />
-            <span>14 Industry Certified Credentials</span>
+            <span>{certsList.length} Industry Certified Credentials</span>
           </div>
           <h2 id="certifications-heading" className="text-3xl sm:text-4xl font-extrabold tracking-tight">
             Certifications & Industry Credentials
@@ -103,7 +129,7 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
             darkMode ? 'bg-[#141414] border-white/10' : 'bg-white border-slate-200'
           }`}>
             <span className="text-xs text-slate-400 uppercase font-bold block">Total Credentials</span>
-            <span className="text-xl sm:text-2xl font-black text-amber-500">{CERTIFICATIONS.length} Verified</span>
+            <span className="text-xl sm:text-2xl font-black text-amber-500">{certsList.length} Verified</span>
           </div>
           <div className={`p-4 rounded-2xl border text-center ${
             darkMode ? 'bg-[#141414] border-white/10' : 'bg-white border-slate-200'
@@ -145,7 +171,7 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
                   }`}
                 >
                   <span>{cat}</span>
-                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
+                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
                     isActive ? 'bg-black/20 text-white' : darkMode ? 'bg-white/10 text-slate-400' : 'bg-slate-200 text-slate-600'
                   }`}>
                     {count}
@@ -160,17 +186,17 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
             <input
               id="certs-search-input"
               type="text"
-              placeholder="Search by keyword, skill, or issuer..."
+              placeholder="Search keyword, skill, or issuer..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full pl-9 pr-8 py-2 rounded-xl text-xs font-medium border focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all ${
+              className={`w-full pl-9 pr-8 py-2.5 rounded-xl text-xs font-medium border focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all ${
                 darkMode ? 'bg-white/5 border-white/10 text-slate-200 placeholder-slate-500' : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400'
               }`}
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-1"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -178,93 +204,109 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
           </div>
         </div>
 
-        {/* Certifications Cards Grid with Dynamic Motion Transitions */}
-        <motion.div 
-          layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          <AnimatePresence>
+        {/* Empty State Fallback */}
+        {filteredCerts.length === 0 ? (
+          <div className="text-center py-16 px-4 rounded-3xl border border-dashed border-slate-300 dark:border-white/10 my-6 bg-white/5">
+            <Award className="w-12 h-12 text-amber-500 mx-auto mb-3 animate-pulse" />
+            <h3 className="text-base font-bold mb-1">No Matching Credentials Found</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-4">
+              No certifications matched category "{selectedCategory}"{searchQuery ? ` and search "${searchQuery}"` : ''}.
+            </p>
+            <button
+              onClick={() => { setSelectedCategory('All'); setSearchQuery(''); }}
+              className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition-all shadow-md active:scale-95"
+            >
+              Reset Filters
+            </button>
+          </div>
+        ) : (
+          /* Certifications Cards Grid */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCerts.map((cert) => (
               <motion.div 
                 key={cert.id}
                 layout
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                className={`group rounded-2xl border shadow-md flex flex-col justify-between overflow-hidden relative transition-all ${
-                  darkMode ? 'bg-[#141414] border-white/10 hover:border-amber-500/40 hover:shadow-amber-500/10' : 'bg-white border-slate-200 hover:border-amber-400 hover:shadow-lg'
+                transition={{ duration: 0.25 }}
+                whileHover={{ y: -5, transition: { duration: 0.15 } }}
+                className={`group rounded-2xl border shadow-sm flex flex-col justify-between overflow-hidden relative transition-all duration-300 ${
+                  darkMode 
+                    ? 'bg-[#141414] border-white/10 hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-500/10' 
+                    : 'bg-white border-slate-200 hover:border-amber-400 hover:shadow-xl'
                 }`}
               >
-                {/* Visual Certificate Graphic Header Preview */}
+                {/* Visual Certificate Header Banner */}
                 <div 
                   onClick={() => handleInspectCert(cert)}
-                  className="relative h-44 p-4 flex flex-col justify-between cursor-pointer overflow-hidden border-b border-slate-200 dark:border-white/10 bg-gradient-to-br from-amber-500/10 via-amber-600/5 to-purple-600/10 group-hover:from-amber-500/20 transition-all"
+                  className="relative p-5 flex flex-col justify-between cursor-pointer border-b border-slate-200 dark:border-white/10 bg-gradient-to-br from-amber-500/10 via-amber-600/5 to-purple-600/10 group-hover:from-amber-500/20 transition-all min-h-[160px]"
                 >
-                  {/* Subtle Parchment Watermark Background Pattern */}
-                  <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:12px_12px]"></div>
+                  {/* Subtle Background Pattern */}
+                  <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none"></div>
                   
-                  {/* Top Category Badge & Issuer Tag */}
-                  <div className="flex items-center justify-between z-10">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500 text-slate-950 uppercase tracking-wider shadow-sm">
+                  {/* Top Category Badge & Date Tag */}
+                  <div className="flex items-center justify-between z-10 gap-2 mb-3">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500 text-slate-950 uppercase tracking-wider shadow-sm truncate max-w-[60%]">
                       {cert.category}
                     </span>
-                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-black/40 text-amber-300 backdrop-blur-xs border border-amber-500/20">
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-black/40 text-amber-300 border border-amber-500/20 shrink-0">
                       {cert.date}
                     </span>
                   </div>
 
                   {/* Certificate Title Graphic Preview */}
-                  <div className="z-10 my-auto py-2">
-                    <div className="text-[10px] font-serif uppercase tracking-widest text-amber-600 dark:text-amber-400 font-bold">Certificate of Completion</div>
-                    <h4 className="text-sm font-extrabold line-clamp-2 leading-snug group-hover:text-amber-500 transition-colors">
+                  <div className="z-10 my-auto">
+                    <div className="text-[9px] font-serif uppercase tracking-widest text-amber-600 dark:text-amber-400 font-bold mb-1">
+                      Official Certificate
+                    </div>
+                    <h3 className="text-sm font-extrabold leading-snug group-hover:text-amber-500 transition-colors line-clamp-2">
                       {cert.title}
-                    </h4>
-                    <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
-                      Issuer: <span className={`px-2 py-0.2 rounded border text-[10px] font-bold ${getIssuerBadge(cert.issuer)}`}>{cert.issuer}</span>
-                    </p>
+                    </h3>
                   </div>
 
-                  {/* Bottom Verification Seal Indicator */}
-                  <div className="flex items-center justify-between z-10 text-[10px] font-medium text-slate-400 border-t border-amber-500/10 pt-1.5">
-                    <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
-                      <CheckCircle2 className="w-3 h-3" /> Official Credential
+                  {/* Issuer & Verification Badge Footer inside Banner */}
+                  <div className="flex items-center justify-between z-10 text-[10px] font-medium mt-3 pt-2 border-t border-amber-500/10">
+                    <span className={`px-2 py-0.5 rounded border text-[10px] font-bold truncate max-w-[65%] ${getIssuerBadge(cert.issuer)}`}>
+                      {cert.issuer}
                     </span>
-                    <span className="flex items-center gap-1 text-amber-500 font-bold group-hover:translate-x-0.5 transition-transform">
-                      <Eye className="w-3 h-3" /> Inspect Seal
+                    <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold shrink-0">
+                      <CheckCircle2 className="w-3 h-3" /> Verified
                     </span>
                   </div>
-
-                  {/* Hover Overlay Light Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                 </div>
 
-                {/* Card Content Body */}
-                <div className="p-5 flex-1 flex flex-col justify-between">
+                {/* Card Body: Skills & Action Buttons */}
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  {/* Skills Pills */}
                   <div>
-                    <div className="flex flex-wrap gap-1.5 mb-4">
-                      {cert.skills.map((s) => (
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+                      Key Competencies
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {cert.skills.map((skill) => (
                         <span 
-                          key={s} 
+                          key={skill} 
                           className={`px-2 py-0.5 rounded text-[10px] font-medium transition-colors ${
-                            darkMode ? 'bg-white/5 text-slate-300 border border-white/5' : 'bg-slate-100 text-slate-700 border border-slate-200'
+                            darkMode 
+                              ? 'bg-white/5 text-slate-300 border border-white/5' 
+                              : 'bg-slate-100 text-slate-700 border border-slate-200'
                           }`}
                         >
-                          {s}
+                          {skill}
                         </span>
                       ))}
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
+                  {/* Action Buttons Bar */}
+                  <div className="pt-3 border-t border-slate-200 dark:border-white/10 flex items-center justify-between gap-2">
                     <button
                       id={`btn-inspect-seal-${cert.id}`}
                       onClick={() => handleInspectCert(cert)}
-                      className="px-3 py-2 min-h-[44px] text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-amber-500 flex items-center gap-1 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                      className="px-3 py-2 min-h-[40px] text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-amber-500 flex items-center gap-1.5 transition-colors rounded-xl hover:bg-amber-500/10 active:scale-95"
                     >
-                      <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <Eye className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                       <span>Inspect Seal</span>
                     </button>
 
@@ -273,7 +315,7 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
                       href={cert.verifyUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3.5 py-2.5 min-h-[44px] rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center gap-1 shadow-sm transition-all hover:scale-105"
+                      className="px-3.5 py-2 min-h-[40px] rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all hover:scale-105 active:scale-95 shrink-0"
                     >
                       <span>Live Credential</span>
                       <ExternalLink className="w-3 h-3" />
@@ -281,65 +323,14 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
                   </div>
 
                 </div>
-
-                {/* On-Hover Glassmorphism Technical Detail Reveal Overlay */}
-                <div className="hidden md:flex absolute inset-0 bg-[#0c0a09]/92 dark:bg-[#09090b]/94 backdrop-blur-xl opacity-0 group-hover:opacity-100 transition-all duration-300 p-5 flex-col justify-between z-30 pointer-events-none group-hover:pointer-events-auto border-2 border-amber-500/40 rounded-2xl">
-                  <div>
-                    <div className="flex items-center justify-between mb-2 pb-2 border-b border-amber-500/20">
-                      <span className="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-amber-500 text-black">
-                        CREDENTIAL AUDIT
-                      </span>
-                      <span className="text-[10px] font-mono text-emerald-400 font-bold flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" /> VERIFIED
-                      </span>
-                    </div>
-
-                    <h4 className="text-sm font-extrabold text-amber-300 mb-1 leading-tight">
-                      {cert.title}
-                    </h4>
-                    <p className="text-[11px] font-semibold text-slate-300 mb-3">
-                      Issued by <strong className="text-amber-400">{cert.issuer}</strong> ({cert.date})
-                    </p>
-
-                    <div className="space-y-2 text-[11px] text-slate-300">
-                      <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                        <span className="text-[9px] font-mono uppercase text-amber-400 font-extrabold block">Acquired Skills</span>
-                        <span className="font-medium text-slate-200">{cert.skills.join(' • ')}</span>
-                      </div>
-
-                      <div className="p-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-mono text-slate-400">
-                        <span className="block text-slate-300 font-bold">Verification Standard</span>
-                        SHA-256 Cryptographic Record Verified • Global Accreditation
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-2 border-t border-amber-500/20">
-                    <button
-                      onClick={() => handleInspectCert(cert)}
-                      className="flex-1 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center justify-center gap-1 shadow-md transition-transform hover:scale-102"
-                    >
-                      <Eye className="w-3.5 h-3.5" /> Inspect Seal
-                    </button>
-                    <a
-                      href={cert.verifyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
-                      title="Open Live Link"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  </div>
-                </div>
               </motion.div>
             ))}
-          </AnimatePresence>
-        </motion.div>
+          </div>
+        )}
 
       </div>
 
-      {/* Dynamic Interactive Certificate View Modal */}
+      {/* Dynamic Interactive Certificate Modal */}
       <AnimatePresence>
         {selectedCertModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
@@ -360,11 +351,11 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
                 <X className="w-5 h-5" />
               </button>
 
-              {/* Certificate Document Visual Presentation Container */}
+              {/* Certificate Presentation Document Container */}
               <div className={`p-6 sm:p-8 rounded-2xl border-4 border-amber-500/40 relative shadow-2xl ${
                 darkMode ? 'bg-gradient-to-br from-amber-950/20 via-slate-900 to-amber-900/10' : 'bg-gradient-to-br from-amber-50/80 via-white to-amber-100/50'
               }`}>
-                {/* Gold Crest Header */}
+                {/* Crest Header */}
                 <div className="text-center space-y-2 mb-6">
                   <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-500/20 border-2 border-amber-500 text-amber-500 shadow-lg mx-auto">
                     <Award className="w-8 h-8" />
@@ -410,7 +401,7 @@ export const CertificationsGrid: React.FC<CertificationsGridProps> = ({ darkMode
                   </div>
                 </div>
 
-                {/* Official Stamp & Verification Actions */}
+                {/* Verification Actions */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
                   <button
                     onClick={() => handleCopyLink(selectedCertModal.verifyUrl, selectedCertModal.id)}

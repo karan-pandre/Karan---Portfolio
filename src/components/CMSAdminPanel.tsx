@@ -1110,7 +1110,78 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
 
               {/* TAB 4: PROFILE & BIO */}
               {activeTab === 'profile' && (
-                <div className="space-y-4">
+                <div className="space-y-6">
+                  {/* Photo Uploader Card */}
+                  <div className="p-4 rounded-2xl border border-slate-800 bg-slate-900/80 flex flex-col sm:flex-row items-center gap-4">
+                    <div className="relative group shrink-0">
+                      <img
+                        src={editableInfo.avatar || '/karan_profile.jpg'}
+                        alt="Karan Pandre"
+                        className="w-20 h-20 rounded-2xl object-cover border-2 border-amber-500 shadow-lg"
+                        onError={(e) => {
+                          (e.target as HTMLElement).setAttribute('src', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300');
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black/60 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-bold">
+                        Change
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 text-center sm:text-left flex-1">
+                      <h5 className="font-extrabold text-sm text-white">Profile Photo & Avatar</h5>
+                      <p className="text-xs text-slate-400">
+                        Upload a new professional headshot to update your photo across hero cards and CMS header.
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2 pt-1 justify-center sm:justify-start">
+                        <label className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs flex items-center gap-1.5 cursor-pointer shadow-sm transition-all">
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Upload New Headshot</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                const reader = new FileReader();
+                                reader.onload = async (evt) => {
+                                  const base64 = evt.target?.result as string;
+                                  if (base64) {
+                                    setEditableInfo({ ...editableInfo, avatar: base64 });
+                                    try {
+                                      localStorage.setItem('karan_custom_avatar', base64);
+                                      await fetch('/api/upload-avatar', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ imageBase64: base64 })
+                                      });
+                                      setSaveSuccess('Profile avatar updated & saved across server!');
+                                    } catch(err) {
+                                      console.warn('Avatar upload failed:', err);
+                                    }
+                                  }
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                          />
+                        </label>
+                        {editableInfo.avatar && (
+                          <button
+                            onClick={() => {
+                              setEditableInfo({ ...editableInfo, avatar: '' });
+                              localStorage.removeItem('karan_custom_avatar');
+                              setSaveSuccess('Reset avatar image to default.');
+                            }}
+                            className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold"
+                          >
+                            Reset Photo
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
                   <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Candidate Profile Details</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -1570,17 +1641,43 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
                         type="text"
                         value={editingCert.issuer || ''}
                         onChange={(e) => setEditingCert({ ...editingCert, issuer: e.target.value })}
-                        placeholder="Google / Cisco"
+                        placeholder="Google / Cisco / IBM"
                         className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white"
                       />
                     </div>
+                    <div>
+                      <label className="font-bold text-slate-400 block mb-1">Category</label>
+                      <select
+                        value={editingCert.category || 'Google & Coursera'}
+                        onChange={(e) => setEditingCert({ ...editingCert, category: e.target.value as any })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white"
+                      >
+                        <option value="Google & Coursera">Google & Coursera</option>
+                        <option value="Data & BI">Data & BI</option>
+                        <option value="Management & Productivity">Management & Productivity</option>
+                        <option value="Cybersecurity">Cybersecurity</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
                     <div>
                       <label className="font-bold text-slate-400 block mb-1">Date</label>
                       <input
                         type="text"
                         value={editingCert.date || ''}
                         onChange={(e) => setEditingCert({ ...editingCert, date: e.target.value })}
-                        placeholder="e.g. 2025"
+                        placeholder="e.g. Oct 2023"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="font-bold text-slate-400 block mb-1">Verification URL</label>
+                      <input
+                        type="text"
+                        value={editingCert.verifyUrl || ''}
+                        onChange={(e) => setEditingCert({ ...editingCert, verifyUrl: e.target.value })}
+                        placeholder="https://coursera.org/verify/..."
                         className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white"
                       />
                     </div>

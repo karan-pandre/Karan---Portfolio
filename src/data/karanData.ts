@@ -302,6 +302,26 @@ export const CERTIFICATIONS: Certification[] = [
     badgeColor: 'bg-cyan-600',
     skills: ['Agile Ceremonies', 'Scrum', 'Incident Workflows'],
   },
+  {
+    id: 'uw-ml-regression',
+    title: 'Machine Learning: Regression',
+    issuer: 'University of Washington (via Coursera)',
+    date: 'Oct 2023',
+    verifyUrl: 'https://coursera.org/verify/8BHMNBDZNJA5',
+    category: 'Data & BI',
+    badgeColor: 'bg-purple-600',
+    skills: ['Linear Regression', 'Ridge & Lasso', 'Gradient Descent', 'Model Evaluation'],
+  },
+  {
+    id: 'uw-ml-foundations',
+    title: 'Machine Learning Foundations: A Case Study Approach',
+    issuer: 'University of Washington (via Coursera)',
+    date: 'Nov 2023',
+    verifyUrl: 'https://coursera.org/verify/EXLNMK6WS5EX',
+    category: 'Data & BI',
+    badgeColor: 'bg-purple-700',
+    skills: ['Classification', 'Clustering', 'Recommender Systems', 'Predictive Modeling'],
+  },
 ];
 
 export const SKILL_GROUPS: SkillGroup[] = [
