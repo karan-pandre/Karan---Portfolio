@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Shield, Activity, ShieldAlert, Flame, Bug, Wrench, FolderLock, Award, 
-  FileText, Sliders, LogOut, ArrowLeft, Menu, X, Bell, UserCheck, Clock, CheckCircle2 
+  FileText, Sliders, LogOut, ArrowLeft, Menu, X, Bell, UserCheck, Clock, CheckCircle2,
+  Globe, Terminal
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CyberAuthUser, ThreatItem, IncidentItem, VulnerabilityItem, SecurityToolItem, CyberProjectItem, CyberLabItem, CyberReportItem, CyberCertItem, ThreatStatus, IncidentStatus, RemediationStatus } from '../../types/cybersecurity';
@@ -16,6 +17,8 @@ import { CyberLabsTab } from './tabs/CyberLabsTab';
 import { CyberReportsTab } from './tabs/CyberReportsTab';
 import { CyberLearningTab } from './tabs/CyberLearningTab';
 import { CyberAdminTab } from './tabs/CyberAdminTab';
+import { CyberThreatMap } from './CyberThreatMap';
+import { CybersecurityLogs } from './CybersecurityLogs';
 import { soundFx } from '../../utils/soundEffects';
 
 interface CyberDashboardProps {
@@ -69,6 +72,8 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
 
   const navItems = [
     { id: 'overview', label: 'SOC Overview', icon: Activity, badge: null },
+    { id: 'map', label: 'Threat Radar Map', icon: Globe, badge: 'LIVE' },
+    { id: 'logs', label: 'SIEM Telemetry Logs', icon: Terminal, badge: 'SPL' },
     { id: 'threats', label: 'Threat Monitoring', icon: ShieldAlert, badge: threats.filter(t => t.status === 'INVESTIGATING').length },
     { id: 'incidents', label: 'Incident Management', icon: Flame, badge: incidents.filter(i => i.status !== 'RESOLVED').length },
     { id: 'vulnerabilities', label: 'Vulnerability CVEs', icon: Bug, badge: vulnerabilities.filter(v => v.severity === 'CRITICAL' && v.remediationStatus !== 'PATCHED').length },
@@ -242,6 +247,14 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
                   vulnerabilities={vulnerabilities}
                   onNavigateTab={(tab) => setActiveTab(tab)}
                 />
+              )}
+
+              {activeTab === 'map' && (
+                <CyberThreatMap />
+              )}
+
+              {activeTab === 'logs' && (
+                <CybersecurityLogs />
               )}
 
               {activeTab === 'threats' && (

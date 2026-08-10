@@ -31,6 +31,7 @@ import { Footer } from './components/Footer';
 import { CyberAuthScreen } from './components/cybersecurity/CyberAuthScreen';
 import { CyberDashboard } from './components/cybersecurity/CyberDashboard';
 import { CyberAuthUser } from './types/cybersecurity';
+import { soundFx } from './utils/soundEffects';
 
 // Motion Staggered Variants for Main Sections
 const mainContainerVariants = {
@@ -58,8 +59,21 @@ const sectionVariants = {
 };
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState<boolean>(true);
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('theme_preference');
+    if (saved === 'dark') return true;
+    if (saved === 'light') return false;
+    return typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)').matches : true;
+  });
   const [isOffline, setIsOffline] = useState<boolean>(!navigator.onLine);
+
+  const handleSetDarkMode = (val: boolean | ((prev: boolean) => boolean)) => {
+    setDarkMode(prev => {
+      const nextVal = typeof val === 'function' ? val(prev) : val;
+      localStorage.setItem('theme_preference', nextVal ? 'dark' : 'light');
+      return nextVal;
+    });
+  };
 
   // Modals state
   const [showATSModal, setShowATSModal] = useState<boolean>(false);
@@ -77,7 +91,7 @@ export default function App() {
 
   const [cyberAuthUser, setCyberAuthUser] = useState<CyberAuthUser | null>(() => {
     try {
-      const stored = localStorage.getItem('karan_cyber_auth_session');
+      const stored = sessionStorage.getItem('karan_cyber_auth_session') || localStorage.getItem('karan_cyber_auth_session');
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed?.authenticated && parsed?.user) {
@@ -141,11 +155,26 @@ export default function App() {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    // Keyboard shortcut (Ctrl+K) for search
+    // OS Theme preference media query listener
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      const savedOverride = localStorage.getItem('theme_preference');
+      if (!savedOverride) {
+        setDarkMode(e.matches);
+      }
+    };
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+
+    // Keyboard shortcuts (Ctrl+K for search, Ctrl+Shift+S for Secret SOC Portal)
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setShowSearchModal(prev => !prev);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === 'S' || e.key === 's')) {
+        e.preventDefault();
+        soundFx.playSuccess();
+        window.location.hash = '#cybersecurity-dashboard';
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -156,6 +185,7 @@ export default function App() {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
       window.removeEventListener('keydown', handleKeyDown);
+      mediaQuery.removeEventListener('change', handleSystemThemeChange);
     };
   }, []);
 
@@ -211,6 +241,7 @@ export default function App() {
         currentUser={cyberAuthUser}
         onLogout={() => {
           try {
+            sessionStorage.removeItem('karan_cyber_auth_session');
             localStorage.removeItem('karan_cyber_auth_session');
           } catch (e) {}
           setCyberAuthUser(null);
@@ -288,7 +319,7 @@ export default function App() {
       {/* Primary Navigation */}
       <Navbar
         darkMode={darkMode}
-        setDarkMode={setDarkMode}
+        setDarkMode={handleSetDarkMode}
         onOpenATS={() => {
           const el = document.getElementById('ats-screener');
           if (el) el.scrollIntoView({ behavior: 'smooth' });

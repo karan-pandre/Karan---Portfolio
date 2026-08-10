@@ -12,8 +12,8 @@ export const CyberAuthScreen: React.FC<CyberAuthScreenProps> = ({
   onLoginSuccess,
   onReturnToPortfolio
 }) => {
-  const [usernameInput, setUsernameInput] = useState<string>('admin');
-  const [passwordInput, setPasswordInput] = useState<string>('karan2026');
+  const [usernameInput, setUsernameInput] = useState<string>('');
+  const [passwordInput, setPasswordInput] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -28,31 +28,7 @@ export const CyberAuthScreen: React.FC<CyberAuthScreenProps> = ({
     const p = passwordInput.trim();
 
     // Simulating authentication latency
-    await new Promise((resolve) => setTimeout(resolve, 600));
-
-    /**
-     * AUTHENTICATION LOGIC:
-     * Valid Demo Passkeys: "karan2026", "admin", "cyber2026", "Karan@port3", "2025"
-     * Valid Usernames: "admin", "karan", "karanpandre3@gmail.com", "analyst"
-     * 
-     * PRODUCTION INTEGRATION NOTE:
-     * To connect with Firebase Auth or Supabase Auth in production:
-     * ```ts
-     * import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-     * try {
-     *   const userCredential = await signInWithEmailAndPassword(auth, email, password);
-     *   onLoginSuccess({ username: userCredential.user.displayName || email, email });
-     * } catch (error) { ... }
-     * ```
-     */
-    const validUsers = [
-      'admin', 'karan', 'karanpandre3@gmail.com', 'analyst', 'secops', 'soc',
-      'karan.pandre@security.soc', 'analyst@security.soc', 'ciso@security.soc'
-    ];
-    const validPasswords = [
-      'karan2026', 'cyber2026', 'admin', 'Karan@port3', '2025', 'password', 'karan',
-      'soc2026', 'analyst2026', 'ciso2026'
-    ];
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     if (u.length >= 1 && p.length >= 1) {
       soundFx.playSuccess();
@@ -66,16 +42,16 @@ export const CyberAuthScreen: React.FC<CyberAuthScreenProps> = ({
         email: u.includes('@') ? u : `${u}@security.soc`
       };
 
-      // Store encrypted-style session object in localStorage
+      // Store in sessionStorage so it clears automatically when the tab is closed
       try {
-        localStorage.setItem('karan_cyber_auth_session', JSON.stringify({
+        sessionStorage.setItem('karan_cyber_auth_session', JSON.stringify({
           authenticated: true,
           user: authUser,
           token: `sec-token-${Date.now()}`,
           timestamp: Date.now()
         }));
       } catch (err) {
-        console.warn('LocalStorage error:', err);
+        console.warn('SessionStorage error:', err);
       }
 
       setIsLoading(false);
@@ -87,14 +63,15 @@ export const CyberAuthScreen: React.FC<CyberAuthScreenProps> = ({
     }
   };
 
-  const handle1ClickDemoLogin = () => {
+  const handle1ClickDemoLogin = (customUser?: string, customPass?: string) => {
     soundFx.playSuccess();
+    const activeUsername = customUser || 'karanpandre3@gmail.com';
     const authUser = {
-      username: 'Karan Pandre (SOC Lead Analyst)',
-      email: 'karanpandre3@gmail.com'
+      username: customUser?.includes('ciso') ? 'Executive CISO (Strategic Risk Officer)' : 'Karan Pandre (SOC Lead Analyst)',
+      email: activeUsername.includes('@') ? activeUsername : `${activeUsername}@security.soc`
     };
     try {
-      localStorage.setItem('karan_cyber_auth_session', JSON.stringify({
+      sessionStorage.setItem('karan_cyber_auth_session', JSON.stringify({
         authenticated: true,
         user: authUser,
         token: `sec-demo-token-${Date.now()}`,
@@ -102,6 +79,12 @@ export const CyberAuthScreen: React.FC<CyberAuthScreenProps> = ({
       }));
     } catch (e) {}
     onLoginSuccess(authUser);
+  };
+
+  const handleFillCredentials = (u: string, p: string) => {
+    soundFx.playCyberBlip();
+    setUsernameInput(u);
+    setPasswordInput(p);
   };
 
   return (
@@ -167,7 +150,7 @@ export const CyberAuthScreen: React.FC<CyberAuthScreenProps> = ({
                 required
                 value={usernameInput}
                 onChange={(e) => setUsernameInput(e.target.value)}
-                placeholder="admin or karanpandre3@gmail.com"
+                placeholder="e.g. karan.pandre@security.soc or admin"
                 className="w-full pl-3.5 pr-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-emerald-300 text-xs font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
               />
             </div>
@@ -185,7 +168,7 @@ export const CyberAuthScreen: React.FC<CyberAuthScreenProps> = ({
                 required
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
-                placeholder="Enter password (e.g. karan2026)"
+                placeholder="Enter password"
                 className="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-emerald-300 text-xs font-mono focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
               />
               <button
@@ -230,7 +213,7 @@ export const CyberAuthScreen: React.FC<CyberAuthScreenProps> = ({
 
             <button
               type="button"
-              onClick={handle1ClickDemoLogin}
+              onClick={() => handle1ClickDemoLogin()}
               className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-emerald-500/30 text-xs font-mono font-bold flex items-center justify-center gap-2 transition-all"
             >
               <Sparkles className="w-4 h-4 text-amber-400" />
@@ -239,27 +222,39 @@ export const CyberAuthScreen: React.FC<CyberAuthScreenProps> = ({
           </div>
         </form>
 
-        {/* Demo Credentials Helper Box */}
+        {/* Demo Credentials Helper Box - Clickable Quick-Fill */}
         <div className="p-3.5 rounded-2xl bg-black/60 border border-white/10 space-y-2 text-[11px] font-mono">
           <div className="flex items-center justify-between text-slate-400 font-bold border-b border-white/10 pb-1.5">
             <span className="flex items-center gap-1 text-emerald-400">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Demo Access Credentials:
+              <CheckCircle2 className="w-3.5 h-3.5" /> Click Credential Role to Autofill:
             </span>
             <span className="text-[10px] text-emerald-400/80 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">Active</span>
           </div>
-          <div className="space-y-1 text-[10px] text-slate-300">
-            <div className="flex justify-between items-center">
-              <span className="text-slate-400">SOC Manager / Lead:</span>
+          <div className="space-y-1.5 text-[10px] text-slate-300">
+            <button
+              type="button"
+              onClick={() => handleFillCredentials('karan.pandre@security.soc', 'soc2026')}
+              className="w-full flex justify-between items-center p-1.5 rounded-lg hover:bg-white/5 transition-all text-left"
+            >
+              <span className="text-slate-400 font-bold">SOC Lead Analyst:</span>
               <span><code className="text-amber-300 font-bold">karan.pandre@security.soc</code> / <code className="text-amber-300 font-bold">soc2026</code></span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-slate-400">Incident Analyst:</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFillCredentials('analyst@security.soc', 'analyst2026')}
+              className="w-full flex justify-between items-center p-1.5 rounded-lg hover:bg-white/5 transition-all text-left"
+            >
+              <span className="text-slate-400 font-bold">Incident Analyst:</span>
               <span><code className="text-amber-300 font-bold">analyst@security.soc</code> / <code className="text-amber-300 font-bold">analyst2026</code></span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-slate-400">Executive CISO:</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFillCredentials('ciso@security.soc', 'ciso2026')}
+              className="w-full flex justify-between items-center p-1.5 rounded-lg hover:bg-white/5 transition-all text-left"
+            >
+              <span className="text-slate-400 font-bold">Executive CISO:</span>
               <span><code className="text-amber-300 font-bold">ciso@security.soc</code> / <code className="text-amber-300 font-bold">ciso2026</code></span>
-            </div>
+            </button>
           </div>
         </div>
 
