@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TargetRole } from '../types';
 import { 
   BarChart3, ShieldCheck, TrendingUp, CheckCircle2, 
   Sparkles, Filter, Layers, Activity
@@ -12,11 +13,20 @@ import { soundFx } from '../utils/soundEffects';
 
 interface InteractiveDashboardsProps {
   darkMode: boolean;
+  activeRole?: TargetRole;
 }
 
-export const InteractiveDashboards: React.FC<InteractiveDashboardsProps> = ({ darkMode }) => {
+export const InteractiveDashboards: React.FC<InteractiveDashboardsProps> = ({ darkMode, activeRole = 'all' }) => {
   const [activeTab, setActiveTab] = useState<'powerbi' | 'soc'>('powerbi');
   const [selectedChannel, setSelectedChannel] = useState<string>('All');
+
+  React.useEffect(() => {
+    if (activeRole === 'cybersecurity' || activeRole === 'network-engineer') {
+      setActiveTab('soc');
+    } else if (activeRole === 'data-analyst') {
+      setActiveTab('powerbi');
+    }
+  }, [activeRole]);
 
   // Physics Wallah Digital Marketing Performance Data
   const channelData = [

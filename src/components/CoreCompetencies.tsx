@@ -1,4 +1,5 @@
 import React from 'react';
+import { TargetRole } from '../types';
 import { 
   BarChart3, Briefcase, ShieldCheck, CheckCircle2, 
   Sparkles, ShieldAlert, Terminal, Network, Cpu, Lock, ChevronRight
@@ -7,9 +8,10 @@ import { motion } from 'motion/react';
 
 interface CoreCompetenciesProps {
   darkMode: boolean;
+  activeRole?: TargetRole;
 }
 
-export const CoreCompetencies: React.FC<CoreCompetenciesProps> = ({ darkMode }) => {
+export const CoreCompetencies: React.FC<CoreCompetenciesProps> = ({ darkMode, activeRole = 'all' }) => {
   const securityPillars = [
     {
       id: 'soc',
@@ -160,6 +162,11 @@ export const CoreCompetencies: React.FC<CoreCompetenciesProps> = ({ darkMode }) 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
           {securityPillars.map((pillar, idx) => {
             const Icon = pillar.icon;
+            const isHighlighted = 
+              (activeRole === 'cybersecurity' && (pillar.id === 'soc' || pillar.id === 'siem')) ||
+              (activeRole === 'data-analyst' && pillar.id === 'analytics') ||
+              (activeRole === 'network-engineer' && pillar.id === 'network');
+
             return (
               <motion.div
                 key={pillar.id}
@@ -168,7 +175,9 @@ export const CoreCompetencies: React.FC<CoreCompetenciesProps> = ({ darkMode }) 
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: idx * 0.08 }}
                 className={`p-5 rounded-2xl border shadow-md flex flex-col justify-between group transition-all hover:-translate-y-1 ${pillar.borderColor} ${
-                  darkMode ? 'bg-[#141414] border-white/10' : 'bg-white border-slate-200'
+                  isHighlighted 
+                    ? 'ring-2 ring-emerald-500 shadow-xl shadow-emerald-500/10 scale-[1.02] ' + (darkMode ? 'bg-[#18201a] border-emerald-500/50' : 'bg-emerald-50/70 border-emerald-300')
+                    : darkMode ? 'bg-[#141414] border-white/10' : 'bg-white border-slate-200'
                 }`}
               >
                 <div>
@@ -218,6 +227,11 @@ export const CoreCompetencies: React.FC<CoreCompetenciesProps> = ({ darkMode }) 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {tracks.map((track, idx) => {
             const Icon = track.icon;
+            const isTrackHighlighted = 
+              (activeRole === 'cybersecurity' && track.id === 'cybersecurity') ||
+              (activeRole === 'data-analyst' && track.id === 'analytics') ||
+              (activeRole === 'network-engineer' && (track.id === 'cybersecurity' || track.id === 'pm'));
+
             return (
               <motion.div
                 key={track.id}
@@ -226,9 +240,11 @@ export const CoreCompetencies: React.FC<CoreCompetenciesProps> = ({ darkMode }) 
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
                 className={`p-7 rounded-2xl border shadow-lg flex flex-col justify-between transition-all hover:-translate-y-1 group relative ${
-                  darkMode 
-                    ? 'bg-[#141414] border-white/10 hover:border-blue-500/40' 
-                    : 'bg-white border-slate-200 hover:border-blue-400'
+                  isTrackHighlighted
+                    ? 'ring-2 ring-blue-500 shadow-xl shadow-blue-500/10 scale-[1.02] ' + (darkMode ? 'bg-[#131b2e] border-blue-500/50' : 'bg-blue-50/70 border-blue-300')
+                    : darkMode 
+                      ? 'bg-[#141414] border-white/10 hover:border-blue-500/40' 
+                      : 'bg-white border-slate-200 hover:border-blue-400'
                 }`}
               >
                 <div>

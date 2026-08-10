@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { 
   Sparkles, ShieldCheck, Download, Mail, MapPin, Award, 
   BarChart3, Briefcase, ChevronRight, ExternalLink, Camera, Upload,
-  Terminal, TrendingUp, CheckCircle2
+  Terminal, TrendingUp, CheckCircle2, Calendar
 } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'motion/react';
 import { PERSONAL_INFO } from '../data/karanData';
@@ -13,6 +13,7 @@ interface HeroProps {
   onOpenResume: () => void;
   onOpenAIChat: () => void;
   onOpenRecruiterBrief?: () => void;
+  onOpenBooking?: () => void;
   personalInfo?: typeof PERSONAL_INFO;
   onRefreshData?: () => void;
 }
@@ -23,6 +24,7 @@ export const Hero: React.FC<HeroProps> = ({
   onOpenResume,
   onOpenAIChat,
   onOpenRecruiterBrief,
+  onOpenBooking,
   personalInfo,
   onRefreshData
 }) => {
@@ -319,6 +321,17 @@ export const Hero: React.FC<HeroProps> = ({
 
             {/* Action CTAs */}
             <div className="flex flex-wrap items-center gap-3 pt-2">
+              {onOpenBooking && (
+                <button
+                  id="hero-cta-booking"
+                  onClick={onOpenBooking}
+                  className="w-full sm:w-auto px-5 py-3 min-h-[44px] justify-center rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm shadow-xl shadow-emerald-600/30 flex items-center gap-2 transition-all hover:scale-[1.03]"
+                >
+                  <Calendar className="w-4 h-4 text-emerald-200" />
+                  Book 1-Click Call
+                </button>
+              )}
+
               {onOpenRecruiterBrief && (
                 <button
                   id="hero-cta-recruiter"

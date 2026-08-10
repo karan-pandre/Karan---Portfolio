@@ -1,3 +1,5 @@
+export type TargetRole = 'all' | 'cybersecurity' | 'data-analyst' | 'network-engineer';
+
 export interface WorkExperience {
   id: string;
   role: string;

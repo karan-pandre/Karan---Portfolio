@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Sun, Moon, Shield, Search, Sparkles, FileText, Lock, 
   Menu, X, ChevronDown, BarChart2,
-  Briefcase, Award, Code2, Cpu, Terminal,
+  Briefcase, Award, Code2, Cpu, Terminal, Calendar,
   Compass, Mail, Home, ArrowUp, Volume2, VolumeX
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -18,6 +18,7 @@ interface NavbarProps {
   onOpenAIChat: () => void;
   onOpenSearch: () => void;
   onOpenRecruiterBrief?: () => void;
+  onOpenBooking?: () => void;
   isOffline: boolean;
   personalInfo?: typeof PERSONAL_INFO;
 }
@@ -31,6 +32,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAIChat,
   onOpenSearch,
   onOpenRecruiterBrief,
+  onOpenBooking,
   isOffline,
   personalInfo
 }) => {
@@ -104,6 +106,15 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   const quickTools = [
+    {
+      id: 'book-meeting',
+      title: '1-Click Intro Meeting',
+      desc: 'Schedule 20-min recruiter call with timezone detection',
+      icon: Calendar,
+      color: 'bg-emerald-600 text-white',
+      badge: '1-Click Call',
+      action: onOpenBooking
+    },
     {
       id: 'ai-twin',
       title: 'AI Career Twin',

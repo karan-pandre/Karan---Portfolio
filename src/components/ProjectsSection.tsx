@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { TargetRole } from '../types';
 import { 
   BarChart3, Database, Shield, Search, ExternalLink, Code, 
   CheckCircle2, Sparkles, Filter, ChevronRight, X 
@@ -11,12 +12,23 @@ import { MagneticCard } from './MagneticCard';
 interface ProjectsSectionProps {
   darkMode: boolean;
   projects?: Project[];
+  activeRole?: TargetRole;
 }
 
-export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ darkMode, projects }) => {
+export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ darkMode, projects, activeRole = 'all' }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeCodeModal, setActiveCodeModal] = useState<Project | null>(null);
+
+  useEffect(() => {
+    if (activeRole === 'cybersecurity' || activeRole === 'network-engineer') {
+      setSelectedCategory('Cybersecurity');
+    } else if (activeRole === 'data-analyst') {
+      setSelectedCategory('Data Analytics');
+    } else if (activeRole === 'all') {
+      setSelectedCategory('All');
+    }
+  }, [activeRole]);
 
   const categories = ['All', 'Data Analytics', 'Cybersecurity', 'Digital Marketing'];
 

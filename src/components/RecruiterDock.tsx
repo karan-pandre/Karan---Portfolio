@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  ShieldCheck, FileText, Target, Mail, Sparkles, Copy, Check, X, ArrowUpRight, GripHorizontal
+  ShieldCheck, FileText, Target, Mail, Sparkles, Copy, Check, X, ArrowUpRight, GripHorizontal, Calendar
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PERSONAL_INFO } from '../data/karanData';
@@ -11,6 +11,7 @@ interface RecruiterDockProps {
   onOpenBriefing: () => void;
   onOpenResume: () => void;
   onOpenATS: () => void;
+  onOpenBooking?: () => void;
 }
 
 export const RecruiterDock: React.FC<RecruiterDockProps> = ({
@@ -18,6 +19,7 @@ export const RecruiterDock: React.FC<RecruiterDockProps> = ({
   onOpenBriefing,
   onOpenResume,
   onOpenATS,
+  onOpenBooking,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
@@ -75,6 +77,29 @@ export const RecruiterDock: React.FC<RecruiterDockProps> = ({
 
             {/* Quick Action Cards */}
             <div className="space-y-1.5 text-xs">
+              {/* 1-Click Meeting Request */}
+              {onOpenBooking && (
+                <button
+                  onClick={() => {
+                    soundFx.playModalOpen();
+                    onOpenBooking();
+                    setIsOpen(false);
+                  }}
+                  className="w-full p-2.5 min-h-[44px] rounded-xl flex items-center justify-between gap-2 font-bold transition-all bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 group"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-white/20 text-white flex items-center justify-center shrink-0">
+                      <Calendar className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="text-left">
+                      <span className="block leading-none text-[11px] font-black">1-Click Intro Meeting</span>
+                      <span className="text-[9px] font-normal opacity-90">Auto timezone detection</span>
+                    </div>
+                  </div>
+                  <ArrowUpRight className="w-3.5 h-3.5 opacity-80 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                </button>
+              )}
+
               {/* 10-Sec Recruiter Briefing */}
               <button
                 onClick={() => {

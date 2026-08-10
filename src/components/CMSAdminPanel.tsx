@@ -8,6 +8,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { ContactMessage, Project, Certification, WorkExperience } from '../types';
 import { PROJECTS, CERTIFICATIONS, PERSONAL_INFO, WORK_EXPERIENCES } from '../data/karanData';
+import { SOARWorkbench } from './SOARWorkbench';
 
 interface CMSAdminPanelProps {
   darkMode: boolean;
@@ -30,7 +31,7 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
   const [passkeyInput, setPasskeyInput] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'overview' | 'experience' | 'projects' | 'certifications' | 'profile' | 'inbox' | 'backup'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'experience' | 'projects' | 'certifications' | 'profile' | 'inbox' | 'backup' | 'soar'>('overview');
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [saveSuccess, setSaveSuccess] = useState<string>('');
   const [lastAutoSaved, setLastAutoSaved] = useState<string | null>(null);
@@ -699,6 +700,18 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
                 >
                   <Database className="w-3.5 h-3.5" />
                   <span>Backup & Sync</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('soar')}
+                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+                    activeTab === 'soar' 
+                      ? 'bg-amber-600 text-white font-bold shadow-md' 
+                      : darkMode ? 'text-amber-400 hover:text-white' : 'text-amber-600 hover:text-slate-900 hover:bg-amber-100'
+                  }`}
+                >
+                  <Shield className="w-3.5 h-3.5" />
+                  <span>SOAR Workbench</span>
                 </button>
               </div>
 
@@ -1494,6 +1507,13 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
                     </div>
 
                   </div>
+                </div>
+              )}
+
+              {/* SOAR Security Incident Response Workbench */}
+              {activeTab === 'soar' && (
+                <div className="space-y-4">
+                  <SOARWorkbench darkMode={darkMode} />
                 </div>
               )}
 

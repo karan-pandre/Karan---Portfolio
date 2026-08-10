@@ -5,14 +5,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import { TargetRole } from './types';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { RoleFilterBar } from './components/RoleFilterBar';
 import { CoreCompetencies } from './components/CoreCompetencies';
 import { InteractiveDashboards } from './components/InteractiveDashboards';
 import { DataPipelineSimulator } from './components/DataPipelineSimulator';
 import { ExperienceTimeline } from './components/ExperienceTimeline';
 import { ProjectsSection } from './components/ProjectsSection';
-import { ValueImpactCalculator } from './components/ValueImpactCalculator';
 import { CertificationsGrid } from './components/CertificationsGrid';
 import { ATSResumeOptimizer } from './components/ATSResumeOptimizer';
 import { AICareerAssistant } from './components/AICareerAssistant';
@@ -20,6 +21,7 @@ import { CMSAdminPanel } from './components/CMSAdminPanel';
 import { ContactSection } from './components/ContactSection';
 import { ResumeViewerModal } from './components/ResumeViewerModal';
 import { RecruiterQuickBrief } from './components/RecruiterQuickBrief';
+import { InterviewBookingModal } from './components/InterviewBookingModal';
 import { RecruiterDock } from './components/RecruiterDock';
 import { SearchModal } from './components/SearchModal';
 import { MouseSpotlight } from './components/MouseSpotlight';
@@ -62,6 +64,10 @@ export default function App() {
   const [showCMSModal, setShowCMSModal] = useState<boolean>(false);
   const [showAIChatModal, setShowAIChatModal] = useState<boolean>(false);
   const [showSearchModal, setShowSearchModal] = useState<boolean>(false);
+  const [showBookingModal, setShowBookingModal] = useState<boolean>(false);
+
+  // Role Filter State ("Tailor for My Job Opening")
+  const [activeRole, setActiveRole] = useState<TargetRole>('all');
 
   // Portfolio CMS Data & Live Preview State
   const [portfolioData, setPortfolioData] = useState<any>(null);
@@ -208,6 +214,7 @@ export default function App() {
         onOpenAIChat={() => setShowAIChatModal(true)}
         onOpenSearch={() => setShowSearchModal(true)}
         onOpenRecruiterBrief={() => setShowRecruiterBriefModal(true)}
+        onOpenBooking={() => setShowBookingModal(true)}
         isOffline={isOffline}
         personalInfo={activeData?.personalInfo}
       />
@@ -230,8 +237,18 @@ export default function App() {
             onOpenResume={() => setShowResumeModal(true)}
             onOpenAIChat={() => setShowAIChatModal(true)}
             onOpenRecruiterBrief={() => setShowRecruiterBriefModal(true)}
+            onOpenBooking={() => setShowBookingModal(true)}
             personalInfo={activeData?.personalInfo}
             onRefreshData={fetchPortfolioData}
+          />
+        </motion.div>
+
+        {/* Role-Based Custom Portfolio Filter Bar */}
+        <motion.div variants={sectionVariants} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <RoleFilterBar
+            activeRole={activeRole}
+            onRoleChange={setActiveRole}
+            darkMode={darkMode}
           />
         </motion.div>
 
@@ -241,7 +258,7 @@ export default function App() {
           whileInView="visible"
           viewport={{ once: true, margin: '-60px' }}
         >
-          <CoreCompetencies darkMode={darkMode} />
+          <CoreCompetencies darkMode={darkMode} activeRole={activeRole} />
         </motion.div>
 
         <motion.div
@@ -250,7 +267,7 @@ export default function App() {
           whileInView="visible"
           viewport={{ once: true, margin: '-60px' }}
         >
-          <InteractiveDashboards darkMode={darkMode} />
+          <InteractiveDashboards darkMode={darkMode} activeRole={activeRole} />
         </motion.div>
 
         <motion.div
@@ -277,16 +294,7 @@ export default function App() {
           whileInView="visible"
           viewport={{ once: true, margin: '-60px' }}
         >
-          <ProjectsSection darkMode={darkMode} projects={activeData?.projects} />
-        </motion.div>
-
-        <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-        >
-          <ValueImpactCalculator darkMode={darkMode} />
+          <ProjectsSection darkMode={darkMode} projects={activeData?.projects} activeRole={activeRole} />
         </motion.div>
 
         <motion.div
@@ -344,6 +352,13 @@ export default function App() {
           if (el) el.scrollIntoView({ behavior: 'smooth' });
           else setShowATSModal(true);
         }}
+        onOpenBooking={() => setShowBookingModal(true)}
+      />
+
+      <InterviewBookingModal
+        darkMode={darkMode}
+        isOpen={showBookingModal}
+        onClose={() => setShowBookingModal(false)}
       />
 
       <RecruiterQuickBrief
