@@ -11,7 +11,6 @@ import { Hero } from './components/Hero';
 import { RoleFilterBar } from './components/RoleFilterBar';
 import { CoreCompetencies } from './components/CoreCompetencies';
 import { InteractiveDashboards } from './components/InteractiveDashboards';
-import { DataPipelineSimulator } from './components/DataPipelineSimulator';
 import { ExperienceTimeline } from './components/ExperienceTimeline';
 import { ProjectsSection } from './components/ProjectsSection';
 import { CertificationsGrid } from './components/CertificationsGrid';
@@ -27,6 +26,11 @@ import { SearchModal } from './components/SearchModal';
 import { MouseSpotlight } from './components/MouseSpotlight';
 import { ScrollProgressBar } from './components/ScrollProgressBar';
 import { Footer } from './components/Footer';
+
+// Private Cybersecurity Dashboard Imports
+import { CyberAuthScreen } from './components/cybersecurity/CyberAuthScreen';
+import { CyberDashboard } from './components/cybersecurity/CyberDashboard';
+import { CyberAuthUser } from './types/cybersecurity';
 
 // Motion Staggered Variants for Main Sections
 const mainContainerVariants = {
@@ -65,6 +69,24 @@ export default function App() {
   const [showAIChatModal, setShowAIChatModal] = useState<boolean>(false);
   const [showSearchModal, setShowSearchModal] = useState<boolean>(false);
   const [showBookingModal, setShowBookingModal] = useState<boolean>(false);
+
+  // Private Cybersecurity Dashboard Route & Auth State
+  const [currentHash, setCurrentHash] = useState<string>(() => {
+    return window.location.hash || window.location.pathname || '';
+  });
+
+  const [cyberAuthUser, setCyberAuthUser] = useState<CyberAuthUser | null>(() => {
+    try {
+      const stored = localStorage.getItem('karan_cyber_auth_session');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.authenticated && parsed?.user) {
+          return parsed.user;
+        }
+      }
+    } catch (err) {}
+    return null;
+  });
 
   // Role Filter State ("Tailor for My Job Opening")
   const [activeRole, setActiveRole] = useState<TargetRole>('all');
@@ -105,6 +127,13 @@ export default function App() {
   useEffect(() => {
     fetchPortfolioData();
 
+    // Route Hash Listener
+    const handleHashChange = () => {
+      setCurrentHash(window.location.hash || window.location.pathname || '');
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+
     // Online / Offline Listeners
     const handleOnline = () => setIsOffline(false);
     const handleOffline = () => setIsOffline(true);
@@ -122,6 +151,8 @@ export default function App() {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
       window.removeEventListener('keydown', handleKeyDown);
@@ -138,6 +169,60 @@ export default function App() {
       document.body.classList.remove('dark');
     }
   }, [darkMode]);
+
+  // Handle Private Cybersecurity Dashboard & Login Routes
+  const normalizedHash = currentHash.toLowerCase().trim();
+  const isCyberLoginRoute = normalizedHash === '#secure-login' || normalizedHash === '/secure-login' || normalizedHash === '#login';
+  const isCyberDashboardRoute = normalizedHash === '#cybersecurity-dashboard' || normalizedHash === '/cybersecurity-dashboard' || normalizedHash === '#cyber-dashboard';
+
+  if (isCyberLoginRoute) {
+    return (
+      <CyberAuthScreen
+        onLoginSuccess={(user) => {
+          setCyberAuthUser(user);
+          window.location.hash = '#cybersecurity-dashboard';
+        }}
+        onReturnToPortfolio={() => {
+          window.location.hash = '';
+          setCurrentHash('');
+        }}
+      />
+    );
+  }
+
+  if (isCyberDashboardRoute) {
+    if (!cyberAuthUser) {
+      return (
+        <CyberAuthScreen
+          onLoginSuccess={(user) => {
+            setCyberAuthUser(user);
+            window.location.hash = '#cybersecurity-dashboard';
+          }}
+          onReturnToPortfolio={() => {
+            window.location.hash = '';
+            setCurrentHash('');
+          }}
+        />
+      );
+    }
+
+    return (
+      <CyberDashboard
+        currentUser={cyberAuthUser}
+        onLogout={() => {
+          try {
+            localStorage.removeItem('karan_cyber_auth_session');
+          } catch (e) {}
+          setCyberAuthUser(null);
+          window.location.hash = '#secure-login';
+        }}
+        onReturnToPortfolio={() => {
+          window.location.hash = '';
+          setCurrentHash('');
+        }}
+      />
+    );
+  }
 
   return (
     <div className={`min-h-screen font-sans selection:bg-blue-500 selection:text-white relative theme-transition transition-colors duration-500 ease-in-out ${
@@ -268,15 +353,6 @@ export default function App() {
           viewport={{ once: true, margin: '-60px' }}
         >
           <InteractiveDashboards darkMode={darkMode} activeRole={activeRole} />
-        </motion.div>
-
-        <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-        >
-          <DataPipelineSimulator darkMode={darkMode} />
         </motion.div>
 
         <motion.div

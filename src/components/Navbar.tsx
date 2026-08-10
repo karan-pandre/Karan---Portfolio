@@ -159,6 +159,15 @@ export const Navbar: React.FC<NavbarProps> = ({
       color: 'bg-amber-600 text-white',
       badge: 'Passkey',
       action: onOpenCMS
+    },
+    {
+      id: 'soc-dashboard',
+      title: 'Private SOC Command Portal',
+      desc: 'Live Threat Map, SIEM Alerts & SOAR Incident Desk',
+      icon: Shield,
+      color: 'bg-emerald-600 text-white',
+      badge: '#cybersecurity-dashboard',
+      action: () => { window.location.hash = '#cybersecurity-dashboard'; }
     }
   ];
 
@@ -276,6 +285,22 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Header Right Action Tools */}
             <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               
+              {/* Direct SOC Command Portal Button */}
+              <button
+                id="btn-nav-soc-portal"
+                onClick={() => { window.location.hash = '#cybersecurity-dashboard'; }}
+                aria-label="Open Private Cybersecurity SOC Portal"
+                className={`hidden xs:flex px-2.5 py-1.5 rounded-xl text-xs font-bold items-center gap-1.5 transition-all border shadow-sm ${
+                  darkMode 
+                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20' 
+                    : 'bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100'
+                }`}
+                title="SOC Command Center (#cybersecurity-dashboard)"
+              >
+                <Shield className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+                <span className="hidden md:inline text-[11px]">SOC Portal</span>
+              </button>
+
               {/* Direct CMS Admin Access Button */}
               <button
                 id="btn-nav-cms-admin"

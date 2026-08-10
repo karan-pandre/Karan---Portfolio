@@ -190,6 +190,35 @@ class SoundEngine {
       console.debug('Audio error:', e);
     }
   }
+
+  /**
+   * Error / Denied Buzz Sound
+   */
+  public playError() {
+    if (this.soundMuted) return;
+    try {
+      this.initCtx();
+      if (!this.ctx) return;
+
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+      osc.frequency.setValueAtTime(110, this.ctx.currentTime + 0.05);
+
+      gain.gain.setValueAtTime(this.volume * 0.8, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.12);
+    } catch (e) {
+      console.debug('Audio error:', e);
+    }
+  }
 }
 
 export const soundFx = new SoundEngine();

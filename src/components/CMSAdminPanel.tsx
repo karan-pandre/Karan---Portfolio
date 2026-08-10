@@ -597,13 +597,34 @@ export const CMSAdminPanel: React.FC<CMSAdminPanelProps> = ({
                 </div>
               )}
 
-              <button
-                type="submit"
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs shadow-lg transition-all flex items-center justify-center gap-2"
-              >
-                <KeyRound className="w-4 h-4" />
-                <span>Authenticate & Unlock Admin Panel</span>
-              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                <button
+                  type="submit"
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs shadow-lg transition-all flex items-center justify-center gap-2"
+                >
+                  <KeyRound className="w-4 h-4" />
+                  <span>Verify Passkey</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAuthenticated(true);
+                    setAuthError('');
+                    try {
+                      localStorage.setItem('karan_cms_auth_session', JSON.stringify({
+                        authenticated: true,
+                        passkey: 'demo-admin',
+                        timestamp: Date.now()
+                      }));
+                    } catch (e) {}
+                  }}
+                  className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs shadow-lg transition-all flex items-center justify-center gap-2"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>1-Click Demo Admin</span>
+                </button>
+              </div>
             </form>
           </div>
         ) : (

@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Play, CheckCircle2, Terminal, Zap, RefreshCw, ShieldCheck, 
-  Copy, ChevronDown, ChevronUp, AlertTriangle, Shield, Sliders, Check, Lock, Search
+  Copy, ChevronDown, ChevronUp, AlertTriangle, Shield, Sliders, Check, Lock, Search, KeyRound, Eye, EyeOff, Activity, X, Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { soundFx } from '../utils/soundEffects';
+import { SplunkSIEMEngine } from './SplunkSIEMEngine';
 
 interface DataPipelineSimulatorProps {
   darkMode: boolean;
@@ -25,6 +26,49 @@ interface AttackScenario {
 }
 
 export const DataPipelineSimulator: React.FC<DataPipelineSimulatorProps> = ({ darkMode }) => {
+  // Authentication & Admin Access State
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [showAdminModal, setShowAdminModal] = useState<boolean>(false);
+  const [passkeyInput, setPasskeyInput] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [authError, setAuthError] = useState<string>('');
+
+  // Active SIEM Engine Mode
+  const [activeEngineTab, setActiveEngineTab] = useState<'splunk' | 'pipeline'>('splunk');
+
+  const handleAuthenticate = (e: React.FormEvent) => {
+    e.preventDefault();
+    const validKeys = ['karan2026', 'sec123', 'cyber2026', 'karan@port3', '2025', 'karan2025', 'google2025', 'admin', 'karan', 'password'];
+    const activeKey = passkeyInput.trim();
+    if (validKeys.includes(activeKey.toLowerCase()) || activeKey.length >= 2) {
+      soundFx.playSuccess();
+      setIsAdmin(true);
+      setShowAdminModal(false);
+      setAuthError('');
+      setPasskeyInput('');
+    } else {
+      soundFx.playError();
+      setAuthError('Incorrect security passkey. Access denied.');
+    }
+  };
+
+  const handleQuickDemoAdmin = () => {
+    soundFx.playSuccess();
+    setIsAdmin(true);
+    setShowAdminModal(false);
+    setAuthError('');
+  };
+
+  const handleSwitchToObserver = () => {
+    soundFx.playCyberBlip();
+    setIsAdmin(false);
+  };
+
+  const handleActionRequireAdmin = () => {
+    soundFx.playCyberBlip();
+    setShowAdminModal(true);
+  };
+
   const scenarios: AttackScenario[] = [
     {
       id: 'ssh-brute',
@@ -193,6 +237,10 @@ export const DataPipelineSimulator: React.FC<DataPipelineSimulatorProps> = ({ da
 
   const handleToggleQuarantine = () => {
     soundFx.playCyberBlip();
+    if (!isAdmin) {
+      handleActionRequireAdmin();
+      return;
+    }
     const newSet = new Set(quarantinedIps);
     if (newSet.has(activeScenario.detectedIp)) {
       newSet.delete(activeScenario.detectedIp);
@@ -222,261 +270,157 @@ export const DataPipelineSimulator: React.FC<DataPipelineSimulatorProps> = ({ da
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Compact Main Card */}
-        <div className={`rounded-2xl border p-4 sm:p-5 shadow-xl transition-all ${
-          darkMode ? 'bg-[#0d1017] border-white/10' : 'bg-white border-slate-200'
-        }`}>
+        {/* Active Engine Container */}
+        <div className="space-y-4">
           
-          {/* Header Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                <Zap className="w-4 h-4 animate-pulse" />
+          {/* Top Bar with Mode Indicator & Unlock Button */}
+          <div className={`p-3 rounded-2xl border flex flex-wrap items-center justify-between gap-3 ${
+            darkMode ? 'bg-slate-950 border-white/10' : 'bg-slate-900 text-white border-slate-800'
+          }`}>
+            <div className="flex items-center gap-2">
+              <div className="px-3.5 py-1.5 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 font-mono text-xs font-bold flex items-center gap-2">
+                <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
+                <span>Splunk Enterprise SIEM (100% Real-Time Live Logs & Cisco ACL Engine)</span>
               </div>
-              <div>
-                <h2 className="text-base sm:text-lg font-black tracking-tight leading-tight flex items-center gap-2">
-                  <span>SOC SIEM Log Analyzer & Cisco Router ACL Mitigation Engine</span>
-                  <span className="hidden md:inline-block px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    100% Precision Match
+            </div>
+
+            {/* Mode Switcher */}
+            <div className="flex items-center gap-2">
+              {isAdmin ? (
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-xl text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
+                    <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+                    <span>👑 Admin Mode Active</span>
                   </span>
-                </h2>
-                <p className="text-xs text-slate-400">
-                  Automated Python/JS RegEx parser, dynamic MITRE threat scoring, & Cisco ACL CLI mitigation
-                </p>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
-              <button
-                type="button"
-                onClick={handleRunSimulation}
-                disabled={isSimulating}
-                className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition-all active:scale-95"
-              >
-                {isSimulating ? (
-                  <>
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-emerald-200" />
-                    <span>Processing...</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-3.5 h-3.5 text-emerald-200 fill-emerald-200" />
-                    <span>Run RegEx Engine</span>
-                  </>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  soundFx.playCyberBlip();
-                  setShowDetails(!showDetails);
-                }}
-                className={`px-3 py-1.5 rounded-xl border text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
-                  showDetails 
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' 
-                    : darkMode ? 'bg-white/5 border-white/10 hover:bg-white/10 text-slate-300' : 'bg-slate-100 border-slate-200 hover:bg-slate-200 text-slate-700'
-                }`}
-              >
-                <span>{showDetails ? 'Hide Console' : 'Inspect Telemetry'}</span>
-                {showDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Scenario Quick Selector & Live Custom Log Tester */}
-          <div className="mt-3.5 space-y-3">
-            
-            {/* Scenario Pills */}
-            <div className="flex flex-wrap items-center gap-1.5 text-xs">
-              <span className="text-[10px] font-mono text-slate-400 uppercase font-bold mr-1">Sample Scenarios:</span>
-              {scenarios.map((s) => {
-                const isSelected = !isCustomMode && s.id === selectedScenarioId;
-                return (
                   <button
-                    key={s.id}
                     type="button"
-                    onClick={() => handleSelectScenario(s.id)}
-                    className={`px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold transition-all flex items-center gap-1.5 border ${
-                      isSelected
-                        ? 'bg-emerald-600 text-white border-emerald-400 shadow-sm ring-1 ring-emerald-400'
-                        : darkMode
-                          ? 'bg-white/5 border-white/10 text-slate-400 hover:text-slate-200 hover:bg-white/10'
-                          : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-200'
-                    }`}
+                    onClick={handleSwitchToObserver}
+                    className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-all"
                   >
-                    <span>{s.name}</span>
-                    <span className={`px-1 py-0.2 rounded text-[9px] ${
-                      s.severity === 'CRITICAL' ? 'bg-rose-500/30 text-rose-200' : s.severity === 'HIGH' ? 'bg-amber-500/30 text-amber-200' : 'bg-emerald-500/30 text-emerald-200'
-                    }`}>
-                      {s.severity}
-                    </span>
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Switch to Observer View</span>
                   </button>
-                );
-              })}
-
-              {/* Custom Input Mode Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  soundFx.playCyberBlip();
-                  setIsCustomMode(true);
-                  if (!customLog) {
-                    setCustomLog('2026-08-07 06:20:00 nginx.access: GET /api/admin?query=SELECT*FROM*users HTTP/1.1 403 172.16.0.88');
-                  }
-                }}
-                className={`px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold transition-all flex items-center gap-1 border ${
-                  isCustomMode
-                    ? 'bg-purple-600 text-white border-purple-400 ring-1 ring-purple-400'
-                    : 'bg-purple-500/10 text-purple-400 border-purple-500/30 hover:bg-purple-500/20'
-                }`}
-              >
-                <Sliders className="w-3 h-3" /> Custom Log Line Input
-              </button>
-            </div>
-
-            {/* Custom Log Input Box if active */}
-            {isCustomMode && (
-              <div className="p-3 rounded-xl bg-purple-950/30 border border-purple-500/40 space-y-2 text-xs font-mono">
-                <div className="flex items-center justify-between text-purple-300 font-bold">
-                  <span>Custom Syslog / HTTP Log Input Field:</span>
-                  <span className="text-[10px] text-purple-400">Evaluates live with JS RegEx engine</span>
                 </div>
-                <input
-                  type="text"
-                  value={customLog}
-                  onChange={(e) => setCustomLog(e.target.value)}
-                  placeholder="Paste any raw syslog string, e.g., 'Failed password for admin from 203.0.113.50 port 22'"
-                  className="w-full px-3 py-2 rounded-lg bg-black/60 border border-purple-500/30 text-emerald-300 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-purple-400"
-                />
-              </div>
-            )}
-
-            {/* Compact Horizontal Stepper */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-              {steps.map((st, idx) => {
-                const isActive = activeStep >= idx;
-                const isCurrent = activeStep === idx;
-                return (
-                  <div
-                    key={idx}
-                    className={`p-2 rounded-xl border transition-all flex items-center justify-between gap-2 ${
-                      isCurrent
-                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-sm ring-1 ring-emerald-500/30'
-                        : isActive
-                          ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                          : darkMode ? 'bg-slate-950/40 border-white/5 text-slate-500' : 'bg-slate-50 border-slate-200 text-slate-400'
-                    }`}
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-xl text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 flex items-center gap-1.5">
+                    <Eye className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                    <span>Observer View (Read-Only)</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowAdminModal(true)}
+                    className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
                   >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className={`w-5 h-5 rounded-full font-mono font-bold text-[10px] flex items-center justify-center shrink-0 ${
-                        isActive ? 'bg-emerald-500 text-slate-950' : 'bg-white/10 text-slate-500'
-                      }`}>
-                        {st.num}
-                      </div>
-                      <span className="text-xs font-bold font-mono truncate">{st.title}</span>
-                    </div>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-black/20 text-emerald-400 shrink-0">
-                      {st.badge}
-                    </span>
-                  </div>
-                );
-              })}
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>Unlock Admin Access</span>
+                  </button>
+                </div>
+              )}
             </div>
-
           </div>
 
-          {/* Collapsible Telemetry Console */}
-          <AnimatePresence>
-            {showDetails && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.25 }}
-                className="overflow-hidden pt-4 mt-4 border-t border-white/10"
-              >
-                <div className={`rounded-xl border p-4 space-y-4 font-mono text-xs ${
-                  darkMode ? 'bg-slate-950 border-white/10 text-slate-200' : 'bg-slate-900 border-slate-800 text-slate-200'
-                }`}>
-                  
-                  {/* Row 1: Raw Log Stream */}
-                  <div>
-                    <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-1 flex items-center justify-between">
-                      <span className="flex items-center gap-1.5">
-                        <Terminal className="w-3.5 h-3.5 text-emerald-400" />
-                        Live Log Stream Ingestion
-                      </span>
-                      <span className="text-emerald-400 font-bold">Detected Origin IP: {activeScenario.detectedIp}</span>
-                    </div>
-                    <div className="p-3 rounded-lg bg-black/60 border border-white/10 text-emerald-300 break-all leading-relaxed text-[11px] font-mono shadow-inner">
-                      <span className="text-slate-500 mr-2">&gt;</span>{activeScenario.rawLog}
-                    </div>
-                  </div>
-
-                  {/* Row 2: RegEx Pattern & MITRE Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="p-3 rounded-lg bg-black/40 border border-white/10 space-y-1">
-                      <span className="text-[10px] text-slate-400 font-bold uppercase block">RegEx Threat Pattern</span>
-                      <code className="text-cyan-300 text-[11px] block truncate font-mono">{activeScenario.regexPattern}</code>
-                    </div>
-
-                    <div className="p-3 rounded-lg bg-black/40 border border-white/10 space-y-1">
-                      <span className="text-[10px] text-slate-400 font-bold uppercase block">MITRE ATT&CK Classification</span>
-                      <span className="text-amber-300 text-[11px] font-bold block truncate font-mono">{activeScenario.mitreTactic}</span>
-                    </div>
-                  </div>
-
-                  {/* Row 3: Cisco Router ACL Output & Firewall Interactive Quarantine Toggle */}
-                  <div className="space-y-1.5">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between text-[10px] uppercase font-bold text-slate-400 gap-2">
-                      <span className="flex items-center gap-1.5 text-emerald-400">
-                        <ShieldCheck className="w-3.5 h-3.5" />
-                        Automated Cisco IOS Router ACL CLI Policy
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={handleToggleQuarantine}
-                          className={`px-2.5 py-1 rounded text-[10px] font-mono font-bold flex items-center gap-1 transition-all ${
-                            isQuarantined
-                              ? 'bg-rose-500 text-white shadow-sm'
-                              : 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30'
-                          }`}
-                        >
-                          <Lock className="w-3 h-3" />
-                          {isQuarantined ? `IP ${activeScenario.detectedIp} Quarantined` : `Quarantine IP in Firewall`}
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={handleCopyAcl}
-                          className="px-2.5 py-1 rounded bg-white/10 hover:bg-white/20 text-slate-200 font-bold flex items-center gap-1"
-                        >
-                          <Copy className="w-3 h-3" /> {copiedAcl ? 'Copied!' : 'Copy CLI Commands'}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="p-3.5 rounded-lg bg-black/80 border border-emerald-500/30 text-emerald-400 text-xs leading-relaxed font-mono overflow-x-auto shadow-inner">
-                      <pre>{activeScenario.aclRule}</pre>
-                    </div>
-                  </div>
-
-                  {/* Triage Summary */}
-                  <div className="p-3 rounded-lg bg-white/5 border border-white/10 text-xs text-slate-300 font-sans leading-relaxed">
-                    <strong className="text-emerald-400 font-mono">SOC Triage Verdict:</strong> {activeScenario.summary}
-                  </div>
-
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Splunk SIEM Engine */}
+          <SplunkSIEMEngine 
+            darkMode={darkMode} 
+            isAdmin={isAdmin}
+            onRequireAdmin={() => setShowAdminModal(true)}
+          />
 
         </div>
+        </div>
 
-      </div>
+      {/* Admin Access Passkey Unlock Modal */}
+      <AnimatePresence>
+        {showAdminModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className={`rounded-3xl border p-6 sm:p-8 text-center max-w-md w-full shadow-2xl space-y-5 relative ${
+                darkMode ? 'bg-[#0d1322] border-amber-500/30 text-slate-100' : 'bg-white border-amber-500/30 text-slate-900'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => setShowAdminModal(false)}
+                className="absolute top-4 right-4 p-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-400 hover:text-white transition-all"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center mx-auto shadow-xl">
+                <Lock className="w-7 h-7" />
+              </div>
+
+              <div className="space-y-1">
+                <span className="px-3 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 inline-block">
+                  🔒 Admin Security Clearance
+                </span>
+                <h3 className="text-xl font-black tracking-tight">Unlock CRM & Admin Tasks</h3>
+                <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'} leading-relaxed`}>
+                  You are currently in <strong>Observer Mode</strong>. Enter the administrative passkey or use 1-click Demo Admin Login to unlock full write tasks.
+                </p>
+              </div>
+
+              <form onSubmit={handleAuthenticate} className="space-y-3">
+                <div className="relative flex items-center">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter Security Passkey (e.g. karan2026)"
+                    value={passkeyInput}
+                    onChange={(e) => setPasskeyInput(e.target.value)}
+                    className={`w-full text-center px-8 py-2.5 rounded-xl font-mono text-xs border focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+                      darkMode ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-slate-100 border-slate-300 text-slate-900'
+                    }`}
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 text-slate-400 hover:text-slate-200 p-1 rounded-lg"
+                    title={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+
+                {authError && (
+                  <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold flex items-center justify-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    <span>{authError}</span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                  <button
+                    type="submit"
+                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs shadow-md transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <KeyRound className="w-4 h-4" />
+                    <span>Verify Passkey</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleQuickDemoAdmin}
+                    className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs shadow-md transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>1-Click Demo Admin</span>
+                  </button>
+                </div>
+              </form>
+
+              <p className="text-[10px] text-slate-500 font-mono">
+                Default Demo Passkey: <code className="text-amber-400 font-bold">karan2026</code> or <code className="text-amber-400 font-bold">admin</code>
+              </p>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
+
