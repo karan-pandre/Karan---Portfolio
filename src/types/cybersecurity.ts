@@ -47,12 +47,20 @@ export interface VulnerabilityItem {
 export interface SecurityToolItem {
   id: string;
   name: string;
-  category: 'Network Security' | 'SIEM & Monitoring' | 'Endpoint Security' | 'Cloud Security' | 'Offensive Security';
+  category: 'Network Security' | 'SIEM & Monitoring' | 'Endpoint Security' | 'Cloud Security' | 'Offensive Security' | 'Endpoint Protection' | 'Vulnerability Management';
   purpose: string;
   skillLevel: 'Expert' | 'Advanced' | 'Intermediate' | 'Foundational';
   status: 'In Portfolio' | 'Practical Lab Usage' | 'Enterprise Deployment' | 'Certified';
   description: string;
   iconName?: string;
+  vendor?: string;
+  version?: string;
+  healthStatus?: 'Healthy' | 'Degraded' | 'Offline' | 'Warning';
+  lastSync?: string;
+  integrationType?: string;
+  autoRemediationEnabled?: boolean;
+  eventsCount24h?: number;
+  apiEndpoint?: string;
 }
 
 export interface CyberProjectItem {

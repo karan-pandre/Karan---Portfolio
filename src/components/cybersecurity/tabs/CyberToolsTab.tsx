@@ -9,12 +9,14 @@ interface CyberToolsTabProps {
   tools: SecurityToolItem[];
   onTriggerToolAction?: (commandText: string) => void;
   onShowToast?: (title: string, message: string, type: 'info' | 'success' | 'warning' | 'error') => void;
+  onSelectTool?: (tool: SecurityToolItem) => void;
 }
 
 export const CyberToolsTab: React.FC<CyberToolsTabProps> = ({ 
   tools,
   onTriggerToolAction,
-  onShowToast
+  onShowToast,
+  onSelectTool
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [autoRemediationMap, setAutoRemediationMap] = useState<Record<string, boolean>>({
@@ -118,7 +120,18 @@ export const CyberToolsTab: React.FC<CyberToolsTabProps> = ({
                   </span>
                 </div>
 
-                <h3 className="text-base font-bold text-white font-mono">{tool.name}</h3>
+                <h3 
+                  onClick={() => {
+                    if (onSelectTool) {
+                      soundFx.playCyberBlip();
+                      onSelectTool(tool);
+                    }
+                  }}
+                  className="text-base font-bold text-white hover:text-emerald-300 font-mono transition-colors cursor-pointer flex items-center justify-between group"
+                >
+                  <span>{tool.name}</span>
+                  <span className="text-[10px] text-slate-500 font-normal group-hover:text-emerald-400 font-sans">Inspect →</span>
+                </h3>
                 <p className="text-xs text-slate-300 leading-relaxed font-sans">{tool.purpose}</p>
               </div>
 
@@ -156,26 +169,41 @@ export const CyberToolsTab: React.FC<CyberToolsTabProps> = ({
                   "{tool.description}"
                 </p>
 
-                {onTriggerToolAction && (
-                  <button
-                    onClick={() => {
-                      const autoPatchFlag = isAutoRemEnabled ? ' [Auto-Remediation: Safe Patches Triggered]' : '';
-                      const routineCmd = `Execute security routine using ${tool.name} (${tool.category})${autoPatchFlag}`;
-                      onTriggerToolAction(routineCmd);
-                      if (onShowToast) {
-                        onShowToast(
-                          `Tool Routine Dispatched`,
-                          `Dispatched automated AI analysis for ${tool.name}${isAutoRemEnabled ? ' with auto-remediation active' : ''}`,
-                          isAutoRemEnabled ? 'success' : 'info'
-                        );
-                      }
-                    }}
-                    className="w-full py-2 rounded-xl bg-slate-800 hover:bg-emerald-600/20 text-slate-300 hover:text-emerald-300 border border-slate-700 hover:border-emerald-500/40 font-mono font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 group"
-                  >
-                    <Play className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400 group-hover:animate-pulse" />
-                    <span>Execute {tool.name} Routine</span>
-                  </button>
-                )}
+                <div className="flex items-center gap-2 pt-1">
+                  {onSelectTool && (
+                    <button
+                      onClick={() => {
+                        soundFx.playCyberBlip();
+                        onSelectTool(tool);
+                      }}
+                      className="flex-1 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 font-mono text-[11px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer"
+                    >
+                      <Wrench className="w-3 h-3 text-cyan-400" />
+                      <span>Diagnostics</span>
+                    </button>
+                  )}
+
+                  {onTriggerToolAction && (
+                    <button
+                      onClick={() => {
+                        const autoPatchFlag = isAutoRemEnabled ? ' [Auto-Remediation: Safe Patches Triggered]' : '';
+                        const routineCmd = `Execute security routine using ${tool.name} (${tool.category})${autoPatchFlag}`;
+                        onTriggerToolAction(routineCmd);
+                        if (onShowToast) {
+                          onShowToast(
+                            `Tool Routine Dispatched`,
+                            `Dispatched automated AI analysis for ${tool.name}${isAutoRemEnabled ? ' with auto-remediation active' : ''}`,
+                            isAutoRemEnabled ? 'success' : 'info'
+                          );
+                        }
+                      }}
+                      className="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-emerald-600/20 text-slate-300 hover:text-emerald-300 border border-slate-700 hover:border-emerald-500/40 font-mono font-bold text-[11px] flex items-center justify-center gap-1 transition-all active:scale-95 group cursor-pointer"
+                    >
+                      <Play className="w-3 h-3 text-emerald-400 fill-emerald-400 group-hover:animate-pulse" />
+                      <span>Execute</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
             </div>

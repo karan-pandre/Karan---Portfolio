@@ -3,7 +3,7 @@ import {
   Shield, Activity, ShieldAlert, Flame, Bug, Wrench, FolderLock, Award, 
   FileText, Sliders, LogOut, ArrowLeft, Menu, X, Bell, UserCheck, Clock, CheckCircle2,
   Globe, Terminal, Save, Download, Sparkles, RefreshCw, Cpu, Search, HelpCircle,
-  ChevronRight, Server, Zap, Radio, Layers, Eye
+  ChevronRight, Server, Zap, Radio, Layers, Eye, ChevronLeft, PanelLeftClose, PanelLeftOpen
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -35,6 +35,7 @@ import { CyberSocCLI } from './CyberSocCLI';
 import { CommandPaletteModal } from './CommandPaletteModal';
 import { ConfirmationModal } from './ConfirmationModal';
 import { AssetDetailDrawer } from './AssetDetailDrawer';
+import { ToolDetailDrawer } from './ToolDetailDrawer';
 import { GuidedTourModal } from './GuidedTourModal';
 import { CyberDemoMode } from './CyberDemoMode';
 import { ToastNotification, ToastMessage } from './ToastNotification';
@@ -53,17 +54,20 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
   onLogout,
   onReturnToPortfolio
 }) => {
-  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [activeTab, setActiveTab] = useState<string>('admin');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
   const [liveClock, setLiveClock] = useState<string>('');
   const [isSyncingFirestore, setIsSyncingFirestore] = useState<boolean>(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
-  const [persona, setPersona] = useState<PersonaRole>('Analyst');
+  const [persona, setPersona] = useState<PersonaRole>('Auditor');
+  const [environmentMode, setEnvironmentMode] = useState<'LIVE' | 'DEMO'>('LIVE');
 
   // Modals & Drawers State
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
   const [isGuidedTourOpen, setIsGuidedTourOpen] = useState<boolean>(false);
   const [selectedAsset, setSelectedAsset] = useState<AssetItem | null>(null);
+  const [selectedTool, setSelectedTool] = useState<SecurityToolItem | null>(null);
 
   // Confirmation Modal State
   const [confirmationConfig, setConfirmationConfig] = useState<{
@@ -120,6 +124,55 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
     updateClock();
     const interval = setInterval(updateClock, 1000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Keyboard Shortcuts (⌘K & G-then-X sequences)
+  useEffect(() => {
+    let pendingGKey = false;
+    let timer: NodeJS.Timeout;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore keybindings inside text inputs or textareas
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName)) {
+        return;
+      }
+
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(prev => !prev);
+        return;
+      }
+
+      if (e.key === '?') {
+        e.preventDefault();
+        setIsGuidedTourOpen(true);
+        return;
+      }
+
+      if (e.key.toLowerCase() === 'g') {
+        pendingGKey = true;
+        clearTimeout(timer);
+        timer = setTimeout(() => { pendingGKey = false; }, 1000);
+        return;
+      }
+
+      if (pendingGKey) {
+        pendingGKey = false;
+        const key = e.key.toLowerCase();
+        if (key === 'o') setActiveTab('overview');
+        if (key === 't') setActiveTab('threats');
+        if (key === 'i') setActiveTab('incidents');
+        if (key === 'v') setActiveTab('vulnerabilities');
+        if (key === 'a') setActiveTab('cli');
+        if (key === 'm') setActiveTab('admin');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      clearTimeout(timer);
+    };
   }, []);
 
   // Save Progress to Firestore
@@ -357,6 +410,12 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
         onScanAsset={(hostName) => showToast('Deep Scan Initiated', `Vulnerability scanner running on ${hostName}`, 'info')}
       />
 
+      {/* Tool Detail Slide-over Drawer */}
+      <ToolDetailDrawer
+        tool={selectedTool}
+        onClose={() => setSelectedTool(null)}
+      />
+
       {/* 60-Second Guided Tour Modal */}
       <GuidedTourModal
         isOpen={isGuidedTourOpen}
@@ -365,7 +424,7 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
       />
 
       {/* Top Header Navigation Bar */}
-      <header className="h-16 bg-[#0d1322]/95 border-b border-emerald-500/20 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md">
+      <header className="h-16 bg-[#0d1322]/95 border-b border-emerald-500/20 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md font-sans">
         
         {/* Left: Mobile Menu Trigger + Brand Title */}
         <div className="flex items-center gap-3">
@@ -377,6 +436,14 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
             {isMobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
+          <button
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            className="hidden lg:flex p-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-white hover:border-emerald-500/30 transition-all cursor-pointer"
+            title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
+            {isSidebarCollapsed ? <PanelLeftOpen className="w-4 h-4 text-emerald-400" /> : <PanelLeftClose className="w-4 h-4 text-slate-400" />}
+          </button>
+
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
               <Shield className="w-5 h-5 text-emerald-400 animate-pulse" />
@@ -386,10 +453,38 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
                 <h1 className="text-sm sm:text-base font-black tracking-tight text-white font-mono leading-none">
                   SOC COMMAND CENTER
                 </h1>
-                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-mono font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  REAL-TIME ACTIVE
+                
+                {/* System Health Status Indicator */}
+                <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-mono font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  <Activity className="w-3 h-3 text-emerald-400 animate-pulse" />
+                  <span>SYS HEALTH: 98.4% OPTIMAL</span>
                 </span>
+
+                {/* Environment Indicator (LIVE / DEMO) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundFx.playCyberBlip();
+                    const nextEnv = environmentMode === 'LIVE' ? 'DEMO' : 'LIVE';
+                    setEnvironmentMode(nextEnv);
+                    if (nextEnv === 'DEMO') {
+                      setActiveTab('demo');
+                      showToast('Environment Mode: DEMO', 'Simulated attack scenario environment active.', 'warning');
+                    } else {
+                      setActiveTab('overview');
+                      showToast('Environment Mode: LIVE', 'Connected to production SIEM & firewall telemetry stream.', 'success');
+                    }
+                  }}
+                  className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-black border flex items-center gap-1 transition-all cursor-pointer ${
+                    environmentMode === 'LIVE'
+                      ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40 hover:bg-emerald-900/60'
+                      : 'bg-purple-950 text-purple-300 border-purple-500/40 hover:bg-purple-900/60'
+                  }`}
+                  title="Click to toggle Environment Mode (LIVE / DEMO)"
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${environmentMode === 'LIVE' ? 'bg-emerald-400 animate-ping' : 'bg-purple-400'}`} />
+                  <span>ENV: {environmentMode}</span>
+                </button>
               </div>
               <p className="text-[10px] text-slate-400 font-mono hidden md:block">
                 Karan Pandre Enterprise Security Operations Platform
@@ -407,7 +502,7 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
               soundFx.playCyberBlip();
               setIsCommandPaletteOpen(true);
             }}
-            className="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/30 text-slate-400 hover:text-emerald-300 flex items-center gap-2 transition-all w-64 justify-between"
+            className="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/30 text-slate-400 hover:text-emerald-300 flex items-center gap-2 transition-all w-60 justify-between"
           >
             <span className="flex items-center gap-1.5">
               <Search className="w-3.5 h-3.5 text-emerald-400" />
@@ -417,7 +512,7 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
           </button>
 
           {/* Persona Switcher Dropdown */}
-          <div className="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-xl border border-slate-800 text-[11px]">
+          <div className="flex items-center gap-1 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-800 text-[11px]">
             <Eye className="w-3.5 h-3.5 text-cyan-400" />
             <span className="text-slate-500 font-sans">Role:</span>
             <select
@@ -436,7 +531,7 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
             </select>
           </div>
 
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-300">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 text-[11px]">
             <Clock className="w-3.5 h-3.5 text-emerald-400" />
             <span>{liveClock || 'UTC OPERATIONAL'}</span>
           </div>
@@ -461,7 +556,7 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
 
           <button
             onClick={handleDownloadPdf}
-            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold flex items-center gap-1.5 transition-all shadow-md text-xs"
+            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold flex items-center gap-1.5 transition-all shadow-md text-xs cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Auto PDF Report</span>
@@ -469,14 +564,14 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
         </div>
 
         {/* Right: Tour / User Profile & Controls */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 font-sans">
           <button
             onClick={() => {
               soundFx.playCyberBlip();
               setIsGuidedTourOpen(true);
             }}
-            className="px-3 py-1.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/30 font-mono text-xs flex items-center gap-1.5 transition-all font-bold"
-            title="Start 60-second product tour"
+            className="px-3 py-1.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/30 font-mono text-xs flex items-center gap-1.5 transition-all font-bold cursor-pointer"
+            title="Start product tour"
           >
             <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
             <span className="hidden sm:inline">Tour Guide</span>
@@ -484,15 +579,20 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
 
           <button
             onClick={onReturnToPortfolio}
-            className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white font-mono text-xs flex items-center gap-1.5 transition-all"
+            className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white font-mono text-xs flex items-center gap-1.5 transition-all cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5 text-emerald-400" />
             <span className="hidden sm:inline">Portfolio Main</span>
           </button>
 
+          {/* User Initial Avatar Badge */}
+          <div className="w-8 h-8 rounded-xl bg-emerald-500 text-slate-950 font-mono font-black text-xs flex items-center justify-center shrink-0">
+            KP
+          </div>
+
           <button
             onClick={onLogout}
-            className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-300 transition-all"
+            className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-300 transition-all cursor-pointer"
             title="Lock Session"
           >
             <LogOut className="w-4 h-4" />
@@ -506,46 +606,49 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
         
         {/* Grouped Sidebar Navigation */}
         <aside className={`
-          fixed lg:static inset-y-0 left-0 z-30 w-64 bg-[#0a0f1d] border-r border-slate-800/80 p-4 flex flex-col justify-between transition-transform duration-300 lg:translate-x-0
+          fixed lg:static inset-y-0 left-0 z-30 ${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-[#0a0f1d] border-r border-slate-800/80 p-3 flex flex-col justify-between transition-all duration-300 lg:translate-x-0
           ${isMobileSidebarOpen ? 'translate-x-0 top-16' : '-translate-x-full lg:translate-x-0'}
         `}>
           <div className="space-y-4 overflow-y-auto max-h-[calc(100vh-10rem)] pr-1 font-mono text-xs">
             {navGroups.map((grp, gIdx) => (
               <div key={gIdx} className="space-y-1">
-                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider px-2 py-0.5">
-                  {grp.groupLabel}
-                </div>
+                {!isSidebarCollapsed && (
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider px-2 py-0.5">
+                    {grp.groupLabel}
+                  </div>
+                )}
                 {grp.items.map((item) => {
                   const IconComp = item.icon;
                   const isActive = activeTab === item.id;
                   return (
                     <button
                       key={item.id}
+                      title={isSidebarCollapsed ? `${item.label}` : undefined}
                       onClick={() => {
                         soundFx.playCyberBlip();
                         setActiveTab(item.id);
                         setIsMobileSidebarOpen(false);
                       }}
-                      className={`w-full px-3 py-2 rounded-xl flex items-center justify-between transition-all group ${
+                      className={`w-full ${isSidebarCollapsed ? 'px-2 justify-center' : 'px-3 justify-between'} py-2 rounded-xl flex items-center transition-all group ${
                         isActive 
-                          ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold shadow-lg shadow-emerald-950/20' 
+                          ? 'bg-[#059669] text-white font-bold shadow-lg shadow-emerald-950/40' 
                           : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200 border border-transparent'
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <IconComp className={`w-4 h-4 transition-colors ${
-                          isActive ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300'
+                        <IconComp className={`w-4 h-4 shrink-0 transition-colors ${
+                          isActive ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'
                         }`} />
-                        <span>{item.label}</span>
+                        {!isSidebarCollapsed && <span className={isActive ? 'text-white font-bold' : ''}>{item.label}</span>}
                       </div>
 
-                      {item.badge !== null && item.badge !== 0 && (
-                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                          item.badge === 'AI' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
-                          item.badge === 'DEFCON' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
-                          item.badge === 'SCENARIO' ? 'bg-gradient-to-r from-purple-500 to-emerald-500 text-white font-extrabold' :
-                          item.badge === 'ADMIN' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' :
-                          typeof item.badge === 'number' && item.badge > 0 ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
+                      {!isSidebarCollapsed && item.badge !== null && item.badge !== 0 && (
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-black ${
+                          item.badge === 'AI' ? 'bg-purple-900/80 text-purple-200 border border-purple-500/40' :
+                          item.badge === 'LIVE' ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/40' :
+                          item.badge === 'WORLD' || item.badge === 'SPL' ? 'bg-blue-950 text-blue-300 border border-blue-500/40' :
+                          item.badge === 'DEFCON' ? 'bg-amber-950 text-amber-300 border border-amber-500/40' :
+                          typeof item.badge === 'number' ? 'bg-rose-600 text-white min-w-[18px] text-center' :
                           'bg-slate-800 text-slate-400'
                         }`}>
                           {item.badge}
@@ -559,20 +662,23 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
           </div>
 
           {/* Footer Security System Info */}
-          <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80 space-y-2 font-mono text-[10px]">
-            <div className="text-slate-400 font-bold flex items-center gap-1.5">
+          <div className={`p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80 space-y-2 font-mono text-[10px] ${isSidebarCollapsed ? 'text-center' : ''}`}>
+            <div className={`text-slate-400 font-bold flex items-center ${isSidebarCollapsed ? 'justify-center' : 'gap-1.5'}`}>
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Session Authenticated</span>
+              {!isSidebarCollapsed && <span>Session Authenticated</span>}
             </div>
-            <div className="text-slate-500 truncate">Analyst: {currentUser.name || 'Karan Pandre'}</div>
-
-            <button
-              onClick={handleDownloadPdf}
-              className="w-full mt-1 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 font-bold border border-emerald-500/30 flex items-center justify-center gap-1 transition-all"
-            >
-              <Download className="w-3 h-3" />
-              <span>Export PDF Report</span>
-            </button>
+            {!isSidebarCollapsed && (
+              <>
+                <div className="text-slate-500 truncate">Analyst: {currentUser.name || 'Karan Pandre'}</div>
+                <button
+                  onClick={handleDownloadPdf}
+                  className="w-full mt-1 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 font-bold border border-emerald-500/30 flex items-center justify-center gap-1 transition-all cursor-pointer"
+                >
+                  <Download className="w-3 h-3" />
+                  <span>Export PDF Report</span>
+                </button>
+              </>
+            )}
           </div>
 
         </aside>
@@ -694,6 +800,7 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
                   tools={tools} 
                   onTriggerToolAction={handleExecuteRoutine}
                   onShowToast={showToast}
+                  onSelectTool={(t) => setSelectedTool(t)}
                 />
               )}
 
