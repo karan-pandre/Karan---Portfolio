@@ -44,14 +44,17 @@ export const CyberVulnerabilitiesTab: React.FC<CyberVulnerabilitiesTabProps> = (
     <div className="space-y-5 font-sans">
       
       {/* Header Bar */}
-      <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+      <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-base font-bold text-white font-mono flex items-center gap-2">
             <Bug className="w-5 h-5 text-rose-400" />
             <span>Vulnerability Assessment & CVE Registry</span>
+            <span className="px-2 py-0.5 rounded text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">
+              REAL APPLICATION LOGIC
+            </span>
           </h2>
           <p className="text-xs text-slate-400">
-            Automated vulnerability scanning, CVSS v3 scoring, and remediation lifecycle tracking.
+            Source: <span className="text-slate-300 font-mono">Local CVE Mirror Store</span> | NIST NVD Live API: <span className="text-amber-400 font-mono font-bold">NOT CONFIGURED</span>
           </p>
         </div>
       </div>

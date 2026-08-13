@@ -13,7 +13,8 @@ import {
 } from '../../types/cybersecurity';
 import { 
   INITIAL_THREATS, INITIAL_INCIDENTS, INITIAL_VULNERABILITIES, INITIAL_TOOLS, 
-  INITIAL_PROJECTS, INITIAL_LABS, INITIAL_REPORTS, INITIAL_CERTS, INITIAL_ASSETS 
+  INITIAL_PROJECTS, INITIAL_LABS, INITIAL_REPORTS, INITIAL_CERTS, INITIAL_ASSETS,
+  DEMO_THREATS, DEMO_INCIDENTS, DEMO_VULNERABILITIES, DEMO_ASSETS, DEMO_TOOLS 
 } from '../../data/cybersecurityData';
 import { CyberOverviewTab } from './tabs/CyberOverviewTab';
 import { CyberThreatsTab } from './tabs/CyberThreatsTab';
@@ -38,9 +39,11 @@ import { AssetDetailDrawer } from './AssetDetailDrawer';
 import { ToolDetailDrawer } from './ToolDetailDrawer';
 import { GuidedTourModal } from './GuidedTourModal';
 import { CyberDemoMode } from './CyberDemoMode';
+import { SystemAuditModal } from './SystemAuditModal';
 import { ToastNotification, ToastMessage } from './ToastNotification';
 import { generateSocPdfReport } from '../../utils/cyberReportPdf';
 import { saveSocSessionToFirestore, loadSocSessionFromFirestore } from '../../utils/firestoreSocSync';
+import { calculateSecurityHealthScore } from '../../utils/securityScoreEngine';
 import { soundFx } from '../../utils/soundEffects';
 
 interface CyberDashboardProps {
@@ -66,6 +69,7 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
   // Modals & Drawers State
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
   const [isGuidedTourOpen, setIsGuidedTourOpen] = useState<boolean>(false);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState<boolean>(false);
   const [selectedAsset, setSelectedAsset] = useState<AssetItem | null>(null);
   const [selectedTool, setSelectedTool] = useState<SecurityToolItem | null>(null);
 
@@ -88,16 +92,51 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
     onConfirm: () => {}
   });
 
-  // Local state initialized with rich default datasets
-  const [threats, setThreats] = useState<ThreatItem[]>(INITIAL_THREATS);
-  const [incidents, setIncidents] = useState<IncidentItem[]>(INITIAL_INCIDENTS);
-  const [vulnerabilities, setVulnerabilities] = useState<VulnerabilityItem[]>(INITIAL_VULNERABILITIES);
-  const [tools, setTools] = useState<SecurityToolItem[]>(INITIAL_TOOLS);
+  // Partitioned Datasets for LIVE vs DEMO Environment Mode
+  const [liveThreats, setLiveThreats] = useState<ThreatItem[]>(INITIAL_THREATS);
+  const [liveIncidents, setLiveIncidents] = useState<IncidentItem[]>(INITIAL_INCIDENTS);
+  const [liveVulnerabilities, setLiveVulnerabilities] = useState<VulnerabilityItem[]>(INITIAL_VULNERABILITIES);
+  const [liveTools, setLiveTools] = useState<SecurityToolItem[]>(INITIAL_TOOLS);
+  const [liveAssets, setLiveAssets] = useState<AssetItem[]>(INITIAL_ASSETS);
+
+  const [demoThreats, setDemoThreats] = useState<ThreatItem[]>(DEMO_THREATS);
+  const [demoIncidents, setDemoIncidents] = useState<IncidentItem[]>(DEMO_INCIDENTS);
+  const [demoVulnerabilities, setDemoVulnerabilities] = useState<VulnerabilityItem[]>(DEMO_VULNERABILITIES);
+  const [demoTools, setDemoTools] = useState<SecurityToolItem[]>(DEMO_TOOLS);
+  const [demoAssets, setDemoAssets] = useState<AssetItem[]>(DEMO_ASSETS);
+
+  // Active Datasets mapped to current Environment Mode
+  const threats = environmentMode === 'LIVE' ? liveThreats : demoThreats;
+  const incidents = environmentMode === 'LIVE' ? liveIncidents : demoIncidents;
+  const vulnerabilities = environmentMode === 'LIVE' ? liveVulnerabilities : demoVulnerabilities;
+  const tools = environmentMode === 'LIVE' ? liveTools : demoTools;
+  const assets = environmentMode === 'LIVE' ? liveAssets : demoAssets;
+
+  const setThreats: React.Dispatch<React.SetStateAction<ThreatItem[]>> = (val) => {
+    if (environmentMode === 'LIVE') setLiveThreats(val);
+    else setDemoThreats(val);
+  };
+  const setIncidents: React.Dispatch<React.SetStateAction<IncidentItem[]>> = (val) => {
+    if (environmentMode === 'LIVE') setLiveIncidents(val);
+    else setDemoIncidents(val);
+  };
+  const setVulnerabilities: React.Dispatch<React.SetStateAction<VulnerabilityItem[]>> = (val) => {
+    if (environmentMode === 'LIVE') setLiveVulnerabilities(val);
+    else setDemoVulnerabilities(val);
+  };
+  const setTools: React.Dispatch<React.SetStateAction<SecurityToolItem[]>> = (val) => {
+    if (environmentMode === 'LIVE') setLiveTools(val);
+    else setDemoTools(val);
+  };
+  const setAssets: React.Dispatch<React.SetStateAction<AssetItem[]>> = (val) => {
+    if (environmentMode === 'LIVE') setLiveAssets(val);
+    else setDemoAssets(val);
+  };
+
   const [projects, setProjects] = useState<CyberProjectItem[]>(INITIAL_PROJECTS);
   const [labs, setLabs] = useState<CyberLabItem[]>(INITIAL_LABS);
   const [reports, setReports] = useState<CyberReportItem[]>(INITIAL_REPORTS);
   const [certifications, setCertifications] = useState<CyberCertItem[]>(INITIAL_CERTS);
-  const [assets, setAssets] = useState<AssetItem[]>(INITIAL_ASSETS);
 
   // Toast Helper
   const showToast = (title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
@@ -179,9 +218,10 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
   const handleSaveProgress = async () => {
     setIsSyncingFirestore(true);
     soundFx.playCyberBlip();
+    const currentScore = calculateSecurityHealthScore(threats, incidents, vulnerabilities, assets, tools).totalScore;
     const success = await saveSocSessionToFirestore({
       updatedAt: new Date().toISOString(),
-      securityScore: 94,
+      securityScore: currentScore,
       threats,
       incidents,
       vulnerabilities,
@@ -423,6 +463,12 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
         onStartInteractiveDemo={() => setActiveTab('demo')}
       />
 
+      {/* Official Classification & Integration System Audit Modal */}
+      <SystemAuditModal
+        isOpen={isAuditModalOpen}
+        onClose={() => setIsAuditModalOpen(false)}
+      />
+
       {/* Top Header Navigation Bar */}
       <header className="h-16 bg-[#0d1322]/95 border-b border-emerald-500/20 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md font-sans">
         
@@ -454,11 +500,18 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
                   SOC COMMAND CENTER
                 </h1>
                 
-                {/* System Health Status Indicator */}
-                <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-mono font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                {/* System Health & Feature Classification Audit Matrix Button */}
+                <button
+                  onClick={() => {
+                    soundFx.playCyberBlip();
+                    setIsAuditModalOpen(true);
+                  }}
+                  className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-mono font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 transition-all cursor-pointer"
+                  title="Inspect Real vs Demo System Feature Classification Matrix"
+                >
                   <Activity className="w-3 h-3 text-emerald-400 animate-pulse" />
-                  <span>SYS HEALTH: 98.4% OPTIMAL</span>
-                </span>
+                  <span>AUDIT MATRIX</span>
+                </button>
 
                 {/* Environment Indicator (LIVE / DEMO) */}
                 <button
@@ -723,6 +776,8 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
                     threats={threats} 
                     incidents={incidents} 
                     vulnerabilities={vulnerabilities}
+                    assets={assets}
+                    tools={tools}
                     onNavigateTab={(tab) => setActiveTab(tab)}
                   />
                 </div>
@@ -801,6 +856,8 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
                   onTriggerToolAction={handleExecuteRoutine}
                   onShowToast={showToast}
                   onSelectTool={(t) => setSelectedTool(t)}
+                  onPromoteThreatsToState={(newThreats) => setThreats(prev => [...newThreats, ...prev])}
+                  onPromoteIncidentsToState={(newIncidents) => setIncidents(prev => [...newIncidents, ...prev])}
                 />
               )}
 

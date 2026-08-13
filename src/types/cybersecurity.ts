@@ -3,6 +3,15 @@ export type ThreatStatus = 'BLOCKED' | 'INVESTIGATING' | 'QUARANTINED' | 'MONITO
 export type IncidentStatus = 'DETECTED' | 'INVESTIGATING' | 'CONTAINED' | 'RESOLVED';
 export type RemediationStatus = 'PATCHED' | 'MITIGATION_APPLIED' | 'PENDING_PATCH' | 'UNDER_REVIEW';
 
+export type FeatureClassification = 
+  | 'REAL INTEGRATED' 
+  | 'REAL APPLICATION LOGIC' 
+  | 'DEMO / SIMULATION' 
+  | 'NOT CONFIGURED' 
+  | 'UNKNOWN';
+
+export type IntegrationState = 'REGISTERED' | 'CONFIGURED' | 'CONNECTED' | 'NOT_CONFIGURED';
+
 export interface ThreatItem {
   id: string;
   type: string;
@@ -15,6 +24,12 @@ export interface ThreatItem {
   payloadSample?: string;
   mitreTactic?: string;
   description: string;
+  provenance?: {
+    source: string;
+    recordId: string;
+    ruleId: string;
+    environment: 'LIVE' | 'DEMO';
+  };
 }
 
 export interface IncidentItem {
@@ -58,6 +73,8 @@ export interface SecurityToolItem {
   healthStatus?: 'Healthy' | 'Degraded' | 'Offline' | 'Warning';
   lastSync?: string;
   integrationType?: string;
+  integrationState?: IntegrationState;
+  apiConfigured?: boolean;
   autoRemediationEnabled?: boolean;
   eventsCount24h?: number;
   apiEndpoint?: string;

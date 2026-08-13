@@ -195,7 +195,14 @@ export const INITIAL_TOOLS: SecurityToolItem[] = [
     purpose: 'Real-time log aggregation, SPL query writing, correlation rules, threat dashboarding & SOC triage.',
     skillLevel: 'Expert',
     status: 'In Portfolio',
-    description: 'Configured indexing pipelines, built custom dashboard panels, and crafted SPL queries for threat hunting.'
+    description: 'Configured indexing pipelines, built custom dashboard panels, and crafted SPL queries for threat hunting.',
+    vendor: 'Splunk Inc.',
+    version: 'v9.1.2',
+    healthStatus: 'Healthy',
+    integrationState: 'CONFIGURED',
+    apiConfigured: true,
+    apiEndpoint: 'https://splunk-siem.corp.internal:8089',
+    lastSync: '1 min ago'
   },
   {
     id: 'tool-2',
@@ -204,7 +211,14 @@ export const INITIAL_TOOLS: SecurityToolItem[] = [
     purpose: 'Simulating complex VLAN networks, router ACL configuration, firewall zone policies & packet inspection.',
     skillLevel: 'Expert',
     status: 'Certified',
-    description: 'Virtual Internship completed via Cisco Networking Academy; built multi-VLAN campus infrastructure.'
+    description: 'Virtual Internship completed via Cisco Networking Academy; built multi-VLAN campus infrastructure.',
+    vendor: 'Cisco Systems',
+    version: 'v8.2.1',
+    healthStatus: 'Healthy',
+    integrationState: 'CONFIGURED',
+    apiConfigured: false,
+    apiEndpoint: 'https://cisco-asa.corp.internal/api/v1',
+    lastSync: '5 mins ago'
   },
   {
     id: 'tool-3',
@@ -213,7 +227,14 @@ export const INITIAL_TOOLS: SecurityToolItem[] = [
     purpose: 'Deep packet inspection (DPI), PCAP analysis, TCP stream reconstruction & protocol anomaly identification.',
     skillLevel: 'Advanced',
     status: 'Practical Lab Usage',
-    description: 'Analyzed malware pcap captures to detect command & control (C2) beaconing and unencrypted password leaks.'
+    description: 'Analyzed malware pcap captures to detect command & control (C2) beaconing and unencrypted password leaks.',
+    vendor: 'Wireshark Foundation',
+    version: 'v4.0.8',
+    healthStatus: 'Healthy',
+    integrationState: 'NOT_CONFIGURED',
+    apiConfigured: false,
+    apiEndpoint: '',
+    lastSync: 'Offline Sensor'
   },
   {
     id: 'tool-4',
@@ -222,7 +243,14 @@ export const INITIAL_TOOLS: SecurityToolItem[] = [
     purpose: 'Network discovery, open port auditing, service version enumeration & OS detection.',
     skillLevel: 'Advanced',
     status: 'Practical Lab Usage',
-    description: 'Executed stealth SYN scans, NSE script vulnerability checks, and automated subnet asset inventories.'
+    description: 'Executed stealth SYN scans, NSE script vulnerability checks, and automated subnet asset inventories.',
+    vendor: 'Insecure.org',
+    version: 'v7.94',
+    healthStatus: 'Healthy',
+    integrationState: 'CONFIGURED',
+    apiConfigured: false,
+    apiEndpoint: 'local://usr/bin/nmap',
+    lastSync: '10 mins ago'
   },
   {
     id: 'tool-5',
@@ -231,7 +259,14 @@ export const INITIAL_TOOLS: SecurityToolItem[] = [
     purpose: 'Web application vulnerability testing, HTTP proxy intercept, Repeater/Intruder payload fuzzing.',
     skillLevel: 'Advanced',
     status: 'Practical Lab Usage',
-    description: 'Tested OWASP Top 10 vulnerabilities (SQLi, XSS, CSRF, IDOR) in PortSwigger Web Security Academy.'
+    description: 'Tested OWASP Top 10 vulnerabilities (SQLi, XSS, CSRF, IDOR) in PortSwigger Web Security Academy.',
+    vendor: 'PortSwigger',
+    version: 'v2023.10',
+    healthStatus: 'Healthy',
+    integrationState: 'NOT_CONFIGURED',
+    apiConfigured: false,
+    apiEndpoint: 'http://127.0.0.1:1337/v1',
+    lastSync: 'Not Configured'
   },
   {
     id: 'tool-6',
@@ -240,7 +275,14 @@ export const INITIAL_TOOLS: SecurityToolItem[] = [
     purpose: 'Open-source security monitoring, host intrusion detection (HIDS), file integrity monitoring (FIM).',
     skillLevel: 'Intermediate',
     status: 'Practical Lab Usage',
-    description: 'Deployed Wazuh manager nodes and connected endpoint agents to monitor Windows/Linux system logs.'
+    description: 'Deployed Wazuh manager nodes and connected endpoint agents to monitor Windows/Linux system logs.',
+    vendor: 'Wazuh Inc.',
+    version: 'v4.5.2',
+    healthStatus: 'Healthy',
+    integrationState: 'CONFIGURED',
+    apiConfigured: true,
+    apiEndpoint: 'https://wazuh-manager.corp.internal:55000',
+    lastSync: '2 mins ago'
   },
   {
     id: 'tool-7',
@@ -249,7 +291,14 @@ export const INITIAL_TOOLS: SecurityToolItem[] = [
     purpose: 'Enterprise EDR threat telemetry, automated endpoint response, device isolation & malware quarantine.',
     skillLevel: 'Intermediate',
     status: 'Enterprise Deployment',
-    description: 'Managed security baseline policies and investigated incident alerts in Microsoft 365 Defender portal.'
+    description: 'Managed security baseline policies and investigated incident alerts in Microsoft 365 Defender portal.',
+    vendor: 'Microsoft Corp.',
+    version: 'v10.1.20',
+    healthStatus: 'Healthy',
+    integrationState: 'NOT_CONFIGURED',
+    apiConfigured: false,
+    apiEndpoint: 'https://api.securitycenter.microsoft.com',
+    lastSync: 'API Key Required'
   },
   {
     id: 'tool-8',
@@ -589,4 +638,103 @@ export const INITIAL_ASSETS = [
     macAddress: '00:80:E1:01:02:03'
   }
 ];
+
+// Isolated Datasets for DEMO Environment Mode
+export const DEMO_THREATS: ThreatItem[] = [
+  {
+    id: 'DEMO-TRT-001',
+    type: 'Simulated APT29 Reconnaissance Sweep',
+    severity: 'HIGH',
+    sourceIp: '198.51.100.99',
+    targetSystem: 'demo-web-edge.corp.test',
+    timestamp: '2026-08-13 10:00:00',
+    status: 'INVESTIGATING',
+    detectionMethod: 'Simulated Suricata Rule #2041',
+    payloadSample: 'Nmap -sV -sC -O -T4 192.168.10.0/24 (Simulated Port Scan)',
+    mitreTactic: 'T1595 - Active Scanning',
+    description: 'DEMO SCENARIO: High-speed stealth SYN scan targeting public web DMZ subnets.'
+  },
+  {
+    id: 'DEMO-TRT-002',
+    type: 'Simulated Ransomware Canary Detonation',
+    severity: 'CRITICAL',
+    sourceIp: '10.0.12.99',
+    targetSystem: 'demo-fileserver-01',
+    timestamp: '2026-08-13 10:15:00',
+    status: 'INVESTIGATING',
+    detectionMethod: 'Simulated File Integrity Monitor',
+    payloadSample: 'C:\\Windows\\System32\\vssadmin.exe Delete Shadows /All /Quiet',
+    mitreTactic: 'T1490 - Inhibit System Recovery',
+    description: 'DEMO SCENARIO: Canary file modification trigger simulating volume shadow copy deletion attempt.'
+  }
+];
+
+export const DEMO_INCIDENTS: IncidentItem[] = [
+  {
+    id: 'DEMO-INC-001',
+    title: 'DEMO: Active APT Ransomware Staging Simulation',
+    severity: 'CRITICAL',
+    status: 'INVESTIGATING',
+    assignedAnalyst: 'Demo SOC Lead',
+    detectionTime: '2026-08-13 10:15:00',
+    lastUpdated: '2026-08-13 10:20:00',
+    description: 'Simulated attack scenario demonstrating end-to-end detection, containment, and incident resolution.',
+    affectedAssets: ['demo-fileserver-01 (10.0.12.99)'],
+    containmentSteps: [
+      'Simulated EDR network isolation of host 10.0.12.99',
+      'Revoked compromise Kerberos TGT tickets',
+      'Generated automated firewall block rules'
+    ],
+    auditLogs: [
+      { timestamp: '10:15:00', action: 'Simulated canary alert raised', author: 'Demo Sandbox' },
+      { timestamp: '10:20:00', action: 'Containment playbook triggered by user in DEMO mode', author: 'Demo User' }
+    ]
+  }
+];
+
+export const DEMO_VULNERABILITIES: VulnerabilityItem[] = [
+  {
+    id: 'DEMO-CVE-2026-9999',
+    name: 'Simulated Zero-Day Kernel Buffer Overflow',
+    cvssScore: 9.8,
+    severity: 'CRITICAL',
+    affectedSystem: 'demo-fileserver-01',
+    detectionDate: '2026-08-13',
+    remediationStatus: 'PENDING_PATCH',
+    description: 'DEMO SCENARIO: Simulated unpatched zero-day vulnerability used for containment testing.',
+    cweCategory: 'CWE-120: Buffer Copy without Checking Size',
+    solutionLink: 'https://demo-sec.local/vuln/DEMO-CVE-2026-9999'
+  }
+];
+
+export const DEMO_ASSETS = [
+  {
+    id: 'DEMO-AST-001',
+    name: 'demo-fileserver-01',
+    type: 'Server' as const,
+    ipAddress: '10.0.12.99',
+    os: 'Windows Server 2022 (Simulated)',
+    owner: 'Demo Subnet',
+    health: 'Critical' as const,
+    riskScore: 95,
+    openVulnerabilitiesCount: 1,
+    activeThreatsCount: 2,
+    lastSeen: 'Just now',
+    location: 'Simulated Cyber Lab',
+    macAddress: 'DE:MO:00:11:22:33'
+  }
+];
+
+export const DEMO_TOOLS: SecurityToolItem[] = [
+  {
+    id: 'demo-tool-1',
+    name: 'Demo SIEM Log Collector',
+    category: 'SIEM & Monitoring',
+    purpose: 'Simulated log ingestion pipeline for testing detection playbooks.',
+    skillLevel: 'Expert',
+    status: 'In Portfolio',
+    description: 'Simulated SIEM instance producing synthetic attack logs for SOC testing.'
+  }
+];
+
 

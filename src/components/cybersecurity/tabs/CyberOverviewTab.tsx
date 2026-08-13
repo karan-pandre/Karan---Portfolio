@@ -1,23 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   ShieldCheck, AlertTriangle, Flame, ShieldAlert, Cpu, BellRing, Activity, CheckCircle2, 
-  TrendingUp, BarChart2, PieChart as PieIcon, Layers, Server, Shield 
+  TrendingUp, BarChart2, PieChart as PieIcon, Layers, Server, Shield, ChevronDown, ChevronUp, Calculator
 } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell, BarChart, Bar, Legend, LineChart, Line 
 } from 'recharts';
 import { 
-  ThreatItem, IncidentItem, VulnerabilityItem 
+  ThreatItem, IncidentItem, VulnerabilityItem, AssetItem, SecurityToolItem 
 } from '../../../types/cybersecurity';
 import { 
   CHART_THREAT_ACTIVITY, CHART_SEVERITY_DISTRIBUTION, CHART_ATTACK_CATEGORIES 
 } from '../../../data/cybersecurityData';
+import { calculateSecurityHealthScore } from '../../../utils/securityScoreEngine';
 
 interface CyberOverviewTabProps {
   threats: ThreatItem[];
   incidents: IncidentItem[];
   vulnerabilities: VulnerabilityItem[];
+  assets?: AssetItem[];
+  tools?: SecurityToolItem[];
   onNavigateTab: (tabId: string) => void;
 }
 
@@ -25,8 +28,13 @@ export const CyberOverviewTab: React.FC<CyberOverviewTabProps> = ({
   threats,
   incidents,
   vulnerabilities,
+  assets = [],
+  tools = [],
   onNavigateTab
 }) => {
+  const [showScoreBreakdown, setShowScoreBreakdown] = useState<boolean>(false);
+  const scoreData = calculateSecurityHealthScore(threats, incidents, vulnerabilities, assets, tools);
+  
   const activeThreatsCount = threats.filter(t => t.status !== 'RESOLVED' && t.status !== 'BLOCKED').length;
   const openIncidentsCount = incidents.filter(i => i.status !== 'RESOLVED').length;
   const criticalVulnsCount = vulnerabilities.filter(v => v.severity === 'CRITICAL' && v.remediationStatus !== 'PATCHED').length;
@@ -37,20 +45,35 @@ export const CyberOverviewTab: React.FC<CyberOverviewTabProps> = ({
       {/* Overview Stat Cards Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         
-        {/* Card 1: Security Score */}
+        {/* Card 1: Deterministic Security Score */}
         <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/30 shadow-lg space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between text-slate-400 text-xs font-mono font-bold">
             <span>Security Posture Score</span>
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono">94</span>
+            <span className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono">{scoreData.totalScore}</span>
             <span className="text-xs text-slate-400 font-mono">/ 100</span>
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 ml-auto">
-              EXCELLENT
+            <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold ml-auto ${
+              scoreData.statusLabel === 'EXCELLENT' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+              scoreData.statusLabel === 'GOOD' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' :
+              scoreData.statusLabel === 'FAIR' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
+              'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+            }`}>
+              {scoreData.statusLabel}
             </span>
           </div>
-          <p className="text-[11px] text-slate-400">Zero unmitigated critical zero-days in production.</p>
+          <div className="flex items-center justify-between pt-1 text-[11px] text-slate-400">
+            <span>Calculated from 5 Security Factors</span>
+            <button
+              onClick={() => setShowScoreBreakdown(!showScoreBreakdown)}
+              className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1 font-mono text-[10px] cursor-pointer"
+            >
+              <Calculator className="w-3 h-3" />
+              <span>{showScoreBreakdown ? 'Hide Math' : 'Breakdown'}</span>
+              {showScoreBreakdown ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
+          </div>
         </div>
 
         {/* Card 2: Active Threats */}
@@ -108,6 +131,89 @@ export const CyberOverviewTab: React.FC<CyberOverviewTabProps> = ({
         </div>
 
       </div>
+
+      {/* Dynamic Security Score Breakdown Drawer Panel */}
+      {showScoreBreakdown && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/95 border border-emerald-500/40 shadow-xl space-y-4 animate-fadeIn font-sans">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center gap-2">
+              <Calculator className="w-4 h-4 text-emerald-400" />
+              <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">
+                Deterministic Security Health Scoring Engine Formula
+              </h3>
+            </div>
+            <span className="text-[10px] font-mono font-bold text-slate-400">
+              Total Score = Threat(25) + Incident(25) + Vuln(25) + Asset(15) + Tool(10)
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            {/* Factor 1: Threat Exposure */}
+            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono text-slate-400 uppercase font-bold">1. Threat Exposure</span>
+                <span className="text-[9px] font-mono text-cyan-400 font-bold bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">REAL APP LOGIC</span>
+              </div>
+              <div className="text-base font-black font-mono text-emerald-400">
+                {scoreData.threatExposureScore} <span className="text-xs font-normal text-slate-500">/ 25 pts</span>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-tight">
+                Deductions: {scoreData.factors.activeCriticalThreats} critical (-6ea), {scoreData.factors.activeHighThreats} high (-3ea)
+              </p>
+            </div>
+
+            {/* Factor 2: Incident Risk */}
+            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono text-slate-400 uppercase font-bold">2. Incident Risk</span>
+                <span className="text-[9px] font-mono text-cyan-400 font-bold bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">REAL APP LOGIC</span>
+              </div>
+              <div className="text-base font-black font-mono text-emerald-400">
+                {scoreData.incidentRiskScore} <span className="text-xs font-normal text-slate-500">/ 25 pts</span>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-tight">
+                Deductions: {scoreData.factors.openCriticalIncidents} critical (-7ea), {scoreData.factors.openHighIncidents} high (-4ea)
+              </p>
+            </div>
+
+            {/* Factor 3: Vuln Posture */}
+            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono text-slate-400 uppercase font-bold">3. Vuln Posture</span>
+                <span className="text-[9px] font-mono text-cyan-400 font-bold bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">REAL APP LOGIC</span>
+              </div>
+              <div className="text-base font-black font-mono text-emerald-400">
+                {scoreData.vulnerabilityPostureScore} <span className="text-xs font-normal text-slate-500">/ 25 pts</span>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-tight">
+                Deductions: {scoreData.factors.unpatchedCriticalVulns} critical (-5ea), {scoreData.factors.unpatchedHighVulns} high (-2.5ea)
+              </p>
+            </div>
+
+            {/* Factor 4: Asset Health */}
+            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div className="text-[10px] font-mono text-slate-400 uppercase font-bold">4. Asset Health</div>
+              <div className="text-base font-black font-mono text-emerald-400">
+                {scoreData.assetHealthScore} <span className="text-xs font-normal text-slate-500">/ 15 pts</span>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-tight">
+                Deductions: {scoreData.factors.highRiskAssets} high-risk assets (&gt;70 risk)
+              </p>
+            </div>
+
+            {/* Factor 5: Tool Availability */}
+            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+              <div className="text-[10px] font-mono text-slate-400 uppercase font-bold">5. Tool Availability</div>
+              <div className="text-base font-black font-mono text-emerald-400">
+                {scoreData.toolAvailabilityScore} <span className="text-xs font-normal text-slate-500">/ 10 pts</span>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-tight">
+                Deductions: {scoreData.factors.degradedOrOfflineTools} degraded/offline tools
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Row 2: Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">

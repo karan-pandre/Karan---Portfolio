@@ -133,11 +133,32 @@ export const ToolDetailDrawer: React.FC<ToolDetailDrawerProps> = ({
                   </div>
                 </div>
 
-                {/* Capabilities & Purpose */}
+                {/* Integration Verification Matrix */}
                 <div className="space-y-2">
-                  <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider block">Purpose & Capabilities</span>
-                  <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 leading-relaxed">
-                    {tool.purpose}
+                  <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider block">Integration & Capability Status</span>
+                  <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-slate-300">
+                    <div className="flex justify-between py-1 border-b border-slate-800/60">
+                      <span className="text-slate-500">Registered in Inventory</span>
+                      <span className="text-emerald-400 font-bold">YES</span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b border-slate-800/60">
+                      <span className="text-slate-500">Credentials Configured</span>
+                      <span className={tool.apiConfigured ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>
+                        {tool.apiConfigured ? 'YES' : 'NO'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b border-slate-800/60">
+                      <span className="text-slate-500">API Connection Verified</span>
+                      <span className={tool.apiConfigured ? 'text-cyan-400 font-bold' : 'text-slate-500 font-bold'}>
+                        {tool.apiConfigured ? 'CONNECTED' : 'NOT CONFIGURED'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between py-1">
+                      <span className="text-slate-500">Executable Operations</span>
+                      <span className={tool.apiConfigured ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>
+                        {tool.apiConfigured ? 'REAL APPLICATION LOGIC' : 'NOT CONFIGURED'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 

@@ -285,13 +285,13 @@ export const CyberD3Heatmap: React.FC<CyberD3HeatmapProps> = ({
           <Globe className="w-5 h-5 text-emerald-400 animate-pulse" />
           <div>
             <h3 className="text-sm font-bold text-white font-mono flex items-center gap-2">
-              <span>Real-Time D3.js Security Threat Heatmap</span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                LIVE VECTOR RADAR
+              <span>Interactive D3.js Security Network Heatmap</span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                DEMO / SIMULATION
               </span>
             </h3>
             <p className="text-xs text-slate-400">
-              Interactive network segment traffic density, attack frequency, and CVE vulnerability distribution.
+              Data Source: <span className="text-slate-300 font-mono">Local Synthesized Network Telemetry</span> | Real-time SVG rendering.
             </p>
           </div>
         </div>

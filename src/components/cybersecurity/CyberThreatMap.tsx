@@ -142,14 +142,14 @@ export const CyberThreatMap: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-black text-white tracking-wider">GLOBAL THREAT INTELLIGENCE RADAR MAP</h2>
-              <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                SURICATA 8.0 SENSORS
+              <h2 className="text-base font-black text-white tracking-wider">GLOBAL THREAT RADAR MAP</h2>
+              <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+                SIMULATED LOCATION
               </span>
             </div>
             <p className="text-[11px] text-slate-400 font-sans">
-              Real-time BGP telemetry, threat vectors, and Suricata IDS packet inspection stream.
+              Geolocation: <span className="text-slate-300 font-mono">Predefined Coordinate Vectors</span> | IP Lookup API: <span className="text-amber-400 font-mono font-bold">NOT CONFIGURED</span>
             </p>
           </div>
         </div>
