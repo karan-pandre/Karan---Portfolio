@@ -97,6 +97,24 @@ export interface CyberReportItem {
   fullContent?: string;
 }
 
+export interface AssetItem {
+  id: string;
+  name: string;
+  type: 'Server' | 'Endpoint' | 'Network Device' | 'Cloud Resource' | 'Database' | 'Critical Infrastructure';
+  ipAddress: string;
+  os: string;
+  owner: string;
+  health: 'Healthy' | 'At Risk' | 'Critical' | 'Isolated';
+  riskScore: number; // 0 - 100
+  openVulnerabilitiesCount: number;
+  activeThreatsCount: number;
+  lastSeen: string;
+  location?: string;
+  macAddress?: string;
+}
+
+export type PersonaRole = 'Analyst' | 'CISO' | 'Engineer' | 'Auditor';
+
 export interface CyberCertItem {
   id: string;
   title: string;

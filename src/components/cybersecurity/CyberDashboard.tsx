@@ -2,11 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { 
   Shield, Activity, ShieldAlert, Flame, Bug, Wrench, FolderLock, Award, 
   FileText, Sliders, LogOut, ArrowLeft, Menu, X, Bell, UserCheck, Clock, CheckCircle2,
-  Globe, Terminal, Save, Download, Sparkles, RefreshCw, Cpu
+  Globe, Terminal, Save, Download, Sparkles, RefreshCw, Cpu, Search, HelpCircle,
+  ChevronRight, Server, Zap, Radio, Layers, Eye
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { CyberAuthUser, ThreatItem, IncidentItem, VulnerabilityItem, SecurityToolItem, CyberProjectItem, CyberLabItem, CyberReportItem, CyberCertItem, ThreatStatus, IncidentStatus, RemediationStatus } from '../../types/cybersecurity';
-import { INITIAL_THREATS, INITIAL_INCIDENTS, INITIAL_VULNERABILITIES, INITIAL_TOOLS, INITIAL_PROJECTS, INITIAL_LABS, INITIAL_REPORTS, INITIAL_CERTS } from '../../data/cybersecurityData';
+import { 
+  CyberAuthUser, ThreatItem, IncidentItem, VulnerabilityItem, SecurityToolItem, 
+  CyberProjectItem, CyberLabItem, CyberReportItem, CyberCertItem, AssetItem, PersonaRole,
+  ThreatStatus, IncidentStatus, RemediationStatus 
+} from '../../types/cybersecurity';
+import { 
+  INITIAL_THREATS, INITIAL_INCIDENTS, INITIAL_VULNERABILITIES, INITIAL_TOOLS, 
+  INITIAL_PROJECTS, INITIAL_LABS, INITIAL_REPORTS, INITIAL_CERTS, INITIAL_ASSETS 
+} from '../../data/cybersecurityData';
 import { CyberOverviewTab } from './tabs/CyberOverviewTab';
 import { CyberThreatsTab } from './tabs/CyberThreatsTab';
 import { CyberIncidentsTab } from './tabs/CyberIncidentsTab';
@@ -17,10 +25,18 @@ import { CyberLabsTab } from './tabs/CyberLabsTab';
 import { CyberReportsTab } from './tabs/CyberReportsTab';
 import { CyberLearningTab } from './tabs/CyberLearningTab';
 import { CyberAdminTab } from './tabs/CyberAdminTab';
+import { CyberAssetsTab } from './tabs/CyberAssetsTab';
+import { CyberPlaybooksTab } from './tabs/CyberPlaybooksTab';
+import { CyberHuntingTab } from './tabs/CyberHuntingTab';
 import { CyberThreatMap } from './CyberThreatMap';
 import { CybersecurityLogs } from './CybersecurityLogs';
 import { CyberD3Heatmap } from './CyberD3Heatmap';
 import { CyberSocCLI } from './CyberSocCLI';
+import { CommandPaletteModal } from './CommandPaletteModal';
+import { ConfirmationModal } from './ConfirmationModal';
+import { AssetDetailDrawer } from './AssetDetailDrawer';
+import { GuidedTourModal } from './GuidedTourModal';
+import { CyberDemoMode } from './CyberDemoMode';
 import { ToastNotification, ToastMessage } from './ToastNotification';
 import { generateSocPdfReport } from '../../utils/cyberReportPdf';
 import { saveSocSessionToFirestore, loadSocSessionFromFirestore } from '../../utils/firestoreSocSync';
@@ -42,6 +58,31 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
   const [liveClock, setLiveClock] = useState<string>('');
   const [isSyncingFirestore, setIsSyncingFirestore] = useState<boolean>(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [persona, setPersona] = useState<PersonaRole>('Analyst');
+
+  // Modals & Drawers State
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
+  const [isGuidedTourOpen, setIsGuidedTourOpen] = useState<boolean>(false);
+  const [selectedAsset, setSelectedAsset] = useState<AssetItem | null>(null);
+
+  // Confirmation Modal State
+  const [confirmationConfig, setConfirmationConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    target: string;
+    riskLevel: 'CRITICAL' | 'HIGH' | 'MEDIUM';
+    expectedImpact: string;
+    reason: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    target: '',
+    riskLevel: 'HIGH',
+    expectedImpact: '',
+    reason: '',
+    onConfirm: () => {}
+  });
 
   // Local state initialized with rich default datasets
   const [threats, setThreats] = useState<ThreatItem[]>(INITIAL_THREATS);
@@ -52,6 +93,7 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
   const [labs, setLabs] = useState<CyberLabItem[]>(INITIAL_LABS);
   const [reports, setReports] = useState<CyberReportItem[]>(INITIAL_REPORTS);
   const [certifications, setCertifications] = useState<CyberCertItem[]>(INITIAL_CERTS);
+  const [assets, setAssets] = useState<AssetItem[]>(INITIAL_ASSETS);
 
   // Toast Helper
   const showToast = (title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
@@ -143,15 +185,46 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
     } else if (lower.includes('scan') || lower.includes('10.0.1.0')) {
       showToast('Subnet Scan Complete', 'Scanned 254 IPs on 10.0.1.0/24. Zero new open vulnerabilities detected.', 'info');
     } else if (lower.includes('contain') || lower.includes('isolate')) {
-      setIncidents(prev => prev.map(i => ({ ...i, status: 'CONTAINED' as IncidentStatus })));
-      showToast('Automated Containment', 'Applied Cisco BGP Null-Route on target egress vectors.', 'success');
+      triggerHostIsolationModal('WIN-104 (10.0.2.45)');
     } else if (lower.includes('report') || lower.includes('pdf')) {
       handleDownloadPdf();
     } else if (lower.includes('block') || lower.includes('ip')) {
-      showToast('Firewall Drop Rule Added', 'IP 185.220.101.5 blocked across all Palo Alto gateway firewalls.', 'warning');
+      triggerBlockIocModal('185.220.101.5');
     } else {
       showToast('Playbook Executed', `Completed automated routine: "${commandText}"`, 'success');
     }
+  };
+
+  // High-Impact Action Confirmation Triggers
+  const triggerHostIsolationModal = (hostName: string) => {
+    setConfirmationConfig({
+      isOpen: true,
+      title: 'Isolate Host From VLAN',
+      target: hostName,
+      riskLevel: 'CRITICAL',
+      expectedImpact: 'Port quarantine applied via Cisco ISE 802.1X. All active TCP/UDP sockets terminated immediately.',
+      reason: 'Unverified administrative Kerberos ticket requests and suspicious outbound C2 beaconing detected.',
+      onConfirm: () => {
+        setAssets(prev => prev.map(a => a.name.includes(hostName) || hostName.includes(a.name) ? { ...a, health: 'Isolated' } : a));
+        setIncidents(prev => prev.map(i => ({ ...i, status: 'CONTAINED' as IncidentStatus })));
+        showToast('Host Isolated', `${hostName} isolated from corporate network via Cisco ISE.`, 'success');
+      }
+    });
+  };
+
+  const triggerBlockIocModal = (ipAddress: string) => {
+    setConfirmationConfig({
+      isOpen: true,
+      title: 'Block Egress IP on Edge Firewalls',
+      target: ipAddress,
+      riskLevel: 'HIGH',
+      expectedImpact: 'BGP null-route and Palo Alto PA-3220 drop rule added across all perimeter firewalls.',
+      reason: 'Malicious external IP associated with active DNS tunneling and password brute-force probing.',
+      onConfirm: () => {
+        setThreats(prev => prev.map(t => t.sourceIp === ipAddress ? { ...t, status: 'BLOCKED' as ThreatStatus } : t));
+        showToast('IOC Blacklisted', `Egress IP ${ipAddress} blocked on all Palo Alto edge firewalls.`, 'warning');
+      }
+    });
   };
 
   // Update Functions for Interactive State
@@ -170,28 +243,126 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
     showToast('Vulnerability Status', `CVE remediation status set to: ${newStatus}`, 'success');
   };
 
-  const navItems = [
-    { id: 'overview', label: 'SOC Overview', icon: Activity, badge: null },
-    { id: 'cli', label: 'AI Agent SOC CLI', icon: Terminal, badge: 'AI' },
-    { id: 'heatmap', label: 'D3 Threat Heatmap', icon: Globe, badge: 'LIVE' },
-    { id: 'map', label: 'Threat Radar Map', icon: Globe, badge: 'WORLD' },
-    { id: 'logs', label: 'SIEM Telemetry Logs', icon: Terminal, badge: 'SPL' },
-    { id: 'threats', label: 'Threat Monitoring', icon: ShieldAlert, badge: threats.filter(t => t.status === 'INVESTIGATING').length },
-    { id: 'incidents', label: 'Incident Management', icon: Flame, badge: incidents.filter(i => i.status !== 'RESOLVED').length },
-    { id: 'vulnerabilities', label: 'Vulnerability CVEs', icon: Bug, badge: vulnerabilities.filter(v => v.severity === 'CRITICAL' && v.remediationStatus !== 'PATCHED').length },
-    { id: 'tools', label: 'Security Tools', icon: Wrench, badge: tools.length },
-    { id: 'projects', label: 'Cyber Projects', icon: FolderLock, badge: projects.length },
-    { id: 'labs', label: 'Security Labs & CTF', icon: Award, badge: labs.length },
-    { id: 'reports', label: 'Audit Reports', icon: FileText, badge: reports.length },
-    { id: 'learning', label: 'Certifications', icon: Award, badge: null },
-    { id: 'admin', label: 'SOC Data Manager', icon: Sliders, badge: 'ADMIN' },
+  // Navigation Groups Structure
+  const navGroups = [
+    {
+      groupLabel: 'COMMAND CENTER',
+      items: [
+        { id: 'overview', label: 'SOC Overview', icon: Activity, badge: null }
+      ]
+    },
+    {
+      groupLabel: 'INVESTIGATE',
+      items: [
+        { id: 'threats', label: 'Threat Monitoring', icon: ShieldAlert, badge: threats.filter(t => t.status === 'INVESTIGATING').length },
+        { id: 'incidents', label: 'Incident Triage', icon: Flame, badge: incidents.filter(i => i.status !== 'RESOLVED').length },
+        { id: 'hunting', label: 'Threat Hunting', icon: Search, badge: 'HUNTER' }
+      ]
+    },
+    {
+      groupLabel: 'EXPOSURE',
+      items: [
+        { id: 'vulnerabilities', label: 'Vulnerabilities & CVEs', icon: Bug, badge: vulnerabilities.filter(v => v.severity === 'CRITICAL' && v.remediationStatus !== 'PATCHED').length },
+        { id: 'assets', label: 'Assets Inventory', icon: Server, badge: assets.length }
+      ]
+    },
+    {
+      groupLabel: 'NETWORK',
+      items: [
+        { id: 'heatmap', label: 'D3 Threat Heatmap', icon: Zap, badge: 'LIVE' },
+        { id: 'map', label: 'Threat Radar Map', icon: Globe, badge: 'WORLD' },
+        { id: 'logs', label: 'SIEM Telemetry Logs', icon: Terminal, badge: 'SPL' }
+      ]
+    },
+    {
+      groupLabel: 'AUTOMATION',
+      items: [
+        { id: 'cli', label: 'AI Agent SOC CLI', icon: Terminal, badge: 'AI' },
+        { id: 'playbooks', label: 'Response Playbooks', icon: Layers, badge: 'DEFCON' }
+      ]
+    },
+    {
+      groupLabel: 'TOOLS & RESOURCES',
+      items: [
+        { id: 'tools', label: 'Security Tools', icon: Wrench, badge: tools.length },
+        { id: 'projects', label: 'Cyber Projects', icon: FolderLock, badge: projects.length },
+        { id: 'labs', label: 'Security Labs & CTF', icon: Award, badge: labs.length }
+      ]
+    },
+    {
+      groupLabel: 'REPORTS & GOVERNANCE',
+      items: [
+        { id: 'reports', label: 'Audit Reports', icon: FileText, badge: reports.length },
+        { id: 'admin', label: 'SOC Data Manager', icon: Sliders, badge: 'ADMIN' }
+      ]
+    },
+    {
+      groupLabel: 'INTERACTIVE DEMO',
+      items: [
+        { id: 'demo', label: 'Guided Demo Mode', icon: Sparkles, badge: 'SCENARIO' }
+      ]
+    }
   ];
+
+  // Helper to find breadcrumb titles
+  const findActiveGroupAndItem = () => {
+    for (const grp of navGroups) {
+      for (const item of grp.items) {
+        if (item.id === activeTab) {
+          return { group: grp.groupLabel, itemLabel: item.label };
+        }
+      }
+    }
+    return { group: 'COMMAND CENTER', itemLabel: 'SOC Overview' };
+  };
+
+  const breadcrumbInfo = findActiveGroupAndItem();
 
   return (
     <div className="min-h-screen bg-[#070b14] text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-black">
       
       {/* Toast Notification Mount */}
       <ToastNotification toasts={toasts} onDismiss={handleDismissToast} />
+
+      {/* Universal Command Palette Modal (⌘K) */}
+      <CommandPaletteModal
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onNavigate={(tab) => setActiveTab(tab)}
+        onExecuteCommand={handleExecuteRoutine}
+        threats={threats}
+        incidents={incidents}
+        vulnerabilities={vulnerabilities}
+        assets={assets}
+        onSelectAsset={(ast) => setSelectedAsset(ast)}
+      />
+
+      {/* Action Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationConfig.isOpen}
+        onClose={() => setConfirmationConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmationConfig.onConfirm}
+        title={confirmationConfig.title}
+        target={confirmationConfig.target}
+        riskLevel={confirmationConfig.riskLevel}
+        expectedImpact={confirmationConfig.expectedImpact}
+        reason={confirmationConfig.reason}
+      />
+
+      {/* Asset Detail Slide-over Drawer */}
+      <AssetDetailDrawer
+        asset={selectedAsset}
+        onClose={() => setSelectedAsset(null)}
+        onIsolateHost={(hostName) => triggerHostIsolationModal(hostName)}
+        onScanAsset={(hostName) => showToast('Deep Scan Initiated', `Vulnerability scanner running on ${hostName}`, 'info')}
+      />
+
+      {/* 60-Second Guided Tour Modal */}
+      <GuidedTourModal
+        isOpen={isGuidedTourOpen}
+        onClose={() => setIsGuidedTourOpen(false)}
+        onStartInteractiveDemo={() => setActiveTab('demo')}
+      />
 
       {/* Top Header Navigation Bar */}
       <header className="h-16 bg-[#0d1322]/95 border-b border-emerald-500/20 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md">
@@ -221,14 +392,50 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
                 </span>
               </div>
               <p className="text-[10px] text-slate-400 font-mono hidden md:block">
-                Karan Pandre Security Operations & Telemetry Platform
+                Karan Pandre Enterprise Security Operations Platform
               </p>
             </div>
           </div>
         </div>
 
-        {/* Center: Live Clock & Quick Header Actions */}
+        {/* Center: Search & Quick Actions */}
         <div className="hidden xl:flex items-center gap-3 font-mono text-xs">
+          
+          {/* Universal Search Palette Trigger */}
+          <button
+            onClick={() => {
+              soundFx.playCyberBlip();
+              setIsCommandPaletteOpen(true);
+            }}
+            className="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/30 text-slate-400 hover:text-emerald-300 flex items-center gap-2 transition-all w-64 justify-between"
+          >
+            <span className="flex items-center gap-1.5">
+              <Search className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Search SOC (⌘K)...</span>
+            </span>
+            <kbd className="px-1.5 py-0.5 text-[9px] bg-slate-800 text-slate-400 rounded">⌘K</kbd>
+          </button>
+
+          {/* Persona Switcher Dropdown */}
+          <div className="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-xl border border-slate-800 text-[11px]">
+            <Eye className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="text-slate-500 font-sans">Role:</span>
+            <select
+              value={persona}
+              onChange={e => {
+                const newP = e.target.value as PersonaRole;
+                setPersona(newP);
+                showToast('Persona Mode Switched', `Dashboard priority view updated for ${newP}`, 'info');
+              }}
+              className="bg-transparent text-emerald-300 font-bold focus:outline-none cursor-pointer"
+            >
+              <option value="Analyst" className="bg-slate-900 text-slate-200">Analyst (Technical)</option>
+              <option value="CISO" className="bg-slate-900 text-slate-200">CISO (Executive KPIs)</option>
+              <option value="Engineer" className="bg-slate-900 text-slate-200">Engineer (Network & Tools)</option>
+              <option value="Auditor" className="bg-slate-900 text-slate-200">Auditor (Compliance Logs)</option>
+            </select>
+          </div>
+
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-300">
             <Clock className="w-3.5 h-3.5 text-emerald-400" />
             <span>{liveClock || 'UTC OPERATIONAL'}</span>
@@ -261,8 +468,20 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
           </button>
         </div>
 
-        {/* Right: User Profile & Controls */}
+        {/* Right: Tour / User Profile & Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            onClick={() => {
+              soundFx.playCyberBlip();
+              setIsGuidedTourOpen(true);
+            }}
+            className="px-3 py-1.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/30 font-mono text-xs flex items-center gap-1.5 transition-all font-bold"
+            title="Start 60-second product tour"
+          >
+            <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">Tour Guide</span>
+          </button>
+
           <button
             onClick={onReturnToPortfolio}
             className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white font-mono text-xs flex items-center gap-1.5 transition-all"
@@ -285,49 +504,58 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
       {/* Main Body Grid with Sidebar */}
       <div className="flex-1 flex overflow-hidden">
         
-        {/* Sidebar Navigation */}
+        {/* Grouped Sidebar Navigation */}
         <aside className={`
           fixed lg:static inset-y-0 left-0 z-30 w-64 bg-[#0a0f1d] border-r border-slate-800/80 p-4 flex flex-col justify-between transition-transform duration-300 lg:translate-x-0
           ${isMobileSidebarOpen ? 'translate-x-0 top-16' : '-translate-x-full lg:translate-x-0'}
         `}>
-          <div className="space-y-1.5 overflow-y-auto max-h-[calc(100vh-10rem)] pr-1 font-mono text-xs">
-            {navItems.map((item) => {
-              const IconComp = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    soundFx.playCyberBlip();
-                    setActiveTab(item.id);
-                    setIsMobileSidebarOpen(false);
-                  }}
-                  className={`w-full px-3 py-2.5 rounded-xl flex items-center justify-between transition-all group ${
-                    isActive 
-                      ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold shadow-lg shadow-emerald-950/20' 
-                      : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200 border border-transparent'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <IconComp className={`w-4 h-4 transition-colors ${
-                      isActive ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300'
-                    }`} />
-                    <span>{item.label}</span>
-                  </div>
+          <div className="space-y-4 overflow-y-auto max-h-[calc(100vh-10rem)] pr-1 font-mono text-xs">
+            {navGroups.map((grp, gIdx) => (
+              <div key={gIdx} className="space-y-1">
+                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider px-2 py-0.5">
+                  {grp.groupLabel}
+                </div>
+                {grp.items.map((item) => {
+                  const IconComp = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        soundFx.playCyberBlip();
+                        setActiveTab(item.id);
+                        setIsMobileSidebarOpen(false);
+                      }}
+                      className={`w-full px-3 py-2 rounded-xl flex items-center justify-between transition-all group ${
+                        isActive 
+                          ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold shadow-lg shadow-emerald-950/20' 
+                          : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200 border border-transparent'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <IconComp className={`w-4 h-4 transition-colors ${
+                          isActive ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300'
+                        }`} />
+                        <span>{item.label}</span>
+                      </div>
 
-                  {item.badge !== null && item.badge !== 0 && (
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                      item.badge === 'AI' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
-                      item.badge === 'ADMIN' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' :
-                      typeof item.badge === 'number' && item.badge > 0 ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
-                      'bg-slate-800 text-slate-400'
-                    }`}>
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+                      {item.badge !== null && item.badge !== 0 && (
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                          item.badge === 'AI' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
+                          item.badge === 'DEFCON' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
+                          item.badge === 'SCENARIO' ? 'bg-gradient-to-r from-purple-500 to-emerald-500 text-white font-extrabold' :
+                          item.badge === 'ADMIN' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' :
+                          typeof item.badge === 'number' && item.badge > 0 ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
+                          'bg-slate-800 text-slate-400'
+                        }`}>
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
           </div>
 
           {/* Footer Security System Info */}
@@ -336,7 +564,7 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
               <span>Session Authenticated</span>
             </div>
-            <div className="text-slate-500 truncate">Token: {currentUser.email}</div>
+            <div className="text-slate-500 truncate">Analyst: {currentUser.name || 'Karan Pandre'}</div>
 
             <button
               onClick={handleDownloadPdf}
@@ -350,7 +578,17 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
         </aside>
 
         {/* Main Content Viewport */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-h-[calc(100vh-4rem)]">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-h-[calc(100vh-4rem)] space-y-4">
+          
+          {/* Breadcrumbs Navigation Bar */}
+          <div className="flex items-center gap-1.5 text-xs font-mono text-slate-400 bg-slate-950/80 px-3 py-1.5 rounded-xl border border-slate-800/80 w-fit">
+            <span className="text-slate-500">SOC Command Center</span>
+            <ChevronRight className="w-3 h-3 text-slate-600" />
+            <span className="text-slate-400">{breadcrumbInfo.group}</span>
+            <ChevronRight className="w-3 h-3 text-slate-600" />
+            <span className="text-emerald-400 font-bold">{breadcrumbInfo.itemLabel}</span>
+          </div>
+
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -388,6 +626,30 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
                 <CyberSocCLI 
                   onExecuteRoutine={handleExecuteRoutine}
                   onShowToast={showToast}
+                />
+              )}
+
+              {activeTab === 'playbooks' && (
+                <CyberPlaybooksTab 
+                  onExecuteCommand={handleExecuteRoutine}
+                  onShowToast={showToast}
+                />
+              )}
+
+              {activeTab === 'hunting' && (
+                <CyberHuntingTab 
+                  threats={threats}
+                  onExecuteCommand={handleExecuteRoutine}
+                  onShowToast={showToast}
+                />
+              )}
+
+              {activeTab === 'assets' && (
+                <CyberAssetsTab 
+                  assets={assets}
+                  onSelectAsset={(ast) => setSelectedAsset(ast)}
+                  onIsolateHost={(h) => triggerHostIsolationModal(h)}
+                  onScanAsset={(h) => showToast('Vulnerability Scan Dispatched', `Deep scan running on asset ${h}`, 'info')}
                 />
               )}
 
@@ -453,10 +715,6 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
                 />
               )}
 
-              {activeTab === 'learning' && (
-                <CyberLearningTab certifications={certifications} />
-              )}
-
               {activeTab === 'admin' && (
                 <CyberAdminTab 
                   threats={threats}
@@ -470,6 +728,14 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
                   onAddNewTool={(newT) => setTools(prev => [newT, ...prev])}
                   onAddNewProject={(newP) => setProjects(prev => [newP, ...prev])}
                   onAddNewLab={(newL) => setLabs(prev => [newL, ...prev])}
+                />
+              )}
+
+              {activeTab === 'demo' && (
+                <CyberDemoMode
+                  onExitDemo={() => setActiveTab('overview')}
+                  onNavigateToTab={(tab) => setActiveTab(tab)}
+                  onShowToast={showToast}
                 />
               )}
             </motion.div>

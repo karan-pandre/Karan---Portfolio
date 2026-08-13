@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  Terminal, Sparkles, Play, CheckCircle2, ShieldAlert, Cpu, ArrowRight, CornerDownLeft, RefreshCw, Copy, Check, History, XCircle, Clock, Save, Trash2
+  Terminal, Sparkles, Play, CheckCircle2, ShieldAlert, Cpu, ArrowRight, CornerDownLeft, RefreshCw, Copy, Check, History, XCircle, Clock, Save, Trash2, HelpCircle, X, Zap, Shield, ChevronRight
 } from 'lucide-react';
 import { soundFx } from '../../utils/soundEffects';
 import { CliHistoryItem, saveCommandHistoryToFirestore, loadCommandHistoryFromFirestore } from '../../utils/firestoreSocSync';
@@ -26,6 +26,47 @@ const PREDEFINED_COMMANDS = [
   { label: '📄 Auto-Generate Executive PDF Report', cmd: 'generate executive security report' }
 ];
 
+const PRO_TIPS_SEQUENCES = [
+  {
+    defcon: 'DEFCON 1',
+    levelName: 'CRITICAL ATTACK / ACTIVE BREACH',
+    color: 'border-rose-500/40 bg-rose-500/10 text-rose-300',
+    badge: 'HIGH THREAT',
+    title: 'Emergency Host Containment & BGP Egress Null-Route',
+    description: 'Use when active malware callback or unauthorized outbound C2 traffic is detected.',
+    sequence: [
+      'auto-contain high severity incidents',
+      'block suspicious egress IP 185.220.101.5',
+      'generate executive security report'
+    ]
+  },
+  {
+    defcon: 'DEFCON 2',
+    levelName: 'ELEVATED VULNERABILITY ALERT',
+    color: 'border-amber-500/40 bg-amber-500/10 text-amber-300',
+    badge: 'MEDIUM THREAT',
+    title: 'Autonomous Threat Hunt & Subnet CVE Remediation',
+    description: 'Use during vulnerability disclosure windows to scan subnets and deploy safe patches.',
+    sequence: [
+      'run autonomous threat hunting',
+      'scan network segment 10.0.1.0/24',
+      'auto-patch high confidence vulnerabilities'
+    ]
+  },
+  {
+    defcon: 'DEFCON 3',
+    levelName: 'ROUTINE SIEM AUDIT & TELEMETRY',
+    color: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
+    badge: 'NORMAL STATE',
+    title: 'SIEM Log Inspection & Executive PDF Export',
+    description: 'Use for routine compliance, brute-force analysis, and executive CISO reporting.',
+    sequence: [
+      'analyze logs for brute-force attack',
+      'generate executive security report'
+    ]
+  }
+];
+
 export const CyberSocCLI: React.FC<CyberSocCLIProps> = ({
   onExecuteRoutine,
   onShowToast
@@ -33,6 +74,7 @@ export const CyberSocCLI: React.FC<CyberSocCLIProps> = ({
   const [inputCmd, setInputCmd] = useState<string>('');
   const [history, setHistory] = useState<CliHistoryItem[]>([]);
   const [isHistorySidebarOpen, setIsHistorySidebarOpen] = useState<boolean>(true);
+  const [isProTipsOpen, setIsProTipsOpen] = useState<boolean>(false);
   const [logs, setLogs] = useState<CliLogEntry[]>([
     {
       id: 'init-1',
@@ -213,6 +255,17 @@ export const CyberSocCLI: React.FC<CyberSocCLIProps> = ({
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => {
+              soundFx.playCyberBlip();
+              setIsProTipsOpen(true);
+            }}
+            className="px-3 py-1.5 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/30 text-xs font-bold flex items-center gap-1.5 transition-all shadow-md active:scale-95"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>Pro-Tips</span>
+          </button>
+
+          <button
             onClick={() => setIsHistorySidebarOpen(!isHistorySidebarOpen)}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
               isHistorySidebarOpen 
@@ -391,6 +444,117 @@ export const CyberSocCLI: React.FC<CyberSocCLIProps> = ({
         )}
 
       </div>
+      {/* Pro-Tips Modal Overlay */}
+      {isProTipsOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl bg-[#0c1322] border border-purple-500/40 rounded-2xl p-6 space-y-5 shadow-2xl font-mono text-slate-100 animate-in fade-in zoom-in duration-200">
+            
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">AI SOC Pro-Tips & Playbook Sequences</h3>
+                  <p className="text-xs text-slate-400 font-sans">
+                    Recommended command routines optimized for varying threat levels and operational conditions.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsProTipsOpen(false)}
+                className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Playbook Sequence List */}
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+              {PRO_TIPS_SEQUENCES.map((item, idx) => (
+                <div
+                  key={idx}
+                  className={`p-4 rounded-xl border space-y-3 bg-slate-950/80 ${item.color}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-black bg-slate-900 border border-slate-700 text-white">
+                        {item.defcon}
+                      </span>
+                      <span className="text-xs font-bold">{item.levelName}</span>
+                    </div>
+
+                    <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-900 border border-slate-700">
+                      {item.badge}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-bold text-white">{item.title}</h4>
+                    <p className="text-xs text-slate-300 font-sans mt-0.5">{item.description}</p>
+                  </div>
+
+                  {/* Sequence Steps */}
+                  <div className="p-3 rounded-lg bg-slate-900 border border-slate-800/80 space-y-1.5 text-xs">
+                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                      Command Sequence Pipeline:
+                    </div>
+                    {item.sequence.map((cmd, cIdx) => (
+                      <div key={cIdx} className="flex items-center gap-2 text-emerald-300 font-semibold">
+                        <ChevronRight className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <code className="bg-slate-950 px-2 py-0.5 rounded border border-slate-800 text-[11px] font-mono">
+                          {cmd}
+                        </code>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Trigger Sequence Button */}
+                  <button
+                    onClick={() => {
+                      setIsProTipsOpen(false);
+                      item.sequence.forEach((cmd, delayIdx) => {
+                        setTimeout(() => {
+                          handleRunCommand(cmd);
+                        }, delayIdx * 1500);
+                      });
+                      if (onShowToast) {
+                        onShowToast(
+                          'Sequence Dispatched',
+                          `Running multi-step playbook: "${item.title}"`,
+                          'info'
+                        );
+                      }
+                    }}
+                    disabled={isExecuting}
+                    className="w-full py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-purple-300" />
+                    <span>Run Full {item.defcon} Sequence</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400 font-sans">
+              <span className="flex items-center gap-1.5 font-mono text-[11px] text-emerald-400">
+                <Shield className="w-3.5 h-3.5" /> All sequences tested in Suricata & Palo Alto telemetry sandbox.
+              </span>
+              <button
+                onClick={() => setIsProTipsOpen(false)}
+                className="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold text-xs"
+              >
+                Close
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

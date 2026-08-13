@@ -496,3 +496,97 @@ export const CHART_ATTACK_CATEGORIES = [
   { category: 'Port Scan', count: 310 },
   { category: 'DNS Tunnel', count: 65 }
 ];
+
+export const INITIAL_ASSETS = [
+  {
+    id: 'AST-001',
+    name: 'DC-PRIMARY-01',
+    type: 'Server' as const,
+    ipAddress: '10.0.1.5',
+    os: 'Windows Server 2022 Datacenter',
+    owner: 'Active Directory Infra Team',
+    health: 'At Risk' as const,
+    riskScore: 78,
+    openVulnerabilitiesCount: 3,
+    activeThreatsCount: 1,
+    lastSeen: '1 minute ago',
+    location: 'Primary US-East Datacenter',
+    macAddress: '00:1A:2B:3C:4D:5E'
+  },
+  {
+    id: 'AST-002',
+    name: 'WIN-104 (HR Lead Laptop)',
+    type: 'Endpoint' as const,
+    ipAddress: '10.0.2.45',
+    os: 'Windows 11 Enterprise (Build 22H2)',
+    owner: 'HR Department',
+    health: 'Critical' as const,
+    riskScore: 92,
+    openVulnerabilitiesCount: 4,
+    activeThreatsCount: 2,
+    lastSeen: '30 seconds ago',
+    location: 'Corporate HQ - Floor 3',
+    macAddress: '00:1C:42:00:00:08'
+  },
+  {
+    id: 'AST-003',
+    name: 'FW-EDGE-01 (Palo Alto PA-3220)',
+    type: 'Network Device' as const,
+    ipAddress: '10.0.1.1',
+    os: 'PAN-OS 10.2.3',
+    owner: 'Network Operations Center',
+    health: 'Healthy' as const,
+    riskScore: 12,
+    openVulnerabilitiesCount: 0,
+    activeThreatsCount: 0,
+    lastSeen: 'Just now',
+    location: 'Perimeter Edge DMZ',
+    macAddress: '00:09:0F:88:12:34'
+  },
+  {
+    id: 'AST-004',
+    name: 'SRV-DB-PROD-01',
+    type: 'Database' as const,
+    ipAddress: '10.0.3.12',
+    os: 'Red Hat Enterprise Linux 9.2 (PostgreSQL 15)',
+    owner: 'Data Engineering',
+    health: 'Healthy' as const,
+    riskScore: 24,
+    openVulnerabilitiesCount: 1,
+    activeThreatsCount: 0,
+    lastSeen: '2 minutes ago',
+    location: 'Isolated Database Subnet (10.0.3.0/24)',
+    macAddress: '52:54:00:12:34:56'
+  },
+  {
+    id: 'AST-005',
+    name: 'AWS-K8S-CLUSTER-PROD',
+    type: 'Cloud Resource' as const,
+    ipAddress: '172.31.42.100',
+    os: 'Alpine Linux / Amazon EKS 1.28',
+    owner: 'DevOps / Cloud Infra',
+    health: 'Healthy' as const,
+    riskScore: 18,
+    openVulnerabilitiesCount: 2,
+    activeThreatsCount: 0,
+    lastSeen: 'Just now',
+    location: 'AWS us-east-1 VPC',
+    macAddress: '02:42:AC:11:00:02'
+  },
+  {
+    id: 'AST-006',
+    name: 'SCADA-PLC-SUBSTATION-04',
+    type: 'Critical Infrastructure' as const,
+    ipAddress: '192.168.100.10',
+    os: 'Embedded RTOS (Modbus/TCP)',
+    owner: 'OT / Industrial Control System',
+    health: 'Healthy' as const,
+    riskScore: 35,
+    openVulnerabilitiesCount: 1,
+    activeThreatsCount: 0,
+    lastSeen: '5 seconds ago',
+    location: 'Substation Alpha Field Site',
+    macAddress: '00:80:E1:01:02:03'
+  }
+];
+

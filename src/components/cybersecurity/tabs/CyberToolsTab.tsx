@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { 
-  Wrench, Shield, Terminal, Server, Cpu, Cloud, Radio, CheckCircle2, Award, Play 
+  Wrench, Shield, Terminal, Server, Cpu, Cloud, Radio, CheckCircle2, Award, Play, ToggleLeft, ToggleRight, Zap, Check 
 } from 'lucide-react';
 import { SecurityToolItem } from '../../../types/cybersecurity';
+import { soundFx } from '../../../utils/soundEffects';
 
 interface CyberToolsTabProps {
   tools: SecurityToolItem[];
@@ -16,6 +17,23 @@ export const CyberToolsTab: React.FC<CyberToolsTabProps> = ({
   onShowToast
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const [autoRemediationMap, setAutoRemediationMap] = useState<Record<string, boolean>>({
+    'tool-1': true, // Snort/Suricata auto-contain enabled by default
+    'tool-2': true  // Splunk automated alerts
+  });
+
+  const toggleAutoRemediation = (toolId: string, toolName: string) => {
+    soundFx.playCyberBlip();
+    const newState = !autoRemediationMap[toolId];
+    setAutoRemediationMap(prev => ({ ...prev, [toolId]: newState }));
+    if (onShowToast) {
+      onShowToast(
+        newState ? 'Auto-Remediation Enabled' : 'Auto-Remediation Disabled',
+        `${toolName} auto-remediation set to ${newState ? 'ACTIVE (Will automatically patch safe high-confidence CVEs)' : 'INACTIVE'}`,
+        newState ? 'success' : 'info'
+      );
+    }
+  };
 
   const categories = [
     'ALL',
@@ -34,7 +52,7 @@ export const CyberToolsTab: React.FC<CyberToolsTabProps> = ({
     <div className="space-y-6 font-sans">
       
       {/* Header */}
-      <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+      <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-base font-bold text-white font-mono flex items-center gap-2">
             <Wrench className="w-5 h-5 text-emerald-400" />
@@ -43,6 +61,17 @@ export const CyberToolsTab: React.FC<CyberToolsTabProps> = ({
           <p className="text-xs text-slate-400">
             Categorized stack of security monitoring, offensive testing, and firewall tools in Karan's portfolio.
           </p>
+        </div>
+
+        {/* Global Auto-Remediation Status Indicator */}
+        <div className="flex items-center gap-2 bg-slate-950 px-3 py-2 rounded-xl border border-slate-800">
+          <Zap className="w-4 h-4 text-amber-400 animate-pulse" />
+          <div className="text-xs font-mono">
+            <span className="text-slate-400">Auto-Remediation Engine: </span>
+            <span className="text-emerald-400 font-bold">
+              {Object.values(autoRemediationMap).filter(Boolean).length} Tools Guarding
+            </span>
+          </div>
         </div>
       </div>
 
@@ -65,63 +94,96 @@ export const CyberToolsTab: React.FC<CyberToolsTabProps> = ({
 
       {/* Tools Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredTools.map((tool) => (
-          <div
-            key={tool.id}
-            className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-3 hover:border-slate-700 transition-all flex flex-col justify-between"
-          >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-800 text-cyan-300 border border-slate-700">
-                  {tool.category}
-                </span>
-                <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold ${
-                  tool.status === 'Certified' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
-                  tool.status === 'In Portfolio' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
-                  'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                }`}>
-                  {tool.status}
-                </span>
+        {filteredTools.map((tool) => {
+          const isAutoRemEnabled = !!autoRemediationMap[tool.id];
+
+          return (
+            <div
+              key={tool.id}
+              className={`p-5 rounded-2xl bg-slate-900/90 border shadow-xl space-y-3 transition-all flex flex-col justify-between ${
+                isAutoRemEnabled ? 'border-emerald-500/40 shadow-emerald-950/20' : 'border-slate-800 hover:border-slate-700'
+              }`}
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-800 text-cyan-300 border border-slate-700">
+                    {tool.category}
+                  </span>
+                  <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold ${
+                    tool.status === 'Certified' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
+                    tool.status === 'In Portfolio' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+                    'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                  }`}>
+                    {tool.status}
+                  </span>
+                </div>
+
+                <h3 className="text-base font-bold text-white font-mono">{tool.name}</h3>
+                <p className="text-xs text-slate-300 leading-relaxed font-sans">{tool.purpose}</p>
               </div>
 
-              <h3 className="text-base font-bold text-white font-mono">{tool.name}</h3>
-              <p className="text-xs text-slate-300 leading-relaxed font-sans">{tool.purpose}</p>
-            </div>
-
-            <div className="pt-3 border-t border-slate-800/80 space-y-2 font-mono text-xs">
-              <div className="flex items-center justify-between text-[11px] text-slate-400">
-                <span>Skill Level:</span>
-                <strong className="text-emerald-300">{tool.skillLevel}</strong>
-              </div>
-              <p className="text-[11px] text-slate-400 italic bg-slate-950/80 p-2.5 rounded-xl border border-slate-800">
-                "{tool.description}"
-              </p>
-
-              {onTriggerToolAction && (
+              {/* Auto-Remediation Toggle Box */}
+              <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-mono">
+                  <Zap className={`w-3.5 h-3.5 ${isAutoRemEnabled ? 'text-amber-400' : 'text-slate-500'}`} />
+                  <span className={isAutoRemEnabled ? 'text-amber-300 font-bold' : 'text-slate-400'}>
+                    Auto-Remediation
+                  </span>
+                </div>
                 <button
-                  onClick={() => {
-                    const routineCmd = `Execute security routine using ${tool.name} (${tool.category})`;
-                    onTriggerToolAction(routineCmd);
-                    if (onShowToast) {
-                      onShowToast(
-                        `Tool Routine Dispatched`,
-                        `Dispatched automated AI analysis for ${tool.name}`,
-                        'info'
-                      );
-                    }
-                  }}
-                  className="w-full py-2 rounded-xl bg-slate-800 hover:bg-emerald-600/20 text-slate-300 hover:text-emerald-300 border border-slate-700 hover:border-emerald-500/40 font-mono font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 group"
+                  onClick={() => toggleAutoRemediation(tool.id, tool.name)}
+                  className="flex items-center gap-1 text-xs font-mono font-bold transition-all"
+                  title="Toggle AI Auto-Remediation for high confidence vulnerabilities"
                 >
-                  <Play className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400 group-hover:animate-pulse" />
-                  <span>Execute {tool.name} Routine</span>
+                  {isAutoRemEnabled ? (
+                    <span className="text-emerald-400 flex items-center gap-1 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/30">
+                      <Check className="w-3 h-3" /> ENABLED
+                    </span>
+                  ) : (
+                    <span className="text-slate-500 hover:text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                      DISABLED
+                    </span>
+                  )}
                 </button>
-              )}
-            </div>
+              </div>
 
-          </div>
-        ))}
+              <div className="pt-3 border-t border-slate-800/80 space-y-2 font-mono text-xs">
+                <div className="flex items-center justify-between text-[11px] text-slate-400">
+                  <span>Skill Level:</span>
+                  <strong className="text-emerald-300">{tool.skillLevel}</strong>
+                </div>
+                <p className="text-[11px] text-slate-400 italic bg-slate-950/80 p-2.5 rounded-xl border border-slate-800">
+                  "{tool.description}"
+                </p>
+
+                {onTriggerToolAction && (
+                  <button
+                    onClick={() => {
+                      const autoPatchFlag = isAutoRemEnabled ? ' [Auto-Remediation: Safe Patches Triggered]' : '';
+                      const routineCmd = `Execute security routine using ${tool.name} (${tool.category})${autoPatchFlag}`;
+                      onTriggerToolAction(routineCmd);
+                      if (onShowToast) {
+                        onShowToast(
+                          `Tool Routine Dispatched`,
+                          `Dispatched automated AI analysis for ${tool.name}${isAutoRemEnabled ? ' with auto-remediation active' : ''}`,
+                          isAutoRemEnabled ? 'success' : 'info'
+                        );
+                      }
+                    }}
+                    className="w-full py-2 rounded-xl bg-slate-800 hover:bg-emerald-600/20 text-slate-300 hover:text-emerald-300 border border-slate-700 hover:border-emerald-500/40 font-mono font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 group"
+                  >
+                    <Play className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400 group-hover:animate-pulse" />
+                    <span>Execute {tool.name} Routine</span>
+                  </button>
+                )}
+              </div>
+
+            </div>
+          );
+        })}
       </div>
 
     </div>
   );
 };
+
