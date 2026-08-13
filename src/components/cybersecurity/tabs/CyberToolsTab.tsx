@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { 
-  Wrench, Shield, Terminal, Server, Cpu, Cloud, Radio, CheckCircle2, Award 
+  Wrench, Shield, Terminal, Server, Cpu, Cloud, Radio, CheckCircle2, Award, Play 
 } from 'lucide-react';
 import { SecurityToolItem } from '../../../types/cybersecurity';
 
 interface CyberToolsTabProps {
   tools: SecurityToolItem[];
+  onTriggerToolAction?: (commandText: string) => void;
+  onShowToast?: (title: string, message: string, type: 'info' | 'success' | 'warning' | 'error') => void;
 }
 
-export const CyberToolsTab: React.FC<CyberToolsTabProps> = ({ tools }) => {
+export const CyberToolsTab: React.FC<CyberToolsTabProps> = ({ 
+  tools,
+  onTriggerToolAction,
+  onShowToast
+}) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 
   const categories = [
@@ -90,6 +96,26 @@ export const CyberToolsTab: React.FC<CyberToolsTabProps> = ({ tools }) => {
               <p className="text-[11px] text-slate-400 italic bg-slate-950/80 p-2.5 rounded-xl border border-slate-800">
                 "{tool.description}"
               </p>
+
+              {onTriggerToolAction && (
+                <button
+                  onClick={() => {
+                    const routineCmd = `Execute security routine using ${tool.name} (${tool.category})`;
+                    onTriggerToolAction(routineCmd);
+                    if (onShowToast) {
+                      onShowToast(
+                        `Tool Routine Dispatched`,
+                        `Dispatched automated AI analysis for ${tool.name}`,
+                        'info'
+                      );
+                    }
+                  }}
+                  className="w-full py-2 rounded-xl bg-slate-800 hover:bg-emerald-600/20 text-slate-300 hover:text-emerald-300 border border-slate-700 hover:border-emerald-500/40 font-mono font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 group"
+                >
+                  <Play className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400 group-hover:animate-pulse" />
+                  <span>Execute {tool.name} Routine</span>
+                </button>
+              )}
             </div>
 
           </div>

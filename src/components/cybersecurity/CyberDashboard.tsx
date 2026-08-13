@@ -428,7 +428,11 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
               )}
 
               {activeTab === 'tools' && (
-                <CyberToolsTab tools={tools} />
+                <CyberToolsTab 
+                  tools={tools} 
+                  onTriggerToolAction={handleExecuteRoutine}
+                  onShowToast={showToast}
+                />
               )}
 
               {activeTab === 'projects' && (
