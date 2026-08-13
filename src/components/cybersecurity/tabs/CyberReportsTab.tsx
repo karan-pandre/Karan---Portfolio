@@ -2,46 +2,36 @@ import React, { useState } from 'react';
 import { 
   FileText, Eye, Download, ShieldCheck, CheckCircle2, X 
 } from 'lucide-react';
-import { CyberReportItem } from '../../../types/cybersecurity';
+import { CyberReportItem, ThreatItem, IncidentItem, VulnerabilityItem } from '../../../types/cybersecurity';
 import { soundFx } from '../../../utils/soundEffects';
+import { generateSocPdfReport } from '../../../utils/cyberReportPdf';
 
 interface CyberReportsTabProps {
   reports: CyberReportItem[];
+  threats?: ThreatItem[];
+  incidents?: IncidentItem[];
+  vulnerabilities?: VulnerabilityItem[];
+  securityScore?: number;
 }
 
-export const CyberReportsTab: React.FC<CyberReportsTabProps> = ({ reports }) => {
+export const CyberReportsTab: React.FC<CyberReportsTabProps> = ({ 
+  reports,
+  threats = [],
+  incidents = [],
+  vulnerabilities = [],
+  securityScore = 94
+}) => {
   const [selectedReport, setSelectedReport] = useState<CyberReportItem | null>(null);
 
-  const handleDownloadCisoReport = () => {
+  const handleDownloadCisoPdfReport = () => {
     soundFx.playSuccess();
-    const reportData = {
-      title: "CISO EXECUTIVE SECURITY SUMMARY REPORT (SOC-2026-SUMMARY)",
-      generatedAt: new Date().toISOString(),
-      organization: "Karan Pandre Security Operations Center (SOC)",
-      author: "Karan Pandre (Lead SOC Security Analyst & Incident Handler)",
-      securityPostureScore: 94,
-      executiveSummary: "During the active session, 14,298 telemetry events were processed via Suricata IDS and Splunk SIEM sensors. 100% of critical zero-day probes were contained via Cisco Extended Router ACLs and Suricata automated drop rules.",
-      keyMetrics: {
-        threatsProcessed: 14298,
-        activeCriticalIncidents: 2,
-        unpatchedCves: 0,
-        soc2ComplianceScore: "100% Compliant",
-        suricataUptime: "99.99%"
-      },
-      recommendedActions: [
-        "Maintain automated Palo Alto BGP drop policies for North Korea & Russia origin subnet ranges.",
-        "Proceed with quarterly ISO-27001 audit verification.",
-        "Sustain zero-trust access gateway enforcement for SOC dashboard endpoints."
-      ]
-    };
-
-    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `ciso_executive_security_report_${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    generateSocPdfReport({
+      threats,
+      incidents,
+      vulnerabilities,
+      securityScore,
+      analystName: 'Karan Pandre'
+    });
   };
 
   return (
@@ -60,7 +50,7 @@ export const CyberReportsTab: React.FC<CyberReportsTabProps> = ({ reports }) => 
         </div>
 
         <button
-          onClick={handleDownloadCisoReport}
+          onClick={handleDownloadCisoPdfReport}
           className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono font-bold text-xs flex items-center gap-2 shadow-lg transition-all active:scale-95"
         >
           <Download className="w-4 h-4" />
