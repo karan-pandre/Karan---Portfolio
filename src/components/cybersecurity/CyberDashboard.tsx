@@ -9,12 +9,14 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   CyberAuthUser, ThreatItem, IncidentItem, VulnerabilityItem, SecurityToolItem, 
   CyberProjectItem, CyberLabItem, CyberReportItem, CyberCertItem, AssetItem, PersonaRole,
-  ThreatStatus, IncidentStatus, RemediationStatus 
+  ThreatStatus, IncidentStatus, RemediationStatus,
+  SocNotificationItem, NotificationCategory, NotificationPreferences, ThreatSeverity
 } from '../../types/cybersecurity';
 import { 
   INITIAL_THREATS, INITIAL_INCIDENTS, INITIAL_VULNERABILITIES, INITIAL_TOOLS, 
   INITIAL_PROJECTS, INITIAL_LABS, INITIAL_REPORTS, INITIAL_CERTS, INITIAL_ASSETS,
-  DEMO_THREATS, DEMO_INCIDENTS, DEMO_VULNERABILITIES, DEMO_ASSETS, DEMO_TOOLS 
+  DEMO_THREATS, DEMO_INCIDENTS, DEMO_VULNERABILITIES, DEMO_ASSETS, DEMO_TOOLS,
+  INITIAL_NOTIFICATIONS
 } from '../../data/cybersecurityData';
 import { CyberOverviewTab } from './tabs/CyberOverviewTab';
 import { CyberThreatsTab } from './tabs/CyberThreatsTab';
@@ -33,6 +35,7 @@ import { CyberThreatMap } from './CyberThreatMap';
 import { CybersecurityLogs } from './CybersecurityLogs';
 import { CyberD3Heatmap } from './CyberD3Heatmap';
 import { CyberSocCLI } from './CyberSocCLI';
+import { AutomatedDetectionRulesPanel } from './AutomatedDetectionRulesPanel';
 import { CommandPaletteModal } from './CommandPaletteModal';
 import { ConfirmationModal } from './ConfirmationModal';
 import { AssetDetailDrawer } from './AssetDetailDrawer';
@@ -40,6 +43,7 @@ import { ToolDetailDrawer } from './ToolDetailDrawer';
 import { GuidedTourModal } from './GuidedTourModal';
 import { CyberDemoMode } from './CyberDemoMode';
 import { SystemAuditModal } from './SystemAuditModal';
+import { CyberNotificationCenter } from './CyberNotificationCenter';
 import { ToastNotification, ToastMessage } from './ToastNotification';
 import { generateSocPdfReport } from '../../utils/cyberReportPdf';
 import { saveSocSessionToFirestore, loadSocSessionFromFirestore } from '../../utils/firestoreSocSync';
@@ -65,6 +69,22 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [persona, setPersona] = useState<PersonaRole>('Auditor');
   const [environmentMode, setEnvironmentMode] = useState<'LIVE' | 'DEMO'>('LIVE');
+
+  // Notification Center & Persistent State
+  const [notifications, setNotifications] = useState<SocNotificationItem[]>(INITIAL_NOTIFICATIONS);
+  const [isNotificationCenterOpen, setIsNotificationCenterOpen] = useState<boolean>(false);
+  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>({
+    soundEnabled: true,
+    toastDuration: 5,
+    dndMode: false,
+    categories: {
+      CRITICAL_ALERT: true,
+      REMEDIATION_ACTION: true,
+      DETECTION_RULE: true,
+      SECURITY_INTEL: true,
+      SYSTEM_HEALTH: true,
+    }
+  });
 
   // Modals & Drawers State
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
@@ -138,8 +158,62 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
   const [reports, setReports] = useState<CyberReportItem[]>(INITIAL_REPORTS);
   const [certifications, setCertifications] = useState<CyberCertItem[]>(INITIAL_CERTS);
 
-  // Toast Helper
-  const showToast = (title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
+  // Enhanced Notification & Toast Helper
+  const showToast = (
+    title: string, 
+    message: string, 
+    type: 'info' | 'success' | 'warning' | 'error' = 'info',
+    options?: {
+      category?: NotificationCategory;
+      severity?: ThreatSeverity;
+      targetTab?: string;
+      targetId?: string;
+      metadata?: { sourceIp?: string; targetAsset?: string; ruleId?: string; hash?: string; cve?: string };
+    }
+  ) => {
+    // Determine category and severity
+    const category: NotificationCategory = options?.category || (
+      type === 'error' ? 'CRITICAL_ALERT' :
+      type === 'success' ? 'REMEDIATION_ACTION' :
+      type === 'warning' ? 'DETECTION_RULE' : 'SYSTEM_HEALTH'
+    );
+    const severity: ThreatSeverity = options?.severity || (
+      type === 'error' ? 'CRITICAL' :
+      type === 'warning' ? 'HIGH' :
+      type === 'success' ? 'MEDIUM' : 'LOW'
+    );
+
+    // Auto-append to persistent Notification Center
+    const newNotification: SocNotificationItem = {
+      id: `NOTIF-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      timestamp: new Date().toISOString(),
+      title,
+      message,
+      category,
+      severity,
+      read: false,
+      pinned: severity === 'CRITICAL',
+      targetTab: options?.targetTab,
+      targetId: options?.targetId,
+      metadata: options?.metadata
+    };
+
+    setNotifications(prev => [newNotification, ...prev]);
+
+    // Play sound if enabled and not DND (unless critical)
+    if (notificationPreferences.soundEnabled && (!notificationPreferences.dndMode || severity === 'CRITICAL')) {
+      soundFx.playCyberBlip();
+    }
+
+    // Check if DND or category filtered for popup toast
+    if (notificationPreferences.dndMode && severity !== 'CRITICAL') {
+      return;
+    }
+
+    if (!notificationPreferences.categories[category]) {
+      return;
+    }
+
     const newToast: ToastMessage = {
       id: `toast-${Date.now()}-${Math.random()}`,
       title,
@@ -152,6 +226,107 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
 
   const handleDismissToast = (id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id));
+  };
+
+  // Notification Center Handlers
+  const handleMarkNotificationAsRead = (id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: !n.read } : n));
+  };
+
+  const handleMarkAllNotificationsAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    showToast('Notifications Updated', 'All alerts marked as read in SOC history', 'info');
+  };
+
+  const handleDeleteNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  const handleClearAllNotifications = () => {
+    setNotifications([]);
+    showToast('Notification Stream Cleared', 'All cached alerts purged from memory', 'info');
+  };
+
+  const handleTogglePinNotification = (id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, pinned: !n.pinned } : n));
+  };
+
+  const handleUpdateNotificationPreferences = (newPrefs: Partial<NotificationPreferences>) => {
+    setNotificationPreferences(prev => ({
+      ...prev,
+      ...newPrefs,
+      categories: { ...prev.categories, ...(newPrefs.categories || {}) }
+    }));
+  };
+
+  const handleTriggerSimulatedAlert = (category: NotificationCategory) => {
+    switch (category) {
+      case 'CRITICAL_ALERT':
+        showToast(
+          'Simulated Ransomware Activity Detected',
+          'Mass encrypted file write operations (.locked) detected on storage-node-01.',
+          'error',
+          {
+            category: 'CRITICAL_ALERT',
+            severity: 'CRITICAL',
+            targetTab: 'incidents',
+            metadata: { targetAsset: 'storage-node-01', ruleId: 'RULE-RANSOM-09' }
+          }
+        );
+        break;
+      case 'REMEDIATION_ACTION':
+        showToast(
+          'Automated Firewall Isolation Verified',
+          'Perimeter firewall dropped malicious subnet 194.26.29.0/24 with SHA-256 integrity hash verification.',
+          'success',
+          {
+            category: 'REMEDIATION_ACTION',
+            severity: 'HIGH',
+            targetTab: 'detection-rules',
+            metadata: { sourceIp: '194.26.29.112', hash: 'sha256-f87c2b19e4a055d28b1a' }
+          }
+        );
+        break;
+      case 'DETECTION_RULE':
+        showToast(
+          'SIEM Correlated Brute-Force Match',
+          'Detection Rule RULE-BRUTE-01 triggered: 1,420 failed SSH logins from 185.220.101.5 in 30s.',
+          'warning',
+          {
+            category: 'DETECTION_RULE',
+            severity: 'HIGH',
+            targetTab: 'detection-rules',
+            metadata: { sourceIp: '185.220.101.5', ruleId: 'RULE-BRUTE-01' }
+          }
+        );
+        break;
+      case 'SECURITY_INTEL':
+        showToast(
+          'New Threat Intel Bulletin (CVE-2026-9041)',
+          'CVSS 9.8 Remote Code Execution advisory published for OpenSSH daemon.',
+          'info',
+          {
+            category: 'SECURITY_INTEL',
+            severity: 'CRITICAL',
+            targetTab: 'vulnerabilities',
+            metadata: { cve: 'CVE-2026-9041' }
+          }
+        );
+        break;
+      case 'SYSTEM_HEALTH':
+      default:
+        showToast(
+          'SIEM Agent Heartbeat Synchronized',
+          'All Wazuh EDR endpoints and Suricata sensor buffers reporting nominal 0% packet loss.',
+          'info',
+          {
+            category: 'SYSTEM_HEALTH',
+            severity: 'LOW',
+            targetTab: 'logs'
+          }
+        );
+        break;
+    }
   };
 
   // Live UTC Clock Effect
@@ -370,6 +545,7 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
     {
       groupLabel: 'AUTOMATION',
       items: [
+        { id: 'detection-rules', label: 'Detection Rules Engine', icon: Cpu, badge: 'RULES' },
         { id: 'cli', label: 'AI Agent SOC CLI', icon: Terminal, badge: 'AI' },
         { id: 'playbooks', label: 'Response Playbooks', icon: Layers, badge: 'DEFCON' }
       ]
@@ -467,6 +643,27 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
       <SystemAuditModal
         isOpen={isAuditModalOpen}
         onClose={() => setIsAuditModalOpen(false)}
+      />
+
+      {/* Advanced SOC Notification Center Drawer */}
+      <CyberNotificationCenter
+        isOpen={isNotificationCenterOpen}
+        onClose={() => setIsNotificationCenterOpen(false)}
+        notifications={notifications}
+        onMarkAsRead={handleMarkNotificationAsRead}
+        onMarkAllAsRead={handleMarkAllNotificationsAsRead}
+        onDeleteNotification={handleDeleteNotification}
+        onClearAll={handleClearAllNotifications}
+        onTogglePin={handleTogglePinNotification}
+        onNavigateToTab={(tab, targetId) => {
+          setActiveTab(tab);
+          if (targetId) {
+            showToast('Navigated from Notification', `Focused record ID: ${targetId}`, 'info');
+          }
+        }}
+        preferences={notificationPreferences}
+        onUpdatePreferences={handleUpdateNotificationPreferences}
+        onTriggerSimulatedAlert={handleTriggerSimulatedAlert}
       />
 
       {/* Top Header Navigation Bar */}
@@ -616,8 +813,36 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
           </button>
         </div>
 
-        {/* Right: Tour / User Profile & Controls */}
+        {/* Right: Tour / Notification Center / User Profile & Controls */}
         <div className="flex items-center gap-2 sm:gap-3 font-sans">
+          
+          {/* Advanced Notification Center Bell Trigger */}
+          <button
+            onClick={() => {
+              soundFx.playCyberBlip();
+              setIsNotificationCenterOpen(true);
+            }}
+            className={`relative p-2 rounded-xl border transition-all cursor-pointer ${
+              isNotificationCenterOpen
+                ? 'bg-emerald-500 text-slate-950 border-emerald-400 font-bold'
+                : notifications.filter(n => !n.read).length > 0
+                ? 'bg-slate-900 border-emerald-500/40 text-slate-200 hover:border-emerald-400 hover:text-white'
+                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+            }`}
+            title={`Notification Center (${notifications.filter(n => !n.read).length} unread alerts)`}
+          >
+            <Bell className={`w-4 h-4 ${notifications.filter(n => !n.read).length > 0 ? 'text-emerald-400' : ''}`} />
+            {notifications.filter(n => !n.read).length > 0 && (
+              <span className={`absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[9px] font-mono font-black text-white flex items-center justify-center shadow-lg ring-2 ring-[#0d1322] ${
+                notifications.some(n => !n.read && n.severity === 'CRITICAL')
+                  ? 'bg-rose-500 shadow-rose-950/80 animate-pulse'
+                  : 'bg-emerald-500 shadow-emerald-950/80'
+              }`}>
+                {notifications.filter(n => !n.read).length > 9 ? '9+' : notifications.filter(n => !n.read).length}
+              </span>
+            )}
+          </button>
+
           <button
             onClick={() => {
               soundFx.playCyberBlip();
@@ -840,6 +1065,14 @@ export const CyberDashboard: React.FC<CyberDashboardProps> = ({
                 <CyberIncidentsTab 
                   incidents={incidents}
                   onUpdateIncidentStatus={handleUpdateIncidentStatus}
+                />
+              )}
+
+              {activeTab === 'detection-rules' && (
+                <AutomatedDetectionRulesPanel
+                  onPromoteThreatsToState={(newThreats) => setThreats(prev => [...newThreats, ...prev])}
+                  onPromoteIncidentsToState={(newIncidents) => setIncidents(prev => [...newIncidents, ...prev])}
+                  onShowToast={showToast}
                 />
               )}
 

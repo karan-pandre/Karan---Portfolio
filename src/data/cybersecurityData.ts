@@ -1,6 +1,7 @@
 import { 
   ThreatItem, IncidentItem, VulnerabilityItem, SecurityToolItem, 
-  CyberProjectItem, CyberLabItem, CyberReportItem, CyberCertItem 
+  CyberProjectItem, CyberLabItem, CyberReportItem, CyberCertItem,
+  SocNotificationItem
 } from '../types/cybersecurity';
 
 export const INITIAL_THREATS: ThreatItem[] = [
@@ -734,6 +735,77 @@ export const DEMO_TOOLS: SecurityToolItem[] = [
     skillLevel: 'Expert',
     status: 'In Portfolio',
     description: 'Simulated SIEM instance producing synthetic attack logs for SOC testing.'
+  }
+];
+
+export const INITIAL_NOTIFICATIONS: SocNotificationItem[] = [
+  {
+    id: 'NOTIF-901',
+    timestamp: '2026-08-19T00:15:30Z',
+    title: 'Automated Firewall Block Applied',
+    message: 'IP 185.220.101.5 was automatically dropped via iptables edge rule. Verified with SHA-256 integrity hash.',
+    category: 'REMEDIATION_ACTION',
+    severity: 'HIGH',
+    read: false,
+    pinned: true,
+    targetTab: 'detection-rules',
+    metadata: {
+      sourceIp: '185.220.101.5',
+      ruleId: 'RULE-BRUTE-01',
+      hash: 'sha256-a9f82d1c640e791b8a5c3e4f0123'
+    }
+  },
+  {
+    id: 'NOTIF-902',
+    timestamp: '2026-08-19T00:12:00Z',
+    title: 'Critical Ransomware Extension Activity',
+    message: 'Detection Rule RULE-RANSOM-05 detected mass file extension modification (.locked) on storage-node-02.',
+    category: 'CRITICAL_ALERT',
+    severity: 'CRITICAL',
+    read: false,
+    pinned: true,
+    targetTab: 'incidents',
+    targetId: 'INC-2026-001',
+    metadata: {
+      targetAsset: 'storage-node-02',
+      ruleId: 'RULE-RANSOM-05'
+    }
+  },
+  {
+    id: 'NOTIF-903',
+    timestamp: '2026-08-19T00:08:45Z',
+    title: 'Gemini AI Incident Root-Cause Generated',
+    message: 'Gemini SOC L3 Assistant synthesized full hypothesis and containment runbook for Log4j JNDI exploit match.',
+    category: 'DETECTION_RULE',
+    severity: 'HIGH',
+    read: false,
+    targetTab: 'detection-rules',
+    metadata: {
+      ruleId: 'RULE-WEB-03'
+    }
+  },
+  {
+    id: 'NOTIF-904',
+    timestamp: '2026-08-18T23:50:12Z',
+    title: 'Zero-Day Vulnerability Advisory (CVE-2026-3819)',
+    message: 'New critical RCE advisory published affecting Apache Tomcat edge gateways. CVSS 9.8 score assigned.',
+    category: 'SECURITY_INTEL',
+    severity: 'CRITICAL',
+    read: true,
+    targetTab: 'vulnerabilities',
+    metadata: {
+      cve: 'CVE-2026-3819'
+    }
+  },
+  {
+    id: 'NOTIF-905',
+    timestamp: '2026-08-18T23:30:00Z',
+    title: 'SIEM Ingestion Stream Synchronized',
+    message: 'Wazuh EDR and Suricata sensor telemetry streaming at 1,420 eps with 0 dropped buffers.',
+    category: 'SYSTEM_HEALTH',
+    severity: 'LOW',
+    read: true,
+    targetTab: 'logs'
   }
 ];
 

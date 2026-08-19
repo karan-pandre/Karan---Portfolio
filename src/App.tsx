@@ -24,6 +24,7 @@ import { InterviewBookingModal } from './components/InterviewBookingModal';
 import { RecruiterDock } from './components/RecruiterDock';
 import { SearchModal } from './components/SearchModal';
 import { MouseSpotlight } from './components/MouseSpotlight';
+import { AnimatedBackground } from './components/AnimatedBackground';
 import { ScrollProgressBar } from './components/ScrollProgressBar';
 import { Footer } from './components/Footer';
 
@@ -260,6 +261,9 @@ export default function App() {
       darkMode ? 'dark bg-[#0a0f1d] text-slate-100' : 'light bg-slate-50 text-slate-900'
     }`}>
       
+      {/* High-Performance Animated Background Elements & Grid */}
+      <AnimatedBackground darkMode={darkMode} />
+
       {/* Editorial Scroll Position Progress Bar */}
       <ScrollProgressBar darkMode={darkMode} />
 

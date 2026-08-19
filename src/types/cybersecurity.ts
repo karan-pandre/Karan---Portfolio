@@ -158,3 +158,139 @@ export interface CyberAuthUser {
   role: 'SOC Administrator' | 'Lead Threat Hunter' | 'Security Analyst';
   lastLogin: string;
 }
+
+export interface NormalizedEvent {
+  eventId: string;
+  timestamp: string;
+  sourceAgent: string;
+  agentIp: string;
+  sourceIp: string;
+  wazuhRuleId?: number | string;
+  wazuhLevel?: number;
+  category?: 'Authentication' | 'System Integrity' | 'Web Application' | 'Network Traffic' | 'Malware' | 'Privilege Escalation' | 'Data Exfiltration' | 'Cloud Audit';
+  description: string;
+  payload?: string;
+  mitreTactic: string;
+  mitreTechnique: string;
+  normalizedSeverity: ThreatSeverity;
+  rawLog?: string;
+}
+
+export interface DetectionPatternCondition {
+  field: 'sourceIp' | 'description' | 'category' | 'wazuhLevel' | 'payload' | 'mitreTactic' | 'normalizedSeverity' | 'sourceAgent';
+  operator: 'equals' | 'contains' | 'regex' | 'greaterThan' | 'in';
+  value: string | number | string[];
+}
+
+export interface DetectionRule {
+  id: string;
+  name: string;
+  description: string;
+  patternConditions: DetectionPatternCondition[];
+  patternLogic: 'AND' | 'OR';
+  incidentPatternType: 'Brute Force' | 'Privilege Escalation' | 'Web Exploitation' | 'Ransomware Activity' | 'Data Exfiltration' | 'Lateral Movement' | 'Credential Access' | 'C2 Communication';
+  severity: ThreatSeverity;
+  mitreTactic: string;
+  mitreTechnique: string;
+  action: 'PROMOTE_TO_THREAT' | 'PROMOTE_TO_INCIDENT' | 'AUTO_ISOLATE_HOST' | 'ALERT_ONLY';
+  triggerAiExplanation: boolean;
+  triggerAutomatedRemediation?: boolean;
+  remediationActionType?: 'ISOLATE_HOST' | 'BLOCK_IP_FIREWALL' | 'REVOKE_USER_SESSION' | 'KILL_PROCESS_TREE' | 'RESTORE_GOLD_IMAGE' | 'FLUSH_DNS_CACHE' | 'CUSTOM_SCRIPT';
+  enabled: boolean;
+  matchCount: number;
+  lastTriggered?: string;
+}
+
+export interface RemediationExecutionResult {
+  id: string;
+  actionType: string;
+  scriptLanguage: 'bash' | 'powershell' | 'ansible' | 'wazuh_ar';
+  scriptContent: string;
+  targetAsset: string;
+  targetIp?: string;
+  executionOutput: string;
+  exitCode: number;
+  verificationHash: string;
+  timestamp: string;
+  status: 'VERIFIED_SUCCESS' | 'FAILED';
+  latencyMs?: number;
+}
+
+export interface RemediationAuditLogEntry {
+  id: string;
+  timestamp: string;
+  ruleId: string;
+  ruleName: string;
+  patternType: string;
+  actionType: string;
+  targetAsset: string;
+  sourceIp: string;
+  scriptLanguage: string;
+  scriptSnippet: string;
+  verificationHash: string;
+  status: 'VERIFIED_SUCCESS' | 'FAILED';
+  executedBy: string;
+  latencyMs: number;
+}
+
+export interface RuleEvaluationResult {
+  id: string;
+  ruleId: string;
+  ruleName: string;
+  incidentPatternType: string;
+  matchedEvent: NormalizedEvent;
+  timestamp: string;
+  severity: ThreatSeverity;
+  action: string;
+  triggeredAi: boolean;
+  aiExplanationState: 'PENDING' | 'GENERATING' | 'COMPLETED' | 'FAILED';
+  aiExplanation?: {
+    summary: string;
+    threatActorHypothesis: string;
+    riskLevel: string;
+    recommendedResponse: string[];
+    mitreRef: string;
+    confidenceScore?: number;
+  };
+  triggeredRemediation?: boolean;
+  remediationState?: 'IDLE' | 'EXECUTING' | 'VERIFIED_SUCCESS' | 'FAILED';
+  remediationExecution?: RemediationExecutionResult;
+  promotedThreat?: ThreatItem;
+  promotedIncident?: IncidentItem;
+}
+
+export type NotificationCategory = 'CRITICAL_ALERT' | 'REMEDIATION_ACTION' | 'DETECTION_RULE' | 'SECURITY_INTEL' | 'SYSTEM_HEALTH';
+
+export interface SocNotificationItem {
+  id: string;
+  timestamp: string;
+  title: string;
+  message: string;
+  category: NotificationCategory;
+  severity: ThreatSeverity;
+  read: boolean;
+  pinned?: boolean;
+  targetTab?: string;
+  targetId?: string;
+  metadata?: {
+    sourceIp?: string;
+    targetAsset?: string;
+    ruleId?: string;
+    hash?: string;
+    cve?: string;
+  };
+}
+
+export interface NotificationPreferences {
+  soundEnabled: boolean;
+  toastDuration: number; // 3, 5, 10, or 0 (sticky)
+  dndMode: boolean;
+  categories: {
+    CRITICAL_ALERT: boolean;
+    REMEDIATION_ACTION: boolean;
+    DETECTION_RULE: boolean;
+    SECURITY_INTEL: boolean;
+    SYSTEM_HEALTH: boolean;
+  };
+}
+

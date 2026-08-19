@@ -18,6 +18,72 @@ interface HeroProps {
   onRefreshData?: () => void;
 }
 
+// Coordinated Spring Entry Animation Variants
+const heroContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const heroItemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring' as const,
+      stiffness: 220,
+      damping: 20,
+      mass: 0.8
+    }
+  }
+};
+
+const heroButtonContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.06,
+      delayChildren: 0.05
+    }
+  }
+};
+
+const heroButtonItemVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.96 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: 'spring' as const,
+      stiffness: 240,
+      damping: 18
+    }
+  }
+};
+
+const heroCardVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: 'spring' as const,
+      stiffness: 180,
+      damping: 22,
+      delay: 0.15
+    }
+  }
+};
+
 export const Hero: React.FC<HeroProps> = ({
   darkMode,
   onOpenATS,
@@ -186,18 +252,18 @@ export const Hero: React.FC<HeroProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* Main Hero Content */}
+          {/* Main Hero Content with Coordinated Stagger Animation */}
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            variants={heroContainerVariants}
+            initial="hidden"
+            animate="visible"
             className="lg:col-span-7 space-y-6"
           >
-            
-
-
             {/* Main Headline with Profile Photo / Initials Avatar */}
-            <div className="flex flex-col xs:flex-row items-start xs:items-center gap-3 sm:gap-5">
+            <motion.div 
+              variants={heroItemVariants}
+              className="flex flex-col xs:flex-row items-start xs:items-center gap-3 sm:gap-5"
+            >
               <motion.div 
                 layoutId="hero-avatar-container"
                 className="relative group w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-1 bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 shadow-xl shrink-0 flex items-center justify-center overflow-hidden"
@@ -278,33 +344,42 @@ export const Hero: React.FC<HeroProps> = ({
                   </AnimatePresence>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Subtitle / Role Focus */}
-            <p className={`text-sm sm:text-base lg:text-lg font-medium leading-relaxed ${
-              darkMode ? 'text-slate-300' : 'text-slate-700'
-            }`}>
+            <motion.p 
+              variants={heroItemVariants}
+              className={`text-sm sm:text-base lg:text-lg font-medium leading-relaxed ${
+                darkMode ? 'text-slate-300' : 'text-slate-700'
+              }`}
+            >
               Senior Associate at <span className="font-semibold text-blue-600 dark:text-blue-400">Physics Wallah</span>. Former <span className="font-semibold text-blue-600 dark:text-blue-400">Infosys</span> Data Analyst Intern & <span className="font-semibold text-blue-600 dark:text-blue-400">Cisco</span> Cybersecurity Virtual Intern.
-            </p>
+            </motion.p>
 
             {/* Target Competencies Pills */}
-            <div className="flex flex-wrap gap-2 pt-1">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-950/80 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+            <motion.div 
+              variants={heroItemVariants}
+              className="flex flex-wrap gap-2 pt-1"
+            >
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-950/80 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shadow-sm">
                 <BarChart3 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                 Data Analytics
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-200 dark:border-purple-800 shadow-sm">
                 <Briefcase className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
                 Project Management
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 shadow-sm">
                 <TrendingUp className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                 Digital Business Marketing
               </span>
-            </div>
+            </motion.div>
 
             {/* Quick Location & Education Meta */}
-            <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+            <motion.div 
+              variants={heroItemVariants}
+              className="flex flex-wrap items-center gap-4 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400"
+            >
               <span className="flex items-center gap-1">
                 <MapPin className="w-4 h-4 text-rose-500" />
                 {PERSONAL_INFO.location}
@@ -317,70 +392,92 @@ export const Hero: React.FC<HeroProps> = ({
                 <CheckCircle2 className="w-4 h-4" />
                 ATS Score 96%+ Optimized
               </span>
-            </div>
+            </motion.div>
 
-            {/* Action CTAs */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
+            {/* Action CTAs with coordinated spring entrance and hover & tap physics */}
+            <motion.div 
+              variants={heroButtonContainerVariants}
+              className="flex flex-wrap items-center gap-3 pt-2"
+            >
               {onOpenBooking && (
-                <button
+                <motion.button
                   id="hero-cta-booking"
+                  variants={heroButtonItemVariants}
                   onClick={onOpenBooking}
-                  className="w-full sm:w-auto px-5 py-3 min-h-[44px] justify-center rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm shadow-xl shadow-emerald-600/30 flex items-center gap-2 transition-all hover:scale-[1.03]"
+                  whileHover={{ scale: 1.03, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full sm:w-auto px-5 py-3 min-h-[44px] justify-center rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm shadow-xl shadow-emerald-600/30 flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <Calendar className="w-4 h-4 text-emerald-200" />
-                  Book 1-Click Call
-                </button>
+                  <span>Book 1-Click Call</span>
+                </motion.button>
               )}
 
               {onOpenRecruiterBrief && (
-                <button
+                <motion.button
                   id="hero-cta-recruiter"
+                  variants={heroButtonItemVariants}
                   onClick={onOpenRecruiterBrief}
-                  className="w-full sm:w-auto px-5 py-3 min-h-[44px] justify-center rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-extrabold text-sm shadow-xl shadow-indigo-600/20 flex items-center gap-2 transition-all hover:scale-[1.03]"
+                  whileHover={{ scale: 1.03, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full sm:w-auto px-5 py-3 min-h-[44px] justify-center rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-extrabold text-sm shadow-xl shadow-indigo-600/20 flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <ShieldCheck className="w-4 h-4 text-cyan-300" />
-                  Recruiter 10-Sec Brief
-                </button>
+                  <span>Recruiter 10-Sec Brief</span>
+                </motion.button>
               )}
 
-              <button
+              <motion.button
                 id="hero-cta-ats"
+                variants={heroButtonItemVariants}
                 onClick={onOpenATS}
-                className="w-full sm:w-auto px-5 py-3 min-h-[44px] justify-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-600/25 flex items-center gap-2 transition-all hover:scale-[1.02]"
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="w-full sm:w-auto px-5 py-3 min-h-[44px] justify-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-lg shadow-blue-600/25 flex items-center gap-2 transition-all cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4" />
-                Run ATS Match Screener
-              </button>
+                <span>Run ATS Screener</span>
+              </motion.button>
 
-              <button
+              <motion.button
                 id="hero-cta-resume"
+                variants={heroButtonItemVariants}
                 onClick={onOpenResume}
-                className={`w-full sm:w-auto px-5 py-3 min-h-[44px] justify-center rounded-xl font-semibold text-sm border flex items-center gap-2 transition-all hover:scale-[1.02] ${
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className={`w-full sm:w-auto px-5 py-3 min-h-[44px] justify-center rounded-xl font-semibold text-sm border flex items-center gap-2 transition-all cursor-pointer ${
                   darkMode 
                     ? 'border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800' 
                     : 'border-slate-300 bg-white text-slate-800 hover:bg-slate-100 shadow-sm'
                 }`}
               >
                 <Download className="w-4 h-4 text-blue-500" />
-                Download Resume (PDF)
-              </button>
+                <span>Resume (PDF)</span>
+              </motion.button>
 
-              <button
+              <motion.button
                 id="hero-cta-ai"
+                variants={heroButtonItemVariants}
                 onClick={onOpenAIChat}
-                className={`w-full sm:w-auto px-4 py-3 min-h-[44px] justify-center rounded-xl font-semibold text-sm flex items-center gap-2 border border-purple-500/30 transition-all ${
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className={`w-full sm:w-auto px-4 py-3 min-h-[44px] justify-center rounded-xl font-semibold text-sm flex items-center gap-2 border border-purple-500/30 transition-all cursor-pointer ${
                   darkMode ? 'bg-purple-950/40 text-purple-300 hover:bg-purple-900/50' : 'bg-purple-50 text-purple-800 hover:bg-purple-100'
                 }`}
               >
                 <Sparkles className="w-4 h-4 text-purple-500" />
-                Ask AI Twin
-              </button>
-            </div>
+                <span>Ask AI Twin</span>
+              </motion.button>
+            </motion.div>
+
           </motion.div>
 
           {/* Hero Feature Card / Verified Candidate Summary */}
           <motion.div 
             ref={cardRef}
+            variants={heroCardVariants}
+            initial="hidden"
+            animate="visible"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             style={{
@@ -388,9 +485,6 @@ export const Hero: React.FC<HeroProps> = ({
               rotateY,
               transformStyle: 'preserve-3d',
             }}
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
             className="lg:col-span-5 perspective-1000"
           >
             <div className={`p-6 sm:p-7 rounded-2xl specular-shine relative overflow-hidden transition-all duration-300 ${

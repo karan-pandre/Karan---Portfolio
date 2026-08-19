@@ -342,6 +342,13 @@ export const WazuhConnectorPanel: React.FC<WazuhConnectorPanelProps> = ({
               {isIngesting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Layers className="w-4 h-4" />}
               <span>{isIngesting ? 'Processing Pipeline...' : 'Step 4-9: Run Ingest & Rules Engine'}</span>
             </button>
+
+            <div className="p-2.5 rounded-xl bg-slate-950/80 border border-cyan-500/20 flex items-center justify-between text-[11px] font-mono">
+              <span className="text-slate-400">Automated Rule Engine:</span>
+              <span className="text-cyan-400 font-bold flex items-center gap-1">
+                <Cpu className="w-3 h-3" /> 6 Patterns Active
+              </span>
+            </div>
           </div>
 
           {/* Card 3: AI Threat Analysis & Remediation */}
