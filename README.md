@@ -1,214 +1,252 @@
 <div align="center">
 
-# ⚡ KARAN PANDRE | EXECUTIVE PORTFOLIO & BI ANALYTICS SUITE
-### *Next-Gen 3D Glassmorphic Interface & Interactive Business Intelligence Engine*
+# Karan Pandre Portfolio
 
-[![Live Web Application](https://img.shields.io/badge/🌐_Live_Demo-Applet_Deployment-00C853?style=for-the-badge&logo=google-chrome&logoColor=white)](https://ais-pre-xfqmv47wknjdg247newaoi-340336038490.asia-southeast1.run.app)
-[![React](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Google Gemini API](https://img.shields.io/badge/Google_Gemini-2.5-4285F4?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![Dark & Light Mode](https://img.shields.io/badge/Theme-Dynamic_3D_Dual_Mode-7C3AED?style=for-the-badge&logo=stylelint&logoColor=white)](#-3d-glassmorphism--adaptive-theme-engine)
+### Interactive Data Analytics & Cybersecurity Portfolio (React + Vite + Express)
 
----
+A polished, recruiter-focused portfolio experience with interactive analytics modules, a private cybersecurity dashboard, CMS-driven content updates, and optional Gemini-powered assistant endpoints.
 
-### 🌐 **[LAUNCH LIVE INTERACTIVE PORTFOLIO](https://ais-pre-xfqmv47wknjdg247newaoi-340336038490.asia-southeast1.run.app)**
-*Experience the live, high-performance web application in real time.*
-
----
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=111827)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Express](https://img.shields.io/badge/Express-4.21-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-4.1-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 
 </div>
 
-<details>
-<summary><b>📑 TABLE OF CONTENTS (Click to Expand)</b></summary>
+---
 
-1. [✨ Key System Upgrades & Recent Features](#-key-system-upgrades--recent-features)
-2. [🎨 3D Glassmorphism & Adaptive Theme Engine](#-3d-glassmorphism--adaptive-theme-engine)
-3. [🔐 Security & CMS Admin Panel](#-security--cms-admin-panel)
-4. [📊 Business Intelligence & Interactive Features](#-business-intelligence--interactive-features)
-5. [🏗️ Application Architecture](#%EF%B8%8F-application-architecture)
-6. [🛠️ Technology Stack](#%EF%B8%8F-technology-stack)
-7. [🐙 GitHub Export & Sync Guide](#-github-export--sync-guide)
-8. [📁 Repository Structure](#-repository-structure)
-9. [🧪 Testing & Verification Report](#-testing--verification-report)
-10. [👤 Author & Contact](#-author--contact)
+## Table of Contents
 
-</details>
+- [Overview](#overview)
+- [Highlights](#highlights)
+- [Demo & Visuals](#demo--visuals)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Scripts](#scripts)
+- [Environment Variables](#environment-variables)
+- [Usage Notes](#usage-notes)
+- [Deployment](#deployment)
+- [Accessibility & Responsive Design](#accessibility--responsive-design)
+- [Contributing](#contributing)
+- [Contact](#contact)
+- [License](#license)
 
 ---
 
-## ✨ Key System Upgrades & Recent Features
+## Overview
 
-> **Latest Release Summary**: Updated with a state-of-the-art **3D Glassmorphism Design System**, secure **Password Masking with Eye Toggle**, and dual-theme **Energetic Dark & Light Color Scheming**.
+This repository powers Karan Pandre’s portfolio application. It combines:
+
+- a modern React frontend,
+- an Express backend with multiple `/api/*` endpoints,
+- editable portfolio data persistence via `cms_data.json`,
+- interactive modules for analytics, ATS matching, and cybersecurity simulation.
+
+> Built for educational and portfolio presentation use.
+
+---
+
+## Highlights
+
+| Area | What’s implemented (verified in code) |
+|---|---|
+| Portfolio UI | Hero, role filter, competency sections, projects, certifications, contact, footer |
+| Recruiter tools | ATS resume optimizer, recruiter quick brief modal, interview booking modal |
+| AI integration | Gemini client initialization when `GEMINI_API_KEY` is configured |
+| CMS workflow | View/edit portfolio data and persist updates through `/api/portfolio-data` |
+| Cybersecurity mode | Dedicated auth + private dashboard routes (`#secure-login`, `#cybersecurity-dashboard`) |
+| Backend APIs | Health, contact, SQL simulator, ATS match, chat, Wazuh connectors, detection-rule endpoints |
+
+---
+
+## Demo & Visuals
+
+- **Configured public URL in metadata/SEO:** https://karanpandre.dev/
+- **Profile image asset:**
+
+<p align="center">
+  <img src="public/karan_profile.jpg" alt="Karan Pandre profile" width="220" />
+</p>
+
+> `index.html` references `/assets/og-preview.png`, but that image is not present in this repository.
+
+---
+
+## Tech Stack
+
+### Frontend
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS (via `@tailwindcss/vite`)
+- Motion, Recharts, D3
+
+### Backend
+- Node.js + Express
+- Vite middleware in development
+- Static `dist/` serving in production
+
+### Integrations
+- Google Gemini SDK (`@google/genai`)
+- Firebase (Auth + Firestore initialization)
+
+---
+
+## Architecture
 
 ```text
- ┌─────────────────────────────────────────────────────────────────────────────┐
- │                      RECENT SYSTEM MODIFICATIONS & FIXES                   │
- ├─────────────────────────────────────────────────────────────────────────────┤
- │  🔑 PASSKEY MASKING      : Security input field converts text to dots.       │
- │                            Includes interactive Eye/EyeOff toggle.          │
- │                                                                             │
- │  🔒 PRIVACY PROTECTION    : Passkeys & admin credentials are no longer       │
- │                            displayed in plaintext on login prompts/alerts.  │
- │                                                                             │
- │  ☀️ ENERGETIC LIGHT MODE  : Calibrated high-contrast light backgrounds,      │
- │                            translucent glass cards, and crisp typography.   │
- │                                                                             │
- │  🌙 3D DARK MODE GLASS   : Deep space navy background (#0a0f1d) with ambient  │
- │                            glowing light orbs and specular shine reflections│
- │                                                                             │
- │  ⚡ 30S DRAFT AUTO-SAVE   : Background interval saves draft changes to       │
- │                            localStorage every 30s with timestamp badge.     │
- │                                                                             │
- │  👁️ LIVE PAGE PREVIEW    : Test edits on main page before saving with       │
- │                            top floating banner and 1-click Publish option.  │
- └─────────────────────────────────────────────────────────────────────────────┘
+Client (React + Vite)
+  ├─ Portfolio sections & recruiter modules
+  ├─ CMS admin panel + preview flows
+  └─ Private cybersecurity routes/dashboard
+          │
+          ▼
+Server (Express)
+  ├─ /api/portfolio-data (read/write CMS store)
+  ├─ /api/chat, /api/ats-match, /api/sql-simulator
+  ├─ /api/connectors/wazuh/*
+  └─ /api/detection-rules/*
+          │
+          ▼
+Persistence
+  └─ cms_data.json (+ static/public asset updates for avatar)
 ```
 
 ---
 
-## 🎨 3D Glassmorphism & Adaptive Theme Engine
-
-The application incorporates a custom **Futuristic 3D Glassmorphism Design System**:
-
-- 💎 **Translucent Glass Panels**: Micro-fine blur filters (`backdrop-filter: blur(16px)`) with backdrop saturation boost.
-- ✨ **Specular Light Sheen**: Dynamic light reflection sweeping across cards on mouse hover.
-- 🌌 **3D Ambient Glowing Orbs**: Smoothly floating gradient ambient light spheres in the background (`animate-orb-float`).
-- 🌗 **Adaptive Dual Mode**:
-  - **3D Dark Mode**: Deep `#0a0f1d` space backdrop, subtle indigo/purple orbs, and neon glowing borders (`.glass-panel-dark`).
-  - **Energetic Light Mode**: Crisp `#f8fafc` canvas, soft sky-blue gradients, high contrast text, and subtle shadows (`.glass-panel-light`).
-
----
-
-## 🔐 Security & CMS Admin Panel
-
-Access the live **CMS Admin Panel** by clicking the **Shield Icon / Admin Hub** in the navigation bar.
-
-### Features
-- 🔑 **Password Protection**: Multi-key authentication system (`Karan@port3`, `admin`, `2025`, etc.).
-- 👁️ **Interactive Eye Masking**: Passkey input defaults to masked `password` mode with a one-click toggle to reveal text.
-- ✏️ **Live Content Editor**: Edit experience timeline, projects, certifications, profile data, and recruiter inbox items in real time.
-- 💾 **Dual-Layer Persistence**: Automatically syncs draft changes to browser `localStorage` and sends encrypted JSON payloads to `/api/portfolio-data`.
-
----
-
-## 📊 Business Intelligence & Interactive Features
-
-| Feature | Description | Interactive Controls |
-|---|---|---|
-| 📈 **Power BI & SQL Analytics Sandbox** | Real-time DAX formula simulation, SQL query runner, campaign funnel metrics. | Filter by Campaign, Run Queries, DAX calculator |
-| 🤖 **Gemini 2.5 AI Recruiter Bot** | Server-side Gemini API integration acting as Karan's 24/7 AI representative. | Ask about experience, skills, certifications |
-| 📑 **ATS Resume Keyword Matcher** | Match job descriptions against Karan's profile with keyword density breakdown. | Paste job description, calculate match % |
-| 🎓 **14 Verified Credentials Gallery** | Industry certifications from Google, IBM, Cisco, and University of Washington. | Filter by issuer, view certificate seals |
-| 💼 **Experience Timeline** | Interactive history covering Physics Wallah, virtual internships, and B.Tech IT. | Filter by corporate / academic tracks |
-
----
-
-## 🏗️ Application Architecture
-
-```text
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          BROWSER CLIENT (React 18)                          │
-│                                                                             │
-│  ┌───────────────────────┐  ┌───────────────────────┐  ┌─────────────────┐ │
-│  │  3D Glassmorphic Hero │  │ Power BI & SQL Data   │  │   Live CMS      │ │
-│  │  & Executive Metrics  │  │   Analytics Sandbox   │  │  Admin Panel    │ │
-│  └───────────────────────┘  └───────────────────────┘  └─────────────────┘ │
-│  ┌───────────────────────┐  ┌───────────────────────┐  ┌─────────────────┐ │
-│  │ Verified Credentials  │  │   Gemini AI Career    │  │  ATS Keyword    │ │
-│  │   14 Badges & Modal   │  │   Recruiter Chatbot   │  │   Match Engine  │ │
-│  └───────────────────────┘  └───────────────────────┘  └─────────────────┘ │
-└──────────────────────────────────┬──────────────────────────────────────────┘
-                                   │ Proxy Requests (/api/*)
-┌──────────────────────────────────▼──────────────────────────────────────────┐
-│                         EXPRESS.JS BACKEND SERVER                           │
-│                                                                             │
-│  • Vite Development Middleware / Static Production Bundler                  │
-│  • Google Gemini 2.5 AI SDK Integration (`@google/genai`)                  │
-│  • Server-Side CMS Data Synchronization (`/api/portfolio-data`)             │
-│  • Secure Environment Secret Management (`GEMINI_API_KEY`)                 │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 🛠️ Technology Stack
-
-- **Frontend**: React 18, Vite 5, TypeScript 5.5
-- **Styling**: Tailwind CSS 3.4, Lucide Icons
-- **Animations**: Motion (`motion/react`), Custom CSS 3D Transforms & Keyframes
-- **Data Visualization**: Recharts, Custom Canvas Visualizers
-- **AI Integration**: `@google/genai` (Google Gemini 2.5 API)
-- **Backend**: Express.js, Node.js
-
----
-
-## 🐙 GitHub Export & Sync Guide
-
-To sync all code changes directly to your GitHub repository (`karanpandre`):
-
-1. Click the **Settings / Export** button in the top-right toolbar of Google AI Studio.
-2. Select **"Export to GitHub"**.
-3. Choose your repository: `karanpandre/karan-pandre-portfolio`.
-4. Click **Confirm Export** — all files, commits, and this futuristic `README.md` will instantly sync to GitHub!
-
----
-
-## 📁 Repository Structure
+## Project Structure
 
 ```text
 .
-├── public/                 # Resume PDF, avatars, static assets
 ├── src/
-│   ├── components/        # Modular 3D Glass UI Components
-│   │   ├── AICareerAssistant.tsx     # Gemini AI recruiter bot
-│   │   ├── ATSResumeOptimizer.tsx    # ATS scanner module
-│   │   ├── CMSAdminPanel.tsx         # Live CMS & password security panel
-│   │   ├── CertificationsGrid.tsx    # 14 verified badges grid
-│   │   ├── ContactSection.tsx        # Contact form & social channels
-│   │   ├── CoreCompetencies.tsx      # Analytics & leadership tracks
-│   │   ├── ExperienceTimeline.tsx    # Work experience & education
-│   │   ├── Hero.tsx                  # Profile header & KPI badges
-│   │   ├── InteractiveDashboards.tsx # Power BI & SQL interactive sandbox
-│   │   ├── MouseSpotlight.tsx        # Dynamic lighting cursor effect
-│   │   ├── Navbar.tsx                # Glassmorphic header & theme toggle
-│   │   └── ProjectsSection.tsx       # Production project showcases
-│   ├── data/
-│   │   └── karanData.ts              # Portfolio dataset & single source of truth
-│   ├── types.ts                      # Shared TypeScript definitions
-│   ├── App.tsx                       # Root application container & theme state
-│   ├── index.css                     # 3D Glassmorphism CSS utilities & animations
-│   └── main.tsx                      # Vite React entrypoint
-├── server.ts               # Express backend & Gemini API proxy
-├── .env.example            # Environment variables template
-├── package.json            # Project dependencies & build scripts
-└── README.md               # Dynamic project documentation
+│   ├── components/                 # Portfolio + cybersecurity UI modules
+│   ├── data/                       # Portfolio and cybersecurity data sources
+│   ├── utils/                      # Utility helpers (e.g., sound effects)
+│   ├── App.tsx                     # Main app composition + route/hash handling
+│   ├── main.tsx                    # React entrypoint
+│   └── firebase.ts                 # Firebase app/auth/firestore initialization
+├── public/
+│   ├── karan_profile.jpg
+│   └── Karan_Pandre_Resume.pdf
+├── server.ts                       # Express API + dev/prod serving logic
+├── cms_data.json                   # Persistent CMS data store
+├── .env.example                    # Environment variable template
+├── vercel.json                     # Vercel build/output + SPA rewrite
+└── README.md
 ```
 
 ---
 
-## 🧪 Testing & Verification Report
+## Getting Started
 
-| Test Type | Scope / Command | Result | Status |
-|---|---|---|---|
-| **TypeScript Typecheck** | `tsc --noEmit` | 0 Syntax / Type Errors | ✅ PASS |
-| **Linting** | `npm run lint` | Clean Code Analysis | ✅ PASS |
-| **Production Build** | `npm run build` | Bundle compiled successfully in `dist/` | ✅ PASS |
-| **Backend Integration** | Express API & Gemini Proxy | `/api/portfolio-data` & `/api/ai/chat` verified | ✅ PASS |
-| **Security Audit** | Passkey Input & Masking | Zero plain-text leaks, masked toggles active | ✅ PASS |
+### 1) Install dependencies
+
+```bash
+npm install
+```
+
+### 2) Configure environment
+
+Copy `.env.example` to `.env` and set values as needed:
+
+```bash
+cp .env.example .env
+```
+
+### 3) Start development server
+
+```bash
+npm run dev
+```
+
+App runs on `http://localhost:3000` via `tsx server.ts`.
 
 ---
 
-## 👤 Author & Contact
+## Scripts
 
-- **Name**: Karan U. Pandre
-- **Role**: Senior Associate (Physics Wallah) | B.Tech Information Technology Graduate
-- **Email**: [karanpandre3@gmail.com](mailto:karanpandre3@gmail.com)
-- **LinkedIn**: [linkedin.com/in/karanpandre](https://linkedin.com/in/karanpandre)
-- **GitHub**: [github.com/karanpandre](https://github.com/karanpandre)
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Runs the Express + Vite development server |
+| `npm run build` | Builds frontend with Vite and bundles `server.ts` to `dist/server.cjs` |
+| `npm run start` | Starts production server from `dist/server.cjs` |
+| `npm run lint` | Type-checks with `tsc --noEmit` |
+| `npm run clean` | Removes build artifacts (`dist`, `server.cjs`) |
 
 ---
 
-<div align="center">
-  <sub>Built with ❤️ for <b>Karan Pandre</b> • Powered by Google AI Studio</sub>
-</div>
+## Environment Variables
+
+| Variable | Required | Notes |
+|---|---|---|
+| `GEMINI_API_KEY` | Optional | Enables Gemini-backed API behavior when valid key is provided |
+| `APP_URL` | Optional | Present in `.env.example`; useful for hosted app URL context |
+| `NODE_ENV` | Runtime | Used to switch dev middleware vs production static serving |
+| `DISABLE_HMR` | Optional | Controls Vite HMR/watch behavior in `vite.config.ts` |
+
+---
+
+## Usage Notes
+
+- Main portfolio is available at the root route.
+- Keyboard shortcut support includes:
+  - `Ctrl/Cmd + K` → toggle search modal
+  - `Ctrl/Cmd + Shift + S` → jump to cybersecurity dashboard route
+- CMS updates are served through backend API endpoints and persisted to `cms_data.json`.
+
+---
+
+## Deployment
+
+This repository includes `vercel.json` configured for Vite:
+
+- `buildCommand`: `npm run build`
+- `outputDirectory`: `dist`
+- SPA rewrite from `/(.*)` to `/index.html`
+
+General production flow:
+
+```bash
+npm run build
+npm run start
+```
+
+---
+
+## Accessibility & Responsive Design
+
+Implemented signals in code include:
+
+- responsive viewport meta configuration,
+- dark/light theme support,
+- keyboard-driven shortcuts,
+- smooth scrolling and adaptive UI sections.
+
+---
+
+## Contributing
+
+Contributions are welcome for portfolio polish, bug fixes, and UX improvements.
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit focused changes
+4. Open a pull request with clear context
+
+---
+
+## Contact
+
+- **Name:** Karan Pandre
+- **Email:** [karanpandre3@gmail.com](mailto:karanpandre3@gmail.com)
+- **LinkedIn:** [linkedin.com/in/karanpandre3](https://linkedin.com/in/karanpandre3)
+- **GitHub:** [github.com/karanpandre3](https://github.com/karanpandre3)
+
+---
+
+## License
+
+No repository-wide license file is currently present.
